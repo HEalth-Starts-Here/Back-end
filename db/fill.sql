@@ -19,7 +19,7 @@ VALUES
     );
 
 INSERT INTO
-    diaries (category, medicId, patientId, creatingDate, name, description)
+    diaries (category, medicId, patientId, creatingDate, title, description)
 VALUES
     (
 		5,
@@ -27,7 +27,15 @@ VALUES
         11,
         '2022-04-10 15:47:24',
         'Название дневника 1',
-        'Описание дневника'
+        'Описание дневника 2'
+    ),
+    (
+		1,
+        111,
+        11,
+        '2022-04-10 15:47:24',
+        'Название дневника 2',
+        'Описание дневника 2'
     );
 
 INSERT INTO

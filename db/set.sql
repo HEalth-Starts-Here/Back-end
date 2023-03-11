@@ -18,7 +18,7 @@ CREATE TABLE diaries (
     medicId                             BIGINT REFERENCES medics (vkId) ON DELETE CASCADE,
     patientId                           BIGINT REFERENCES patients (vkId) ON DELETE CASCADE,
     creatingDate                        TIMESTAMP NOT NULL,
-    name                                VARCHAR(30) NOT NULL,
+    title                               VARCHAR(30) NOT NULL,
     description                         VARCHAR(3000)
 );
 

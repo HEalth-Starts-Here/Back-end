@@ -2,11 +2,11 @@ package app
 
 import (
 	csrfsecurity "hesh/internal/pkg/csrf"
-	// "eventool/internal/pkg/database"
+	"hesh/internal/pkg/database"
 	// "eventool/internal/pkg/middlewares"
 	"hesh/internal/pkg/utils/config"
 	"hesh/internal/pkg/utils/log"
-	// "eventool/internal/pkg/utils/setter"
+	"hesh/internal/pkg/utils/setter"
 	"fmt"
 	"net/http"
 	"os"
@@ -30,11 +30,11 @@ func RunServer() {
 	// api.Use(middlewares.PanicRecovery)
 	// api.Use(middlewares.CsrfMdlw)
 
-	// db := database.InitDatabase()
-	// db.Connect()
-	// defer db.Disconnect()
+	db := database.InitDatabase()
+	db.Connect()
+	defer db.Disconnect()
 
-	// setter.SetHandlers(setter.Services{
+	setter.SetHandlers(setter.Services{
 	// 	// Act: setter.Data{Db: db, Api: api},
 	// 	// Mov: setter.Data{Db: db, Api: api},
 	// 	User: setter.Data{Db: db, Api: api},
@@ -43,12 +43,12 @@ func RunServer() {
 	// 	// Ann: setter.Data{Db: db, Api: api},
 	// 	// Ser: setter.Data{Db: db, Api: api},
 	// 	// Pla: setter.Data{Db: db, Api: api},
-	// 	Event: setter.Data{Db: db, Api: api},
+	Diary: setter.Data{Db: db, Api: api},
 
 	// 	// Com: setter.Data{Db: nil, Api: api},
 	// 	// Rat: setter.Data{Db: nil, Api: api},
 	// 	Aut: setter.Data{Db: nil, Api: api},
-	// })
+	})
 
 	// router.Handle("/metrics", promhttp.Handler())
 
