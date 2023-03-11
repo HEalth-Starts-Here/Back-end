@@ -1,0 +1,40 @@
+{
+    "localport": "8080",
+    "database": {
+        "heroku": {
+            "user": "gccsyecdepvbbu",
+            "password": "c9a92883f4c0e5bd6ceff6daafc98acd617e4053eee2bd30c539f89f119bec4d",
+            "host": "ec2-34-242-8-97.eu-west-1.compute.amazonaws.com",
+            "port": "5432",
+            "dbname": "d44b32nrphiafr"
+        },
+        "local": {
+            "user": "hesh",
+            "password": "hesh",
+            "host": "localhost",
+            "port": "5432",
+            "dbname": "hesh"
+        }
+    },
+    "logs": {
+        "output to stdout": false,
+        "filename": "logs.txt"
+    },
+    "sessions": {
+        "session name": "hesh-session"
+    },
+    "mcs": {
+        "auth": {
+            "connection type": "tcp",
+            "port": "8081"
+        },
+        "comment": {
+            "connection type": "tcp",
+            "port": "8082"
+        },
+        "rating": {
+            "connection type": "tcp",
+            "port": "8083"
+        } 
+    }
+}
