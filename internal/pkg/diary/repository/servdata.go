@@ -133,48 +133,64 @@ func (cr *dbdiaryrepository) GetDiary() (domain.DiaryListResponse, error) {
 	return out, nil
 }
 
-// func (cr *dbeventrepository) GetCertainEvent(eventId uint64) (domain.EventCreatingResponse, error) {
-// 	var resp []database.DBbyterow
-// 	var err error
-// 	query := queryGetCertainEvent
-// 	resp, err = cr.dbm.Query(query, eventId)
+func (cr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, error) {
+	var resp []database.DBbyterow
+	var err error
+	query := queryGetCertainDiaryMainInfo
+	resp, err = cr.dbm.Query(query, diaryId)
 
-// 	if err != nil {
-// 		log.Warn("{GetCertainEvent} in query: " + query)
-// 		log.Error(err)
-// 		return domain.EventCreatingResponse{}, domain.Err.ErrObj.InternalServer
-// 	}
+	if err != nil {
+		log.Warn("{GetCertainDiary} in query: " + query)
+		log.Error(err)
+		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
+	}
 
-// 	if len(resp) == 0 {
-// 		log.Warn("{GetCertainEvent}")
-// 		log.Error(domain.Err.ErrObj.SmallDb)
-// 		return domain.EventCreatingResponse{}, domain.Err.ErrObj.SmallDb
-// 	}
+	if len(resp) == 0 {
+		log.Warn("{GetCertainDiary}")
+		log.Error(domain.Err.ErrObj.SmallDb)
+		return domain.DiaryResponse{}, domain.Err.ErrObj.SmallDb
+	}
 
-// 	event := domain.EventCreatingResponse{
-// 		Id:                     cast.ToUint64(resp[0][0]),
-// 		PosterPath:             cast.ToString(resp[0][1]),
-// 		Title:                  cast.ToString(resp[0][2]),
-// 		Rating:                 cast.FlToStr((cast.ToFloat64(resp[0][3]))),
-// 		VotesNum:               cast.ToUint64(resp[0][4]),
-// 		Description:            cast.ToString(resp[0][5]),
-// 		UserId:                 cast.ToString(resp[0][6]),
-// 		Longitude:              cast.FlToStr((cast.ToFloat64(resp[0][7]))),
-// 		Latitude:               cast.FlToStr((cast.ToFloat64(resp[0][8]))),
-// 		CurrentMembersQuantity: cast.ToUint64(resp[0][9]),
-// 		MaxMembersQuantity:     cast.ToUint64(resp[0][10]),
-// 		MinMembersQuantity:     cast.ToUint64(resp[0][11]),
-// 		CreatingDate:           cast.ToString(resp[0][12]),
-// 		StartDate:              cast.ToString(resp[0][13]),
-// 		EndDate:                cast.ToString(resp[0][14]),
-// 		MinAge:                 cast.ToString(resp[0][15]),
-// 		MaxAge:                 cast.ToString(resp[0][16]),
-// 		Price:                  cast.ToString(resp[0][17]),
-// 	}
-// 	out := event
+	diary := domain.DiaryCreatingResponse{
+		Id:                     cast.ToUint64(resp[0][0]),
+		Category:               cast.ToUint32(resp[0][1]),
+		MedicId:                cast.ToUint32(resp[0][2]),
+		PatientId:              cast.ToUint32(resp[0][3]),
+		CreatingDate:           cast.ToString(resp[0][4]),
+		Title:                  cast.ToString(resp[0][5]),
+		Description:            cast.ToString(resp[0][6]),
+	}
 
-// 	return out, nil
-// }
+	var resp2 []database.DBbyterow
+	var err2 error
+	query2 := queryGetCertainDiaryRecords
+	resp2, err2 = cr.dbm.Query(query2, diaryId)
+
+
+	if err2 != nil {
+		log.Warn("{GetCertainDiaryRecords} in query: " + query2)
+		log.Error(err2)
+		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
+	}
+
+	records := make([]domain.RecordsCreatingResponse, 0)
+	for i := range resp2 {
+		records = append(records, domain.RecordsCreatingResponse{
+			Id:                     cast.ToUint64(resp2[i][0]),
+			DiaryId:                cast.ToUint64(resp2[i][1]),
+			Description:            cast.ToString(resp2[i][2]),
+			PosterPath:             cast.ToString(resp2[i][3]),
+		})
+	}
+
+
+	out := domain.DiaryResponse{
+		Diary: diary,
+		RecordsList: records,
+	}
+
+	return out, nil
+}
 
 // func (cr *dbeventrepository) GetCategory() (domain.CategoryListResponse, error) {
 // 	var resp []database.DBbyterow

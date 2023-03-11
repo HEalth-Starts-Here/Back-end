@@ -44,5 +44,15 @@ VALUES
     (
         1,
         '/static/lesions/raw/1.png',
-        'description text'
+        'description records 1 of 1 diary'
+    ),
+    (
+        1,
+        '/static/lesions/raw/1.png',
+        'description records 2 of 1 diary'
+    ),
+    (
+        2,
+        '/static/lesions/raw/1.png',
+        'description records of 1 diary'
     );

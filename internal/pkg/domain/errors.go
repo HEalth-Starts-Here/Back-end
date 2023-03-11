@@ -35,7 +35,7 @@ type errObj struct {
 	// UserDontSignUpForThisEvent error
 
 	// ParseId error
-	// SmallDb error
+	SmallDb error
 
 	// InvalidRating      error
 	// InvalidId          error
@@ -85,7 +85,7 @@ var Err = err{
 // 		UserDontSignUpForThisEvent: errors.New("User do not sign up for this event"),
 
 // 		ParseId: errors.New("Parse Id error"),
-// 		SmallDb: errors.New("Sorry, our database is too small yet"),
+		SmallDb: errors.New("Sorry, our database is too small yet"),
 
 // 		InvalidRating:      errors.New("Invalid value of `rating`"),
 // 		InvalidId:          errors.New("Invalid id in database request"),

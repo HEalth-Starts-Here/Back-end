@@ -40,9 +40,21 @@ type DiaryCreatingResponse struct {
 	Description            string   `json:"description"`
 }
 
+type RecordsCreatingResponse struct {
+	Id                     uint64   `json:"id"`
+	DiaryId                uint64   `json:"medicid"`
+	Description            string   `json:"description"`
+	PosterPath             string   `json:"posterpath"`
+}
+
 
 type DiaryListResponse struct {
 	DiaryList []DiaryCreatingResponse `json:"diarylist"`
+}
+
+type DiaryResponse struct {
+	Diary DiaryCreatingResponse `json:"diary"`
+	RecordsList []RecordsCreatingResponse `json:"records"`
 }
 
 // type CategoryResponse struct {
@@ -57,7 +69,7 @@ type DiaryListResponse struct {
 type DiaryRepository interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
 	GetDiary() (DiaryListResponse, error)  
-	// GetCertainDiary(diaryId uint64) (DiaryCreatingResponse, error)
+	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 
 
 	// DiaryAlreadyExist(diary DiaryCreatingRequest) (bool, error)
@@ -73,7 +85,7 @@ type DiaryRepository interface {
 type DiaryUsecase interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
 	GetDiary() (DiaryListResponse, error) 
-	// GetCertainDiary(diaryId uint64) (DiaryCreatingResponse, error)
+	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 
 
 	// GetCategory() (CategoryListResponse, error)

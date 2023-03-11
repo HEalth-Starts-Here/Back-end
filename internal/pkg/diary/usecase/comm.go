@@ -63,25 +63,16 @@ func (eu DiaryUsecase) GetDiary() (domain.DiaryListResponse, error) {
 	return feed, nil
 }
 
-// func (eu EventUsecase) GetCertainEvent(eventId uint64) (domain.EventCreatingResponse, error) {
+func (eu DiaryUsecase) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, error) {
 
-// 	// userAge, err :=  eu.eventRepo.GetUserAge(userId)
-// 	// if err != nil {
-// 	// 	return domain.EventCreatingResponse{}, err
-// 	// }
-
-// 	// if !isValidUser {
-// 	// 	return domain.EventCreatingResponse{}, nil
-// 	// }
-
-// 	event, err := eu.eventRepo.GetCertainEvent(eventId)
+	diary, err := eu.diaryRepo.GetCertainDiary(diaryId)
 	
-// 	if err != nil {
-// 		return domain.EventCreatingResponse{}, err
-// 	}
+	if err != nil {
+		return domain.DiaryResponse{}, err
+	}
 
-// 	return event, nil
-// }
+	return diary, nil
+}
 
 // func (eu EventUsecase) GetCategory() (domain.CategoryListResponse, error) {
 

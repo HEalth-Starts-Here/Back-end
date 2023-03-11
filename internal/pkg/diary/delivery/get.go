@@ -5,13 +5,13 @@ import (
 	// "eventool/internal/pkg/sessions"
 	// "hesh/internal/pkg/utils/cast"
 	"hesh/internal/pkg/utils/sanitizer"
-	// "strconv"
+	"strconv"
 	// "strings"
 
 	"io/ioutil"
 	"net/http"
 
-	// "github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 
 	"github.com/mailru/easyjson"
 )
@@ -88,37 +88,36 @@ func (handler *DiaryHandler) GetDiary(w http.ResponseWriter, r *http.Request) {
 	w.Write(out)
 }
 
-// func (handler *EventHandler) GetCertainEvent(w http.ResponseWriter, r *http.Request) {
-// 	defer r.Body.Close()
-// 	// userId, err := sessions.CheckSession(r);
-// 	// if err == domain.Err.ErrObj.UserNotLoggedIn {
-// 	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusBadRequest)
-// 	// 	return
-// 	// }
+func (handler *DiaryHandler) GetCertainDiary(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	// userId, err := sessions.CheckSession(r);
+	// if err == domain.Err.ErrObj.UserNotLoggedIn {
+	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusBadRequest)
+	// 	return
+	// }
 
-// 	params := mux.Vars(r)
-// 	eventId, err := strconv.ParseUint(params["id"], 10, 64)
-// 	if err != nil {
-// 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
-// 		return
-// 	}
+	params := mux.Vars(r)
+	diaryId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		return
+	}
 	
-// 	// event, err := handler.EventUsecase.GetCertainEvent(eventId, userId)
-// 	event, err := handler.EventUsecase.GetCertainEvent(eventId)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
+	diary, err := handler.DiaryUsecase.GetCertainDiary(diaryId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	
-// 	out, err := easyjson.Marshal(event)
-// 	if err != nil {
-// 		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
+	out, err := easyjson.Marshal(diary)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		return
+	}
 	
-// 	w.WriteHeader(http.StatusOK)
-// 	w.Write(out)
-// }
+	w.WriteHeader(http.StatusOK)
+	w.Write(out)
+}
 
 
 // func (handler *EventHandler) GetCategory(w http.ResponseWriter, r *http.Request) {

@@ -21,6 +21,19 @@ const (
 	FROM diaries
 	ORDER BY diaries.id;
 	`
+	
+	queryGetCertainDiaryMainInfo = `
+	SELECT id, category, medicId, patientId, creatingDate, title, description
+	FROM diaries
+	WHERE id = $1;
+	`
+
+	queryGetCertainDiaryRecords = `
+	SELECT id, diaryid, description, posterpath
+	FROM records
+	WHERE diaryid = $1;
+	`
+
 // 	queryCheckEvent = `
 // 	SELECT count(*)
 // 	FROM events 
