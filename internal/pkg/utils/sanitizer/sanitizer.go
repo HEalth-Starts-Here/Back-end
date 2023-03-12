@@ -6,8 +6,14 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 )
 
-func SanitizeDiaryCreating(event *domain.DiaryCreatingRequest) {
+func SanitizeDiaryCreating(diary *domain.DiaryCreatingRequest) {
 	sanitizer := bluemonday.UGCPolicy()
-	event.Title = sanitizer.Sanitize(event.Title)
-	event.Description = sanitizer.Sanitize(event.Description)
+	diary.Title = sanitizer.Sanitize(diary.Title)
+	diary.Description = sanitizer.Sanitize(diary.Description)
+}
+
+func SanitizeRecordCreating(record *domain.RecordCreatingRequest) {
+	sanitizer := bluemonday.UGCPolicy()
+	record.Description = sanitizer.Sanitize(record.Description)
+	record.PosterPath = sanitizer.Sanitize(record.PosterPath)
 }

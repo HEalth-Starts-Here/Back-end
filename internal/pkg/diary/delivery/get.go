@@ -66,7 +66,7 @@ func (handler *DiaryHandler) CreateDiary(w http.ResponseWriter, r *http.Request)
 	w.Write(out)
 }
 
-func (handler *DiaryHandler) GetDiary(w http.ResponseWriter, r *http.Request) {
+func (handler *DiaryHandler) GetDiary (w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	// categoryString := r.URL.Query().Get("category")
 	// categories := strings.Split(categoryString, " ")
@@ -116,6 +116,56 @@ func (handler *DiaryHandler) GetCertainDiary(w http.ResponseWriter, r *http.Requ
 	}
 	
 	w.WriteHeader(http.StatusOK)
+	w.Write(out)
+}
+
+func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	// sessionId, err := sessions.CheckSession(r)
+	// if err == domain.Err.ErrObj.UserNotLoggedIn {
+	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
+	// 	return
+	// }
+
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	RecordCreatingRequest := new(domain.RecordCreatingRequest)
+	RecordCreatingRequest.SetDefault()
+	
+	err = easyjson.Unmarshal(b, RecordCreatingRequest)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// if cast.IntToStr(sessionId) != EventCreatingRequest.UserId {
+	// 	http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// }
+
+	sanitizer.SanitizeRecordCreating(RecordCreatingRequest)
+
+	es, err := handler.DiaryUsecase.CreateRecord(*RecordCreatingRequest)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	out, err := easyjson.Marshal(es)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 	w.Write(out)
 }
 

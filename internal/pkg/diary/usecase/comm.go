@@ -74,6 +74,32 @@ func (eu DiaryUsecase) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, er
 	return diary, nil
 }
 
+func (eu DiaryUsecase) CreateRecord(recordData domain.RecordCreatingRequest) (domain.RecordCreatingResponse, error) {
+	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
+	// if err != nil {
+	// 	return domain.DiaryCreatingResponse{}, err
+	// }
+
+	// if alreadyExist {
+	// 	return domain.DiaryCreatingResponse{}, domain.Err.ErrObj.PlaylistExist
+	// }
+
+	if !recordData.IsValid() {
+		return domain.RecordCreatingResponse{}, domain.Err.ErrObj.InvalidTitle
+	}
+
+	diaryCreatingResponse, err := eu.diaryRepo.CreateRecord(recordData)
+	if err != nil {
+		return domain.RecordCreatingResponse{}, err
+	}
+
+	// diaryCreatingResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
+	// if err != nil {
+	// 	return domain.EventCreatingResponse{}, err
+	// }
+	return diaryCreatingResponse, nil
+}
+
 // func (eu EventUsecase) GetCategory() (domain.CategoryListResponse, error) {
 
 // 	categoryList, err := eu.eventRepo.GetCategory()

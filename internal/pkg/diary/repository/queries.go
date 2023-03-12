@@ -33,7 +33,17 @@ const (
 	FROM records
 	WHERE diaryid = $1;
 	`
-
+	queryCreateRecord = `
+	INSERT INTO
+    records (diaryId, posterPath, description)
+	VALUES
+    (
+        $1,
+        $2,
+        $3
+    )
+	RETURNING id, diaryId, posterPath, description;
+	`
 // 	queryCheckEvent = `
 // 	SELECT count(*)
 // 	FROM events 

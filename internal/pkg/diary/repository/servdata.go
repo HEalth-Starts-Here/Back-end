@@ -192,6 +192,23 @@ func (cr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	return out, nil
 }
 
+func (er *dbdiaryrepository) CreateRecord(record domain.RecordCreatingRequest) (domain.RecordCreatingResponse, error) {
+	resp, err := er.dbm.Query(queryCreateRecord, record.DiaryId, record.PosterPath, record.Description)
+	if err != nil {
+		log.Warn("{CreateRecord} in query: " + queryCreateDiary)
+		log.Error(err)
+		return domain.RecordCreatingResponse{}, err
+	}
+
+	return domain.RecordCreatingResponse{
+		Id:                     cast.ToUint64(resp[0][0]),
+		DiaryId:                cast.ToUint64(resp[0][1]),
+		PosterPath:             cast.ToString(resp[0][2]),
+		Description:            cast.ToString(resp[0][3]),
+	}, nil
+}
+
+
 // func (cr *dbeventrepository) GetCategory() (domain.CategoryListResponse, error) {
 // 	var resp []database.DBbyterow
 // 	var err error

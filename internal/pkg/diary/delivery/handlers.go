@@ -17,6 +17,7 @@ func SetDiaryHandlers(router *mux.Router, pu domain.DiaryUsecase) {
 	router.HandleFunc(CreateDiaryUrl, handler.CreateDiary).Methods("POST", "OPTIONS")
 	router.HandleFunc(GetDiaryUrl, handler.GetDiary).Methods("GET", "OPTIONS")
 	router.HandleFunc(GetCertainDiaryUrl, handler.GetCertainDiary).Methods("GET", "OPTIONS")
+	router.HandleFunc(CreateRecordUrl, handler.CreateRecord).Methods("POST", "OPTIONS")
 
 	// router.HandleFunc(GetRecomendedDiary, handler.GetRecomendedDiary).Methods("GET", "OPTIONS")
 	// router.HandleFunc(GetCatagoryUrl, handler.GetCategory).Methods("GET", "OPTIONS")

@@ -5,6 +5,7 @@ const (
 	CreateDiaryUrl		  = diaryUrl + "/create"
 	GetDiaryUrl   		  = diaryUrl + "/get"
 	GetCertainDiaryUrl    = GetDiaryUrl + "/{id:[0-9]+}"
+	CreateRecordUrl       = CreateDiaryUrl + "/{id:[0-9]+}"
 	// GetRecomendedEvent    = GetEventUrl + "/recomended"
 	// GetCatagoryUrl        = eventUrl + "/category"
 	// EventSignUpUrl		  = eventUrl + "/signup/{id:[0-9]+}"
