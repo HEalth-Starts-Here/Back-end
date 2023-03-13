@@ -39,20 +39,23 @@ VALUES
     );
 
 INSERT INTO
-    records (diaryId, posterPath, description)
+    records (diaryId, creatingDate, description, posterPath)
 VALUES
     (
         1,
-        '/static/lesions/raw/1.png',
-        'description records 1 of 1 diary'
+        '2022-04-10 15:47:24',
+        'description records 1 of 1 diary',
+        '/static/lesions/raw/1.png'
     ),
     (
         1,
-        '/static/lesions/raw/1.png',
-        'description records 2 of 1 diary'
+        '2022-04-10 15:47:24',
+        'description records 2 of 1 diary',
+        '/static/lesions/raw/1.png'
     ),
     (
         2,
-        '/static/lesions/raw/1.png',
-        'description records of 1 diary'
+        '2022-04-10 15:47:24',
+        'description records of 1 diary',
+        '/static/lesions/raw/1.png'
     );

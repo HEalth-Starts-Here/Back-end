@@ -24,7 +24,7 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreatingRequest) (dom
 	resp, err := er.dbm.Query(queryCreateDiary, diary.Category, diary.MedicId,
 		diary.PatientId, time.Now().Format("2006.01.02 15:04:05"), diary.Title, diary.Description)
 	if err != nil {
-		log.Warn("{CreateEvent} in query: " + queryCreateDiary)
+		log.Warn("{CreateDiary} in query: " + queryCreateDiary)
 		log.Error(err)
 		return domain.DiaryCreatingResponse{}, err
 	}
@@ -192,8 +192,8 @@ func (cr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	return out, nil
 }
 
-func (er *dbdiaryrepository) CreateRecord(record domain.RecordCreatingRequest) (domain.RecordCreatingResponse, error) {
-	resp, err := er.dbm.Query(queryCreateRecord, record.DiaryId, record.PosterPath, record.Description)
+func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCreatingRequest) (domain.RecordCreatingResponse, error) {
+	resp, err := er.dbm.Query(queryCreateRecord, diaryId, time.Now().Format("2006.01.02 15:04:05"), record.Description, record.PosterPath)
 	if err != nil {
 		log.Warn("{CreateRecord} in query: " + queryCreateDiary)
 		log.Error(err)

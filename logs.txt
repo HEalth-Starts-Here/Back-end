@@ -1,6 +1,9 @@
-Sun, 12 Mar 2023 21:50:31 MSK INF database.go:60: Successful connection to postgres
-Sun, 12 Mar 2023 21:50:31 MSK INF database.go:61: Connection params: user=hesh password=hesh host=localhost port=5432 dbname=hesh
-Sun, 12 Mar 2023 21:50:31 MSK INF runserver.go:67: Connecting to port 8080
-Sun, 12 Mar 2023 21:50:36 MSK ERR error="tx is closed"
-Sun, 12 Mar 2023 21:50:36 MSK ERR error="tx is closed"
-Sun, 12 Mar 2023 23:16:41 MSK ERR error="tx is closed"
+Mon, 13 Mar 2023 04:26:37 MSK INF database.go:60: Successful connection to postgres
+Mon, 13 Mar 2023 04:26:37 MSK INF database.go:61: Connection params: user=hesh password=hesh host=localhost port=5432 dbname=hesh
+Mon, 13 Mar 2023 04:26:37 MSK INF runserver.go:67: Connecting to port 8080
+Mon, 13 Mar 2023 04:26:40 MSK ERR error="tx is closed"
+Mon, 13 Mar 2023 04:34:12 MSK ERR error="tx is closed"
+Mon, 13 Mar 2023 04:34:23 MSK ERR error="tx is closed"
+Mon, 13 Mar 2023 04:34:28 MSK ERR error="tx is closed"
+Mon, 13 Mar 2023 04:34:28 MSK ERR error="tx is closed"
+Mon, 13 Mar 2023 04:34:34 MSK ERR error="tx is closed"

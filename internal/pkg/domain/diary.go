@@ -25,7 +25,6 @@ func (er *DiaryCreatingRequest) SetDefault() () {
 }
 
 func (er *RecordCreatingRequest) SetDefault() () {
-	er.DiaryId = 0
 	er.Description = ""
 	er.PosterPath = ""
 	return
@@ -57,7 +56,7 @@ type DiaryCreatingResponse struct {
 
 type RecordsCreatingResponse struct {
 	Id                     uint64   `json:"id"`
-	DiaryId                uint64   `json:"medicid"`
+	DiaryId                uint64   `json:"diaryid"`
 	Description            string   `json:"description"`
 	PosterPath             string   `json:"posterpath"`
 }
@@ -72,7 +71,6 @@ type DiaryResponse struct {
 }
 
 type RecordCreatingRequest struct {
-	DiaryId                uint64   `json:"diaryid"`
 	Description            string   `json:"description"`
 	PosterPath             string   `json:"posterpath"`
 }
@@ -80,6 +78,7 @@ type RecordCreatingRequest struct {
 type RecordCreatingResponse struct {
 	Id                     uint64   `json:"id"`
 	DiaryId                uint64   `json:"diaryid"`
+	CreatingDate           string   `json:"creatingdate"`
 	Description            string   `json:"description"`
 	PosterPath             string   `json:"posterpath"`
 }
@@ -97,7 +96,7 @@ type DiaryRepository interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
 	GetDiary() (DiaryListResponse, error)  
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	CreateRecord(record RecordCreatingRequest) (RecordCreatingResponse, error)
+	CreateRecord(diaryId uint64, record RecordCreatingRequest) (RecordCreatingResponse, error)
 
 
 	// DiaryAlreadyExist(diary DiaryCreatingRequest) (bool, error)
@@ -114,7 +113,7 @@ type DiaryUsecase interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
 	GetDiary() (DiaryListResponse, error) 
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	CreateRecord(record RecordCreatingRequest) (RecordCreatingResponse, error)
+	CreateRecord(diaryId uint64, record RecordCreatingRequest) (RecordCreatingResponse, error)
 
 
 	// GetCategory() (CategoryListResponse, error)

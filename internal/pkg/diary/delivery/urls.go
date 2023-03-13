@@ -2,8 +2,8 @@ package diarydelivery
 
 const (
 	diaryUrl      		  = "/diary"
-	CreateDiaryUrl		  = diaryUrl + "/create"
 	GetDiaryUrl   		  = diaryUrl + "/get"
+	CreateDiaryUrl		  = diaryUrl + "/create"
 	GetCertainDiaryUrl    = GetDiaryUrl + "/{id:[0-9]+}"
 	CreateRecordUrl       = CreateDiaryUrl + "/{id:[0-9]+}"
 	// GetRecomendedEvent    = GetEventUrl + "/recomended"

@@ -38,7 +38,7 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain(in *jlexer.Lexer, out *RecordsC
 		switch key {
 		case "id":
 			out.Id = uint64(in.Uint64())
-		case "medicid":
+		case "diaryid":
 			out.DiaryId = uint64(in.Uint64())
 		case "description":
 			out.Description = string(in.String())
@@ -64,7 +64,7 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain(out *jwriter.Writer, in Records
 		out.Uint64(uint64(in.Id))
 	}
 	{
-		const prefix string = ",\"medicid\":"
+		const prefix string = ",\"diaryid\":"
 		out.RawString(prefix)
 		out.Uint64(uint64(in.DiaryId))
 	}
@@ -127,6 +127,8 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain1(in *jlexer.Lexer, out *RecordC
 			out.Id = uint64(in.Uint64())
 		case "diaryid":
 			out.DiaryId = uint64(in.Uint64())
+		case "creatingdate":
+			out.CreatingDate = string(in.String())
 		case "description":
 			out.Description = string(in.String())
 		case "posterpath":
@@ -154,6 +156,11 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain1(out *jwriter.Writer, in Record
 		const prefix string = ",\"diaryid\":"
 		out.RawString(prefix)
 		out.Uint64(uint64(in.DiaryId))
+	}
+	{
+		const prefix string = ",\"creatingdate\":"
+		out.RawString(prefix)
+		out.String(string(in.CreatingDate))
 	}
 	{
 		const prefix string = ",\"description\":"
@@ -210,8 +217,6 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain2(in *jlexer.Lexer, out *RecordC
 			continue
 		}
 		switch key {
-		case "diaryid":
-			out.DiaryId = uint64(in.Uint64())
 		case "description":
 			out.Description = string(in.String())
 		case "posterpath":
@@ -231,13 +236,8 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain2(out *jwriter.Writer, in Record
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"diaryid\":"
-		out.RawString(prefix[1:])
-		out.Uint64(uint64(in.DiaryId))
-	}
-	{
 		const prefix string = ",\"description\":"
-		out.RawString(prefix)
+		out.RawString(prefix[1:])
 		out.String(string(in.Description))
 	}
 	{
@@ -503,7 +503,7 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain5(in *jlexer.Lexer, out *DiaryCr
 			out.PatientId = uint32(in.Uint32())
 		case "creatingdate":
 			out.CreatingDate = string(in.String())
-		case "name":
+		case "title":
 			out.Title = string(in.String())
 		case "description":
 			out.Description = string(in.String())
@@ -547,7 +547,7 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain5(out *jwriter.Writer, in DiaryC
 		out.String(string(in.CreatingDate))
 	}
 	{
-		const prefix string = ",\"name\":"
+		const prefix string = ",\"title\":"
 		out.RawString(prefix)
 		out.String(string(in.Title))
 	}

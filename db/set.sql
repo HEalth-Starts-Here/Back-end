@@ -25,8 +25,7 @@ CREATE TABLE diaries (
 CREATE TABLE records (
     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
     diaryId                             BIGINT REFERENCES diaries (id) ON DELETE CASCADE,
+    creatingDate                        TIMESTAMP NOT NULL,
     description                         VARCHAR(3000), 
-    -- TODO: add date for records
-    -- creatingDate                        TIMESTAMP NOT NULL,
     posterPath                          VARCHAR(50) 
 );

@@ -36,8 +36,8 @@ func (handler *DiaryHandler) CreateDiary(w http.ResponseWriter, r *http.Request)
 	
 	err = easyjson.Unmarshal(b, DiaryCreatingRequest)
 	if err != nil {
-		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusInternalServerError)
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -50,7 +50,7 @@ func (handler *DiaryHandler) CreateDiary(w http.ResponseWriter, r *http.Request)
 
 	es, err := handler.DiaryUsecase.CreateDiary(*DiaryCreatingRequest)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -127,6 +127,13 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 	// 	return
 	// }
 
+	params := mux.Vars(r)
+	diaryId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		return
+	}
+
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -136,11 +143,10 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 
 	RecordCreatingRequest := new(domain.RecordCreatingRequest)
 	RecordCreatingRequest.SetDefault()
-	
 	err = easyjson.Unmarshal(b, RecordCreatingRequest)
 	if err != nil {
-		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusInternalServerError)
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -151,10 +157,10 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 
 	sanitizer.SanitizeRecordCreating(RecordCreatingRequest)
 
-	es, err := handler.DiaryUsecase.CreateRecord(*RecordCreatingRequest)
+	es, err := handler.DiaryUsecase.CreateRecord(diaryId, *RecordCreatingRequest)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

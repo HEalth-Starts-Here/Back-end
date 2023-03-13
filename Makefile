@@ -23,5 +23,8 @@ go-test:
 
 go-tool:
 	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go tool cover -func=cover.out
-
+create-easyjson:
+	easyjson -all internal/pkg/domain/*.go
+easyjson:
+	rm internal/pkg/domain/*easyjson.go && easyjson -all internal/pkg/domain/*.go
 # Команда для запуска тестов: go test -coverpkg=./... -coverprofile=cover ./... && cat cover | grep -v "mock" | grep -v  "easyjson" | grep -v "proto" > cover.out && go tool cover -func=cover.out

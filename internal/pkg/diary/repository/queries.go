@@ -35,14 +35,15 @@ const (
 	`
 	queryCreateRecord = `
 	INSERT INTO
-    records (diaryId, posterPath, description)
+    records (diaryId, creatingdate, description, posterpath)
 	VALUES
     (
         $1,
         $2,
-        $3
+        $3,
+        $4
     )
-	RETURNING id, diaryId, posterPath, description;
+	RETURNING id, diaryId, creatingdate, description, posterpath;
 	`
 // 	queryCheckEvent = `
 // 	SELECT count(*)
