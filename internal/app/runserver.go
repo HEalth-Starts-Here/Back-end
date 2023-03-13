@@ -3,7 +3,7 @@ package app
 import (
 	csrfsecurity "hesh/internal/pkg/csrf"
 	"hesh/internal/pkg/database"
-	// "eventool/internal/pkg/middlewares"
+	"hesh/internal/pkg/middlewares"
 	"hesh/internal/pkg/utils/config"
 	"hesh/internal/pkg/utils/log"
 	"hesh/internal/pkg/utils/setter"
@@ -24,7 +24,7 @@ func RunServer() {
 	// metrics := middlewares.InitMetrics()
 	// api.Use(metrics.Metrics)
 
-	// api.Use(middlewares.Cors)
+	api.Use(middlewares.Cors)
 	// api.Use(middlewares.Logger)
 	// api.Use(metrics.Metrics)
 	// api.Use(middlewares.PanicRecovery)
