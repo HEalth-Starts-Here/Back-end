@@ -3,9 +3,18 @@ package domain
 // TODO write valid path
 const (
 	// BaseEventPicture = "/home/ubuntu/lolkek/static/event/event.png"
-	maxEventTitleLength = 200
+	maxDiaryTitleLength = 200
+	maxRecordTitleLength = 200
+	maxDiaryDescriptionLength = 3000
 	maxRecordDescriptionLength = 3000
 )
+
+// const (
+// 	One Season = iota
+// 	Tw
+// 	Winter
+// 	Spring
+// )
 
 type DiaryCreatingRequest struct {
 	Category               uint32   `json:"category"`
@@ -26,19 +35,19 @@ func (er *DiaryCreatingRequest) SetDefault() () {
 
 func (er *RecordCreatingRequest) SetDefault() () {
 	er.Description = ""
-	er.PosterPath = ""
+	er.Title = ""
 	return
 }
 
 func (er DiaryCreatingRequest) IsValid() (isValid bool) {
-	if len(er.Title) > maxEventTitleLength {
+	if len(er.Title) > maxDiaryTitleLength || len(er.Description) > maxDiaryDescriptionLength{
 		return false
 	}
 	return true
 }
 
 func (er RecordCreatingRequest) IsValid() (isValid bool) {
-	if len(er.Description) > maxRecordDescriptionLength {
+	if len(er.Title) > maxRecordTitleLength || len(er.Description) > maxRecordDescriptionLength{
 		return false
 	}
 	return true
@@ -54,12 +63,12 @@ type DiaryCreatingResponse struct {
 	Description            string   `json:"description"`
 }
 
-type RecordsCreatingResponse struct {
-	Id                     uint64   `json:"id"`
-	DiaryId                uint64   `json:"diaryid"`
-	Description            string   `json:"description"`
-	PosterPath             string   `json:"posterpath"`
-}
+// type RecordsCreatingResponse struct {
+// 	Id                     uint64   `json:"id"`
+// 	DiaryId                uint64   `json:"diaryid"`
+// 	Description            string   `json:"description"`
+// 	PosterPath             string   `json:"posterpath"`
+// }
 
 type DiaryListResponse struct {
 	DiaryList []DiaryCreatingResponse `json:"diarylist"`
@@ -67,12 +76,15 @@ type DiaryListResponse struct {
 
 type DiaryResponse struct {
 	Diary DiaryCreatingResponse `json:"diary"`
-	RecordsList []RecordsCreatingResponse `json:"records"`
+	RecordsList []RecordCreatingResponse `json:"records"`
 }
 
 type RecordCreatingRequest struct {
+	// PosterPath             string   `json:"posterpath"` // TODO: array photos for patients with few disease areas
+
+	Title           	   string   `json:"title"` 
 	Description            string   `json:"description"`
-	PosterPath             string   `json:"posterpath"`
+	// Image	               string   `json:"image"` 
 }
 
 type RecordCreatingResponse struct {
@@ -80,7 +92,21 @@ type RecordCreatingResponse struct {
 	DiaryId                uint64   `json:"diaryid"`
 	CreatingDate           string   `json:"creatingdate"`
 	Description            string   `json:"description"`
-	PosterPath             string   `json:"posterpath"`
+	Title                  string   `json:"title"`
+}
+
+type ScaleValue uint8
+
+type Characteristic struct {
+	Itching 			   ScaleValue `json:"itching"` // defin all not required
+	Pain 				   ScaleValue `json:"pain"`
+	Edema 				   ScaleValue `json:"edema"`
+	Redness 			   ScaleValue `json:"redness"`
+	Dryness 			   ScaleValue `json:"dryness"`
+	Peeling 			   ScaleValue `json:"peeling"`
+
+	Area 				   float32 `json:"area"` // cm^2
+	// TODO Define palm area as 1%	
 }
 
 // type CategoryResponse struct {

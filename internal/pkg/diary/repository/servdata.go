@@ -173,13 +173,14 @@ func (cr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
 	}
 
-	records := make([]domain.RecordsCreatingResponse, 0)
+	records := make([]domain.RecordCreatingResponse, 0)
 	for i := range resp2 {
-		records = append(records, domain.RecordsCreatingResponse{
+		records = append(records, domain.RecordCreatingResponse{
 			Id:                     cast.ToUint64(resp2[i][0]),
 			DiaryId:                cast.ToUint64(resp2[i][1]),
-			Description:            cast.ToString(resp2[i][2]),
-			PosterPath:             cast.ToString(resp2[i][3]),
+			CreatingDate:           cast.ToString(resp2[i][2]),
+			Title:            	    cast.ToString(resp2[i][3]),
+			Description:            cast.ToString(resp2[i][4]),
 		})
 	}
 
@@ -193,7 +194,7 @@ func (cr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 }
 
 func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCreatingRequest) (domain.RecordCreatingResponse, error) {
-	resp, err := er.dbm.Query(queryCreateRecord, diaryId, time.Now().Format("2006.01.02 15:04:05"), record.Description, record.PosterPath)
+	resp, err := er.dbm.Query(queryCreateRecord, diaryId, time.Now().Format("2006.01.02 15:04:05"), record.Title, record.Description)
 	if err != nil {
 		log.Warn("{CreateRecord} in query: " + queryCreateDiary)
 		log.Error(err)
@@ -203,8 +204,9 @@ func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCr
 	return domain.RecordCreatingResponse{
 		Id:                     cast.ToUint64(resp[0][0]),
 		DiaryId:                cast.ToUint64(resp[0][1]),
-		PosterPath:             cast.ToString(resp[0][2]),
-		Description:            cast.ToString(resp[0][3]),
+		CreatingDate:           cast.ToString(resp[0][2]),
+		Title:            	    cast.ToString(resp[0][3]),
+		Description:            cast.ToString(resp[0][4]),
 	}, nil
 }
 

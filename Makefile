@@ -23,6 +23,9 @@ go-test:
 
 go-tool:
 	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go tool cover -func=cover.out
+set-gopath:
+	export GOPATH=$HOME/go && export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
 create-easyjson:
 	easyjson -all internal/pkg/domain/*.go
 easyjson:

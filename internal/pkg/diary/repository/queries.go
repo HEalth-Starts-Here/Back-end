@@ -29,13 +29,13 @@ const (
 	`
 
 	queryGetCertainDiaryRecords = `
-	SELECT id, diaryid, description, posterpath
+	SELECT id, diaryid, creatingdate, title, description
 	FROM records
 	WHERE diaryid = $1;
 	`
 	queryCreateRecord = `
 	INSERT INTO
-    records (diaryId, creatingdate, description, posterpath)
+    records (diaryId, creatingdate, title, description)
 	VALUES
     (
         $1,
@@ -43,7 +43,7 @@ const (
         $3,
         $4
     )
-	RETURNING id, diaryId, creatingdate, description, posterpath;
+	RETURNING id, diaryId, creatingdate, title, description;
 	`
 // 	queryCheckEvent = `
 // 	SELECT count(*)
