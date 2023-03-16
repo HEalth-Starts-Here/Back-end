@@ -35,15 +35,21 @@ const (
 	`
 	queryCreateRecord = `
 	INSERT INTO
-    records (diaryId, creatingdate, title, description)
+    records (diaryId, creatingDate, title, description, dryness, edema, itching, pain, peeling, redness)
 	VALUES
     (
         $1,
         $2,
         $3,
-        $4
+        $4,
+        $5,
+        $6,
+        $7,
+        $8,
+        $9,
+        $10
     )
-	RETURNING id, diaryId, creatingdate, title, description;
+	RETURNING id, diaryId, creatingDate, title, description, dryness, edema, itching, pain, peeling, redness;
 	`
 // 	queryCheckEvent = `
 // 	SELECT count(*)

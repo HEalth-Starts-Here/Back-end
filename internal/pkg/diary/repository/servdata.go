@@ -194,7 +194,17 @@ func (cr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 }
 
 func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCreatingRequest) (domain.RecordCreatingResponse, error) {
-	resp, err := er.dbm.Query(queryCreateRecord, diaryId, time.Now().Format("2006.01.02 15:04:05"), record.Title, record.Description)
+	resp, err := er.dbm.Query(queryCreateRecord, 
+		diaryId, 
+		time.Now().Format("2006.01.02 15:04:05"), 
+		record.Title, 
+		record.Description,
+		record.Characteristics.Dryness, 
+		record.Characteristics.Edema, 
+		record.Characteristics.Itching, 
+		record.Characteristics.Pain, 
+		record.Characteristics.Peeling, 
+		record.Characteristics.Redness)
 	if err != nil {
 		log.Warn("{CreateRecord} in query: " + queryCreateDiary)
 		log.Error(err)
@@ -207,6 +217,15 @@ func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCr
 		CreatingDate:           cast.ToString(resp[0][2]),
 		Title:            	    cast.ToString(resp[0][3]),
 		Description:            cast.ToString(resp[0][4]),
+
+		Characteristics: domain.Characteristics{
+			Dryness:		    cast.ToUint8(resp[0][5]),
+			Edema: 				cast.ToUint8(resp[0][6]),
+			Itching: 			cast.ToUint8(resp[0][7]),
+			Pain:				cast.ToUint8(resp[0][8]),
+			Peeling: 			cast.ToUint8(resp[0][9]),
+			Redness:			cast.ToUint8(resp[0][10]),
+		},
 	}, nil
 }
 

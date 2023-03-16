@@ -36,6 +36,8 @@ func (er *DiaryCreatingRequest) SetDefault() () {
 func (er *RecordCreatingRequest) SetDefault() () {
 	er.Description = ""
 	er.Title = ""
+	er.Characteristics = Characteristics{}
+	er.FilePaths = []string{}
 	return
 }
 
@@ -49,6 +51,18 @@ func (er DiaryCreatingRequest) IsValid() (isValid bool) {
 func (er RecordCreatingRequest) IsValid() (isValid bool) {
 	if len(er.Title) > maxRecordTitleLength || len(er.Description) > maxRecordDescriptionLength{
 		return false
+	}
+	characteristicsList := [](*uint8){  &er.Characteristics.Dryness, 
+										&er.Characteristics.Edema, 
+										&er.Characteristics.Itching, 
+										&er.Characteristics.Pain, 
+										&er.Characteristics.Peeling, 
+										&er.Characteristics.Redness,
+									}
+	for ch := range characteristicsList{
+		if ch > 10{
+			return false
+		}
 	}
 	return true
 }
@@ -80,11 +94,10 @@ type DiaryResponse struct {
 }
 
 type RecordCreatingRequest struct {
-	// PosterPath             string   `json:"posterpath"` // TODO: array photos for patients with few disease areas
-
-	Title           	   string   `json:"title"` 
-	Description            string   `json:"description"`
-	// Image	               string   `json:"image"` 
+	Title           	   string      `json:"title"` 
+	Description            string      `json:"description"`
+	Characteristics		   Characteristics `json:"characteristics"`
+	FilePaths 			   []string  `json:"filepaths"`
 }
 
 type RecordCreatingResponse struct {
@@ -93,21 +106,21 @@ type RecordCreatingResponse struct {
 	CreatingDate           string   `json:"creatingdate"`
 	Description            string   `json:"description"`
 	Title                  string   `json:"title"`
+	Characteristics		   Characteristics `json:"characteristics"`
+
 }
 
-type ScaleValue uint8
-
-type Characteristic struct {
-	Itching 			   ScaleValue `json:"itching"` // defin all not required
-	Pain 				   ScaleValue `json:"pain"`
-	Edema 				   ScaleValue `json:"edema"`
-	Redness 			   ScaleValue `json:"redness"`
-	Dryness 			   ScaleValue `json:"dryness"`
-	Peeling 			   ScaleValue `json:"peeling"`
-
-	Area 				   float32 `json:"area"` // cm^2
-	// TODO Define palm area as 1%	
+type Characteristics struct {
+	Dryness 			   uint8 `json:"dryness"`
+	Edema 				   uint8 `json:"edema"`
+	Itching 			   uint8 `json:"itching"` // defin all not required
+	Pain 				   uint8 `json:"pain"`
+	Peeling 			   uint8 `json:"peeling"`
+	Redness 			   uint8 `json:"redness"`
 }
+
+// Area 				   float32 `json:"area"` // cm^2
+// // TODO Define palm area as 1%	
 
 // type CategoryResponse struct {
 // 	Name             string   `json:"name"`

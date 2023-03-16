@@ -40,9 +40,12 @@ func ToUint32(src []byte) uint32 {
 	return binary.BigEndian.Uint32(src)
 }
 
-
 func ToUint16(src []byte) uint16 {
 	return binary.BigEndian.Uint16(src)
+}
+
+func ToUint8(src []byte) uint8 {
+	return uint8(binary.BigEndian.Uint16(src))
 }
 
 func ToFloat64(src []byte) float64 {

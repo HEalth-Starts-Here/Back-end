@@ -39,23 +39,65 @@ VALUES
     );
 
 INSERT INTO
-    records (diaryId, creatingDate, title, description)
+    records (diaryId, creatingDate, title, description, dryness, edema, itching, pain, peeling, redness)
 VALUES
     (
         1,
         '2022-04-10 15:47:24',
         'Title records 1 of 1 diary',
-        'Description records 1 of 1 diary'
+        'Description records 1 of 1 diary',
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
     ),
     (
         1,
         '2022-04-10 15:47:24',
         'Title records 2 of 1 diary',
-        'Description records 2 of 1 diary'
+        'Description records 2 of 1 diary',
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
     ),
     (
         2,
         '2022-04-10 15:47:24',
         'Title records of 1 diary',
-        'Description records of 1 diary'
+        'Description records of 1 diary',
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+    );
+
+INSERT INTO
+    imagepaths (recordsId, path)
+VALUES
+    (
+		1,
+        'static/lesions/raw/1.png'
+    ),
+    (
+		1,
+        'static/lesions/raw/2.png'
+    ),
+    (
+		1,
+        'static/lesions/raw/3.png'
+    ),
+    (
+		2,
+        'static/lesions/raw/4.png'
+    ),
+    (
+		2,
+        'static/lesions/raw/5.png'
     );

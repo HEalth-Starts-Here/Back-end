@@ -44,6 +44,8 @@ type DevConfig struct {
 			Port     string `mapstructure:"port"`
 		} `mapstructure:"rating"`
 	} `mapstructure:"mcs"`
+	LoadedFilesPath string `mapstructure:"loadedfilespath"`
+	ProcessedFilesPath string `mapstructure:"processedfilespath"`
 }
 
 var DevConfigStore DevConfig

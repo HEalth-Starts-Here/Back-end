@@ -46,6 +46,8 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain(in *jlexer.Lexer, out *RecordCr
 			out.Description = string(in.String())
 		case "title":
 			out.Title = string(in.String())
+		case "characteristics":
+			(out.Characteristics).UnmarshalEasyJSON(in)
 		default:
 			in.SkipRecursive()
 		}
@@ -84,6 +86,11 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain(out *jwriter.Writer, in RecordC
 		const prefix string = ",\"title\":"
 		out.RawString(prefix)
 		out.String(string(in.Title))
+	}
+	{
+		const prefix string = ",\"characteristics\":"
+		out.RawString(prefix)
+		(in.Characteristics).MarshalEasyJSON(out)
 	}
 	out.RawByte('}')
 }
@@ -134,6 +141,31 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain1(in *jlexer.Lexer, out *RecordC
 			out.Title = string(in.String())
 		case "description":
 			out.Description = string(in.String())
+		case "characteristics":
+			(out.Characteristics).UnmarshalEasyJSON(in)
+		case "filepaths":
+			if in.IsNull() {
+				in.Skip()
+				out.FilePaths = nil
+			} else {
+				in.Delim('[')
+				if out.FilePaths == nil {
+					if !in.IsDelim(']') {
+						out.FilePaths = make([]string, 0, 4)
+					} else {
+						out.FilePaths = []string{}
+					}
+				} else {
+					out.FilePaths = (out.FilePaths)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v1 string
+					v1 = string(in.String())
+					out.FilePaths = append(out.FilePaths, v1)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -157,6 +189,27 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain1(out *jwriter.Writer, in Record
 		const prefix string = ",\"description\":"
 		out.RawString(prefix)
 		out.String(string(in.Description))
+	}
+	{
+		const prefix string = ",\"characteristics\":"
+		out.RawString(prefix)
+		(in.Characteristics).MarshalEasyJSON(out)
+	}
+	{
+		const prefix string = ",\"filepaths\":"
+		out.RawString(prefix)
+		if in.FilePaths == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v2, v3 := range in.FilePaths {
+				if v2 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v3))
+			}
+			out.RawByte(']')
+		}
 	}
 	out.RawByte('}')
 }
@@ -213,7 +266,7 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain2(in *jlexer.Lexer, out *DiaryRe
 				in.Delim('[')
 				if out.RecordsList == nil {
 					if !in.IsDelim(']') {
-						out.RecordsList = make([]RecordCreatingResponse, 0, 1)
+						out.RecordsList = make([]RecordCreatingResponse, 0, 0)
 					} else {
 						out.RecordsList = []RecordCreatingResponse{}
 					}
@@ -221,9 +274,9 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain2(in *jlexer.Lexer, out *DiaryRe
 					out.RecordsList = (out.RecordsList)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v1 RecordCreatingResponse
-					(v1).UnmarshalEasyJSON(in)
-					out.RecordsList = append(out.RecordsList, v1)
+					var v4 RecordCreatingResponse
+					(v4).UnmarshalEasyJSON(in)
+					out.RecordsList = append(out.RecordsList, v4)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -254,11 +307,11 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain2(out *jwriter.Writer, in DiaryR
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v2, v3 := range in.RecordsList {
-				if v2 > 0 {
+			for v5, v6 := range in.RecordsList {
+				if v5 > 0 {
 					out.RawByte(',')
 				}
-				(v3).MarshalEasyJSON(out)
+				(v6).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -324,9 +377,9 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain3(in *jlexer.Lexer, out *DiaryLi
 					out.DiaryList = (out.DiaryList)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v4 DiaryCreatingResponse
-					(v4).UnmarshalEasyJSON(in)
-					out.DiaryList = append(out.DiaryList, v4)
+					var v7 DiaryCreatingResponse
+					(v7).UnmarshalEasyJSON(in)
+					out.DiaryList = append(out.DiaryList, v7)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -352,11 +405,11 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain3(out *jwriter.Writer, in DiaryL
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v5, v6 := range in.DiaryList {
-				if v5 > 0 {
+			for v8, v9 := range in.DiaryList {
+				if v8 > 0 {
 					out.RawByte(',')
 				}
-				(v6).MarshalEasyJSON(out)
+				(v9).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -589,7 +642,7 @@ func (v *DiaryCreatingRequest) UnmarshalJSON(data []byte) error {
 func (v *DiaryCreatingRequest) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson1ddc3ff7DecodeHeshInternalPkgDomain5(l, v)
 }
-func easyjson1ddc3ff7DecodeHeshInternalPkgDomain6(in *jlexer.Lexer, out *Characteristic) {
+func easyjson1ddc3ff7DecodeHeshInternalPkgDomain6(in *jlexer.Lexer, out *Characteristics) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -608,20 +661,18 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain6(in *jlexer.Lexer, out *Charact
 			continue
 		}
 		switch key {
-		case "itching":
-			out.Itching = ScaleValue(in.Uint8())
-		case "pain":
-			out.Pain = ScaleValue(in.Uint8())
-		case "edema":
-			out.Edema = ScaleValue(in.Uint8())
-		case "redness":
-			out.Redness = ScaleValue(in.Uint8())
 		case "dryness":
-			out.Dryness = ScaleValue(in.Uint8())
+			out.Dryness = uint8(in.Uint8())
+		case "edema":
+			out.Edema = uint8(in.Uint8())
+		case "itching":
+			out.Itching = uint8(in.Uint8())
+		case "pain":
+			out.Pain = uint8(in.Uint8())
 		case "peeling":
-			out.Peeling = ScaleValue(in.Uint8())
-		case "area":
-			out.Area = float32(in.Float32())
+			out.Peeling = uint8(in.Uint8())
+		case "redness":
+			out.Redness = uint8(in.Uint8())
 		default:
 			in.SkipRecursive()
 		}
@@ -632,13 +683,23 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain6(in *jlexer.Lexer, out *Charact
 		in.Consumed()
 	}
 }
-func easyjson1ddc3ff7EncodeHeshInternalPkgDomain6(out *jwriter.Writer, in Characteristic) {
+func easyjson1ddc3ff7EncodeHeshInternalPkgDomain6(out *jwriter.Writer, in Characteristics) {
 	out.RawByte('{')
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"itching\":"
+		const prefix string = ",\"dryness\":"
 		out.RawString(prefix[1:])
+		out.Uint8(uint8(in.Dryness))
+	}
+	{
+		const prefix string = ",\"edema\":"
+		out.RawString(prefix)
+		out.Uint8(uint8(in.Edema))
+	}
+	{
+		const prefix string = ",\"itching\":"
+		out.RawString(prefix)
 		out.Uint8(uint8(in.Itching))
 	}
 	{
@@ -647,53 +708,38 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain6(out *jwriter.Writer, in Charac
 		out.Uint8(uint8(in.Pain))
 	}
 	{
-		const prefix string = ",\"edema\":"
+		const prefix string = ",\"peeling\":"
 		out.RawString(prefix)
-		out.Uint8(uint8(in.Edema))
+		out.Uint8(uint8(in.Peeling))
 	}
 	{
 		const prefix string = ",\"redness\":"
 		out.RawString(prefix)
 		out.Uint8(uint8(in.Redness))
 	}
-	{
-		const prefix string = ",\"dryness\":"
-		out.RawString(prefix)
-		out.Uint8(uint8(in.Dryness))
-	}
-	{
-		const prefix string = ",\"peeling\":"
-		out.RawString(prefix)
-		out.Uint8(uint8(in.Peeling))
-	}
-	{
-		const prefix string = ",\"area\":"
-		out.RawString(prefix)
-		out.Float32(float32(in.Area))
-	}
 	out.RawByte('}')
 }
 
 // MarshalJSON supports json.Marshaler interface
-func (v Characteristic) MarshalJSON() ([]byte, error) {
+func (v Characteristics) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
 	easyjson1ddc3ff7EncodeHeshInternalPkgDomain6(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
-func (v Characteristic) MarshalEasyJSON(w *jwriter.Writer) {
+func (v Characteristics) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson1ddc3ff7EncodeHeshInternalPkgDomain6(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
-func (v *Characteristic) UnmarshalJSON(data []byte) error {
+func (v *Characteristics) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
 	easyjson1ddc3ff7DecodeHeshInternalPkgDomain6(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *Characteristic) UnmarshalEasyJSON(l *jlexer.Lexer) {
+func (v *Characteristics) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson1ddc3ff7DecodeHeshInternalPkgDomain6(l, v)
 }

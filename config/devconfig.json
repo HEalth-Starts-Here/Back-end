@@ -36,5 +36,7 @@
             "connection type": "tcp",
             "port": "8083"
         } 
-    }
+    },
+    "loadedfilespath": "static/lesions/raw/",
+    "processedfilespath": "static/segmented/"
 }
