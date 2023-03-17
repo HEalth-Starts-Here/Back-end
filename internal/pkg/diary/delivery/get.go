@@ -2,6 +2,7 @@ package diarydelivery
 
 import (
 	"hesh/internal/pkg/domain"
+	"mime/multipart"
 	// "path/filepath"
 	// "eventool/internal/pkg/sessions"
 	// "hesh/internal/pkg/utils/cast"
@@ -126,6 +127,27 @@ func (handler *DiaryHandler) GetCertainDiary(w http.ResponseWriter, r *http.Requ
 	w.WriteHeader(http.StatusOK)
 	w.Write(out)
 }
+func validExtenstions (files []*multipart.FileHeader ) bool {
+	availableExtensions := map[string]struct{}{"jpeg":{}, "png":{}, "jpg":{}}
+	for i := range(files) {
+		k := len(files[i].Filename) - 1
+		extension := ""
+		for k != 0{
+			if (files[i].Filename)[k] == '.' {
+				extension = (files[i].Filename)[k+1:]
+			}
+			k = k - 1
+		}
+		_, is := availableExtensions[extension]
+		if !is {
+			// log.Error(err)
+			// http.Error(w, domain.Err.ErrObj.BadFileExtension.Error(), http.StatusBadRequest)
+			return false
+		}
+
+	}
+	return true
+}
 
 func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
@@ -162,6 +184,13 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 			http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
 			return
  		}
+		
+		if !validExtenstions(files){
+			log.Error(domain.Err.ErrObj.BadFileExtension)
+			http.Error(w, domain.Err.ErrObj.BadFileExtension.Error(), http.StatusBadRequest)
+			return
+		}
+		
 		filepaths = append(filepaths, files[i].Filename)
 		println(config.DevConfigStore.LoadedFilesPath + files[i].Filename)
  		out, err := os.Create(config.DevConfigStore.LoadedFilesPath + files[i].Filename)

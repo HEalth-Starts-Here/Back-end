@@ -28,7 +28,8 @@ type errObj struct {
 	// BadPassword        error
 
 	BadInput error
-
+	
+	BadFileExtension error
 	// AlreadyIn   error
 	// EmailExists error
 	// UserAlreadySignUpForThisEvent error
@@ -78,7 +79,8 @@ var Err = err{
 // 		BadPassword:        errors.New("Wrong password"),
 
 		BadInput: errors.New("Bad input"),
-
+		
+		BadFileExtension: errors.New("Bad file extension"),
 // 		AlreadyIn:   errors.New("User is already logged in"),
 // 		EmailExists: errors.New("Email not unique"),
 // 		UserAlreadySignUpForThisEvent: errors.New("User already sign up for this event"),
