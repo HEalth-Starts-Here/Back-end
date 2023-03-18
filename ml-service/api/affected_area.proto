@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+message AffectedAreaRequest {
+    bytes image = 1;
+}
+
+message AffectedAreaResponse {
+    int32 area = 1;
+}
+
+service AffectedArea {
+    rpc calculateArea(AffectedAreaRequest) returns (AffectedAreaResponse);
+}
