@@ -536,7 +536,7 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain5(in *jlexer.Lexer, out *DiaryLi
 				in.Delim('[')
 				if out.DiaryList == nil {
 					if !in.IsDelim(']') {
-						out.DiaryList = make([]DiaryCreatingResponse, 0, 0)
+						out.DiaryList = make([]DiaryCreatingResponse, 0, 1)
 					} else {
 						out.DiaryList = []DiaryCreatingResponse{}
 					}
@@ -628,8 +628,6 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain6(in *jlexer.Lexer, out *DiaryCr
 		switch key {
 		case "id":
 			out.Id = uint64(in.Uint64())
-		case "category":
-			out.Category = uint32(in.Uint32())
 		case "medicid":
 			out.MedicId = uint32(in.Uint32())
 		case "patientid":
@@ -658,11 +656,6 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain6(out *jwriter.Writer, in DiaryC
 		const prefix string = ",\"id\":"
 		out.RawString(prefix[1:])
 		out.Uint64(uint64(in.Id))
-	}
-	{
-		const prefix string = ",\"category\":"
-		out.RawString(prefix)
-		out.Uint32(uint32(in.Category))
 	}
 	{
 		const prefix string = ",\"medicid\":"
@@ -734,8 +727,6 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain7(in *jlexer.Lexer, out *DiaryCr
 			continue
 		}
 		switch key {
-		case "category":
-			out.Category = uint32(in.Uint32())
 		case "medicid":
 			out.MedicId = uint32(in.Uint32())
 		case "patientid":
@@ -759,13 +750,8 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain7(out *jwriter.Writer, in DiaryC
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"category\":"
-		out.RawString(prefix[1:])
-		out.Uint32(uint32(in.Category))
-	}
-	{
 		const prefix string = ",\"medicid\":"
-		out.RawString(prefix)
+		out.RawString(prefix[1:])
 		out.Uint32(uint32(in.MedicId))
 	}
 	{

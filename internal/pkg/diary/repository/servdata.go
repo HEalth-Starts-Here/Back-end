@@ -24,7 +24,7 @@ func InitDiaryRep(manager *database.DBManager) domain.DiaryRepository {
 }
 
 func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreatingRequest) (domain.DiaryCreatingResponse, error) {
-	resp, err := er.dbm.Query(queryCreateDiary, diary.Category, diary.MedicId,
+	resp, err := er.dbm.Query(queryCreateDiary, diary.MedicId,
 		diary.PatientId, time.Now().Format("2006.01.02 15:04:05"), diary.Title, diary.Description)
 	if err != nil {
 		log.Warn("{CreateDiary} in query: " + queryCreateDiary)
@@ -34,12 +34,11 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreatingRequest) (dom
 
 	return domain.DiaryCreatingResponse{
 		Id:                     cast.ToUint64(resp[0][0]),
-		Category:               cast.ToUint32(resp[0][1]),
-		MedicId:                cast.ToUint32(resp[0][2]),
-		PatientId:              cast.ToUint32(resp[0][3]),
-		CreatingDate:           cast.TimeToStr(cast.ToTime(resp[0][4]), true),
-		Title:                  cast.ToString(resp[0][5]),
-		Description:            cast.ToString(resp[0][6]),
+		MedicId:                cast.ToUint32(resp[0][1]),
+		PatientId:              cast.ToUint32(resp[0][2]),
+		CreatingDate:           cast.TimeToStr(cast.ToTime(resp[0][3]), true),
+		Title:                  cast.ToString(resp[0][4]),
+		Description:            cast.ToString(resp[0][5]),
 	}, nil
 }
 
@@ -102,12 +101,11 @@ func (cr *dbdiaryrepository) GetDiary() (domain.DiaryListResponse, error) {
 	for i := range resp {
 		diaries = append(diaries, domain.DiaryCreatingResponse{
 			Id:                     cast.ToUint64(resp[i][0]),
-			Category:               cast.ToUint32(resp[i][1]),
-			MedicId:                cast.ToUint32(resp[i][2]),
-			PatientId:              cast.ToUint32(resp[i][3]),
-			CreatingDate:           cast.TimeToStr(cast.ToTime(resp[i][4]), true),
-			Title:                  cast.ToString(resp[i][5]),
-			Description:            cast.ToString(resp[i][6]),
+			MedicId:                cast.ToUint32(resp[i][1]),
+			PatientId:              cast.ToUint32(resp[i][2]),
+			CreatingDate:           cast.TimeToStr(cast.ToTime(resp[i][3]), true),
+			Title:                  cast.ToString(resp[i][4]),
+			Description:            cast.ToString(resp[i][5]),
 		})
 	}
 
@@ -158,12 +156,11 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 
 	diary := domain.DiaryCreatingResponse{
 		Id:                     cast.ToUint64(resp[0][0]),
-		Category:               cast.ToUint32(resp[0][1]),
-		MedicId:                cast.ToUint32(resp[0][2]),
-		PatientId:              cast.ToUint32(resp[0][3]),
-		CreatingDate:           cast.TimeToStr(cast.ToTime(resp[0][4]), true),
-		Title:                  cast.ToString(resp[0][5]),
-		Description:            cast.ToString(resp[0][6]),
+		MedicId:                cast.ToUint32(resp[0][1]),
+		PatientId:              cast.ToUint32(resp[0][2]),
+		CreatingDate:           cast.TimeToStr(cast.ToTime(resp[0][3]), true),
+		Title:                  cast.ToString(resp[0][4]),
+		Description:            cast.ToString(resp[0][5]),
 	}
 
 	var resp2 []database.DBbyterow
@@ -183,9 +180,10 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		recordCreatingResponse := domain.RecordCreatingResponse{
 			Id:                     cast.ToUint64(resp2[i][0]),
 			DiaryId:                cast.ToUint64(resp2[i][1]),
-			CreatingDate:           cast.TimeToStr(cast.ToTime(resp[i][4]), true),
-			Title:            	    cast.ToString(resp2[i][3]),
-			Description:            cast.ToString(resp2[i][4]),
+			CreatingDate:           cast.TimeToStr(cast.ToTime(resp2[i][2]), true),
+			Description:            cast.ToString(resp2[i][3]),
+			Title:            	    cast.ToString(resp2[i][4]),
+			Area:            	    cast.ToFloat64(resp2[i][5]),
 			// TODO add characteristics and image info
 		}
 		recordCreatingResponse.ImageList, err = dr.GetRecordImageLists(recordCreatingResponse.Id)

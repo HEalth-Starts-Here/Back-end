@@ -3,33 +3,32 @@ package diaryrepository
 const (
 	queryCreateDiary = `
 	INSERT INTO
-    diaries (category, medicId, patientId, creatingDate, title, description)
+    diaries (medicId, patientId, creatingDate, title, description)
 	VALUES
     (
 		$1,
         $2,
         $3,
         $4,
-        $5,
-        $6
+        $5
     )
-	RETURNING id, category, medicId, patientId, creatingDate, title, description;
+	RETURNING id, medicId, patientId, creatingDate, title, description;
 	`
 
 	queryDiaryList = `
-	SELECT id, category, medicId, patientId, creatingDate, title, description
+	SELECT id, medicId, patientId, creatingDate, title, description
 	FROM diaries
 	ORDER BY diaries.id;
 	`
 	
 	queryGetCertainDiaryMainInfo = `
-	SELECT id, category, medicId, patientId, creatingDate, title, description
+	SELECT id, medicId, patientId, creatingDate, title, description
 	FROM diaries
 	WHERE id = $1;
 	`
 
 	queryGetCertainDiaryRecords = `
-	SELECT id, diaryid, creatingdate, title, description
+	SELECT id, diaryid, creatingdate, description, title, area
 	FROM records
 	WHERE diaryid = $1;
 	`

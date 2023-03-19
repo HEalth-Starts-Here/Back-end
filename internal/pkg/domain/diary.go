@@ -9,15 +9,8 @@ const (
 	maxRecordDescriptionLength = 3000
 )
 
-// const (
-// 	One Season = iota
-// 	Tw
-// 	Winter
-// 	Spring
-// )
-
 type DiaryCreatingRequest struct {
-	Category               uint32   `json:"category"`
+	// Category               uint32   `json:"category"`
 	MedicId                uint32   `json:"medicid"`
 	PatientId              uint32   `json:"patientid"`
 	Title                  string   `json:"title"`
@@ -25,7 +18,6 @@ type DiaryCreatingRequest struct {
 }
 
 func (er *DiaryCreatingRequest) SetDefault() () {
-	er.Category = 0
 	er.MedicId = 0
 	er.PatientId = 0
 	er.Title = ""
@@ -68,7 +60,7 @@ func (er RecordCreatingRequest) IsValid() (isValid bool) {
 
 type DiaryCreatingResponse struct {
 	Id                     uint64   `json:"id"`
-	Category               uint32   `json:"category"`
+	// Category               uint32   `json:"category"`
 	MedicId                uint32   `json:"medicid"`
 	PatientId              uint32   `json:"patientid"`
 	CreatingDate           string   `json:"creatingdate"`
@@ -133,15 +125,6 @@ type ImageInfoUsecase struct {
 
 // Area 				   float32 `json:"area"` // cm^2
 // // TODO Define palm area as 1%	
-
-// type CategoryResponse struct {
-// 	Name             string   `json:"name"`
-// 	ImagePath             string   `json:"ImagePath"`
-// }
-
-// type CategoryListResponse struct {
-// 	CategoryList []CategoryResponse `json:"categorylist"`
-// }
 
 type DiaryRepository interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)

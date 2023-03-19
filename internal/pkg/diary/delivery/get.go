@@ -270,9 +270,6 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 	// 	http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 	// 	w.WriteHeader(http.StatusBadRequest)
 	// }
-	println()
-	println()
-	println()
 	sanitizer.SanitizeRecordCreating(RecordCreatingRequest)
 
 

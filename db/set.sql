@@ -16,7 +16,7 @@ CREATE TABLE patients (
 
 CREATE TABLE diaries (
     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
-    category                            BIGINT NOT NULL,
+    -- category                            BIGINT NOT NULL,
     medicId                             BIGINT REFERENCES medics (vkId) ON DELETE CASCADE,
     patientId                           BIGINT REFERENCES patients (vkId) ON DELETE CASCADE,
     creatingDate                        TIMESTAMP NOT NULL,
