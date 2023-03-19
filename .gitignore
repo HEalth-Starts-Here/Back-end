@@ -1,4 +1,4 @@
 logs.txt
 .vscode
 cmd/__debug_bin
-static/lesions/
+static/lesions/raw/*
