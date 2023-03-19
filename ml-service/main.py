@@ -28,14 +28,14 @@ class AffectedAreaService(pb_grpc.AffectedAreaServicer):
 
     def calculateArea(self, request, context):
         result = self._model.predict(request.image)
-        return pb.AffectedAreaResponse(result)
+        return pb.AffectedAreaResponse(
+            area=result[0].masks.masks.squeeze().nonzero().shape[0]
+        )
 
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    pb_grpc.add_AffectedAreaServicer_to_server(
-        AffectedAreaService(MODEL_PATH), server
-    )
+    pb_grpc.add_AffectedAreaServicer_to_server(AffectedAreaService(MODEL_PATH), server)
     server.add_insecure_port("[::]:50051")
     server.start()
     server.wait_for_termination()
