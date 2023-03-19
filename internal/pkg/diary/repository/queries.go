@@ -33,6 +33,7 @@ const (
 	FROM records
 	WHERE diaryid = $1;
 	`
+
 	queryCreateRecord = `
 	INSERT INTO
     records (diaryId, creatingDate, title, description, dryness, edema, itching, pain, peeling, redness)
@@ -155,4 +156,20 @@ const (
 // 	FROM events
 // 	WHERE id = $1;
 // 	`
+
+queryGetImageList = `
+SELECT id, recordid, name, area
+FROM images
+WHERE recordid = $1;
+`
+
+queryCreateRecordImageListFirstPart = `
+INSERT INTO
+images (recordid, name)
+VALUES
+`
+queryCreateRecordImageListSecondPart = `
+RETURNING id, recordid, name, area;
+`
+
 )

@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS diaries              CASCADE;
 DROP TABLE IF EXISTS medics               CASCADE;
 DROP TABLE IF EXISTS patients             CASCADE;
 DROP TABLE IF EXISTS records              CASCADE;
-DROP TABLE IF EXISTS imagepaths           CASCADE;
+DROP TABLE IF EXISTS images               CASCADE;
 
 
 CREATE TABLE medics (
@@ -36,10 +36,12 @@ CREATE TABLE records (
     pain                                SMALLINT DEFAULT 0 CHECK (pain >= 0 AND pain <= 10),
     peeling                             SMALLINT DEFAULT 0 CHECK (peeling >= 0 AND peeling <= 10),
     redness                             SMALLINT DEFAULT 0 CHECK (redness >= 0 AND redness <= 10)
+    area                                FLOAT DEFAULT 0.0
 );
 
-CREATE TABLE imagepaths (
+CREATE TABLE images (
     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
-    recordsId                           BIGINT REFERENCES records (id) ON DELETE CASCADE,
-    path                                VARCHAR(200) 
+    recordId                            BIGINT REFERENCES records (id) ON DELETE CASCADE,
+    name                                VARCHAR(200), 
+    area                                FLOAT DEFAULT 0.0
 );

@@ -37,7 +37,6 @@ func (er *RecordCreatingRequest) SetDefault() () {
 	er.Description = ""
 	er.Title = ""
 	er.Characteristics = Characteristics{}
-	er.FilePaths = []string{}
 	return
 }
 
@@ -94,19 +93,27 @@ type DiaryResponse struct {
 }
 
 type RecordCreatingRequest struct {
-	Title           	   string      `json:"title"` 
-	Description            string      `json:"description"`
-	Characteristics		   Characteristics `json:"characteristics"`
-	FilePaths 			   []string  `json:"filepaths"`
+	Title           	   string     		 `json:"title"` 
+	Description            string			 `json:"description"`
+	Characteristics		   Characteristics	 `json:"characteristics"`
+}
+
+type ImageInfo struct {
+	Id                     uint64   `json:"id"`
+	RecordId               uint64   `json:"recordid"`
+	Name	               string   `json:"name"`
+	Area	               float64  `json:"area"`
+	
 }
 
 type RecordCreatingResponse struct {
-	Id                     uint64   `json:"id"`
-	DiaryId                uint64   `json:"diaryid"`
-	CreatingDate           string   `json:"creatingdate"`
-	Description            string   `json:"description"`
-	Title                  string   `json:"title"`
-	Characteristics		   Characteristics `json:"characteristics"`
+	Id                     uint64 		     `json:"id"`
+	DiaryId                uint64  			 `json:"diaryid"`
+	CreatingDate           string   		 `json:"creatingdate"`
+	Description            string  			 `json:"description"`
+	Title                  string  			 `json:"title"`
+	Characteristics		   Characteristics	 `json:"characteristics"`
+	ImageList		   	   []ImageInfo		 `json:"imagelist"`
 
 }
 
@@ -135,7 +142,7 @@ type DiaryRepository interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
 	GetDiary() (DiaryListResponse, error)  
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	CreateRecord(diaryId uint64, record RecordCreatingRequest) (RecordCreatingResponse, error)
+	CreateRecord(diaryId uint64, record RecordCreatingRequest, imagenames []string) (RecordCreatingResponse, error)
 
 
 	// DiaryAlreadyExist(diary DiaryCreatingRequest) (bool, error)
@@ -152,7 +159,7 @@ type DiaryUsecase interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
 	GetDiary() (DiaryListResponse, error) 
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	CreateRecord(diaryId uint64, record RecordCreatingRequest) (RecordCreatingResponse, error)
+	CreateRecord(diaryId uint64, record RecordCreatingRequest, imagenames []string) (RecordCreatingResponse, error)
 
 
 	// GetCategory() (CategoryListResponse, error)

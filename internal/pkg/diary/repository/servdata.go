@@ -3,9 +3,12 @@ package diaryrepository
 import (
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
+	"strings"
+
 	// diaryrepository "hesh/internal/pkg/diary/repository"
 	"hesh/internal/pkg/utils/cast"
 	"hesh/internal/pkg/utils/log"
+
 	// "strings"
 	"time"
 )
@@ -105,24 +108,6 @@ func (cr *dbdiaryrepository) GetDiary() (domain.DiaryListResponse, error) {
 			CreatingDate:           cast.ToString(resp[i][4]),
 			Title:                  cast.ToString(resp[i][5]),
 			Description:            cast.ToString(resp[i][6]),
-			// Id:                     cast.ToUint64(resp[i][0]),
-			// PosterPath:             cast.ToString(resp[i][1]),
-			// Title:                  cast.ToString(resp[i][2]),
-			// Rating:                 cast.FlToStr((cast.ToFloat64(resp[i][3]))),
-			// VotesNum:               cast.ToUint64(resp[i][4]),
-			// Description:            cast.ToString(resp[i][5]),
-			// UserId:                 cast.ToString(resp[i][6]),
-			// Longitude:              cast.FlToStr((cast.ToFloat64(resp[i][7]))),
-			// Latitude:               cast.FlToStr((cast.ToFloat64(resp[i][8]))),
-			// CurrentMembersQuantity: cast.ToUint64(resp[i][9]),
-			// MaxMembersQuantity:     cast.ToUint64(resp[i][10]),
-			// MinMembersQuantity:     cast.ToUint64(resp[i][11]),
-			// CreatingDate:           cast.ToString(resp[i][12]),
-			// StartDate:              cast.ToString(resp[i][13]),
-			// EndDate:                cast.ToString(resp[i][14]),
-			// MinAge:                 cast.ToString(resp[i][15]),
-			// MaxAge:                 cast.ToString(resp[i][16]),
-			// Price:                  cast.ToString(resp[i][17]),
 		})
 	}
 
@@ -133,11 +118,31 @@ func (cr *dbdiaryrepository) GetDiary() (domain.DiaryListResponse, error) {
 	return out, nil
 }
 
-func (cr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, error) {
+func (er *dbdiaryrepository) GetRecordImageLists(recordId uint64) ([]domain.ImageInfo, error) {
+	query := queryGetImageList
+	resp, err := er.dbm.Query(query, recordId)
+	if err != nil {
+		log.Warn("{GetRecordImageLists} in query: " + query)
+		log.Error(err)
+		return []domain.ImageInfo{}, err
+	}
+	response := []domain.ImageInfo{}
+	for i := range resp {
+		response = append(response, domain.ImageInfo{
+			Id:       cast.ToUint64(resp[i][0]),
+			RecordId: cast.ToUint64(resp[i][1]),
+			Name:	  cast.ToString(resp[i][2]),
+			Area:	  cast.ToFloat64(resp[i][3]),
+		} )
+	}
+	return response, nil
+}
+
+func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, error) {
 	var resp []database.DBbyterow
 	var err error
 	query := queryGetCertainDiaryMainInfo
-	resp, err = cr.dbm.Query(query, diaryId)
+	resp, err = dr.dbm.Query(query, diaryId)
 
 	if err != nil {
 		log.Warn("{GetCertainDiary} in query: " + query)
@@ -164,7 +169,7 @@ func (cr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	var resp2 []database.DBbyterow
 	var err2 error
 	query2 := queryGetCertainDiaryRecords
-	resp2, err2 = cr.dbm.Query(query2, diaryId)
+	resp2, err2 = dr.dbm.Query(query2, diaryId)
 
 
 	if err2 != nil {
@@ -175,13 +180,20 @@ func (cr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 
 	records := make([]domain.RecordCreatingResponse, 0)
 	for i := range resp2 {
-		records = append(records, domain.RecordCreatingResponse{
+		recordCreatingResponse := domain.RecordCreatingResponse{
 			Id:                     cast.ToUint64(resp2[i][0]),
 			DiaryId:                cast.ToUint64(resp2[i][1]),
 			CreatingDate:           cast.ToString(resp2[i][2]),
 			Title:            	    cast.ToString(resp2[i][3]),
 			Description:            cast.ToString(resp2[i][4]),
-		})
+			// TODO add characteristics and image info
+		}
+		recordCreatingResponse.ImageList, err = dr.GetRecordImageLists(recordCreatingResponse.Id)
+		if err != nil {
+			log.Error(err)
+			return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
+		}
+		records = append(records, recordCreatingResponse)
 	}
 
 
@@ -193,7 +205,40 @@ func (cr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	return out, nil
 }
 
-func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCreatingRequest) (domain.RecordCreatingResponse, error) {
+func (er *dbdiaryrepository) CreateRecordImageLists(recordId uint64, imageNames []string) ([]domain.ImageInfo, error) {
+	query := strings.Builder{}
+	// arrayForQuery := ""
+	query.Write([]byte(queryCreateRecordImageListFirstPart))
+	for i := range imageNames {
+		query.Write([]byte("("))
+		query.Write([]byte(cast.IntToStr(recordId)))
+		query.Write([]byte(","))
+		query.Write([]byte("'" + imageNames[i] + "'"))
+		query.Write([]byte(")"))
+		if i != len(imageNames) - 1 {
+			query.Write([]byte(","))
+		}
+	}
+	query.Write([]byte(queryCreateRecordImageListSecondPart))
+	resp, err := er.dbm.Query(query.String())
+	if err != nil {
+		log.Warn("{CreateRecordImageLists} in query: " + query.String())
+		log.Error(err)
+		return []domain.ImageInfo{}, err
+	}
+	response := []domain.ImageInfo{}
+	for i := range resp {
+		response = append(response, domain.ImageInfo{
+			Id:       cast.ToUint64(resp[i][0]),
+			RecordId: cast.ToUint64(resp[i][1]),
+			Name:	  cast.ToString(resp[i][2]),
+			Area:	  cast.ToFloat64(resp[i][3]),
+		} )
+	}
+	return response, nil
+}
+
+func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCreatingRequest, imagenames []string) (domain.RecordCreatingResponse, error) {
 	resp, err := er.dbm.Query(queryCreateRecord, 
 		diaryId, 
 		time.Now().Format("2006.01.02 15:04:05"), 
@@ -211,7 +256,7 @@ func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCr
 		return domain.RecordCreatingResponse{}, err
 	}
 
-	return domain.RecordCreatingResponse{
+	response := domain.RecordCreatingResponse{
 		Id:                     cast.ToUint64(resp[0][0]),
 		DiaryId:                cast.ToUint64(resp[0][1]),
 		CreatingDate:           cast.ToString(resp[0][2]),
@@ -226,7 +271,25 @@ func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCr
 			Peeling: 			cast.ToUint8(resp[0][9]),
 			Redness:			cast.ToUint8(resp[0][10]),
 		},
-	}, nil
+		ImageList: []domain.ImageInfo{},
+	}
+
+
+	// TODO check case with 0 images
+	response.ImageList, err = er.CreateRecordImageLists(response.Id, imagenames)
+
+	// resp, err = er.dbm.Query(queryGetImageList, response.Id)
+	// if err != nil {
+	// 	log.Warn("{CreateRecord} in query: " + queryGetImageList)
+	// 	log.Error(err)
+	// 	return domain.RecordCreatingResponse{}, err
+	// }
+
+	// for i := range resp {
+	// 	response.ImageList = append(response.ImageList, cast.ToString(resp[i][0]))
+	// }
+
+	return response, nil
 }
 
 

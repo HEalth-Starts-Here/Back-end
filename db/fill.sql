@@ -79,25 +79,25 @@ VALUES
     );
 
 INSERT INTO
-    imagepaths (recordsId, path)
+    images (recordId, name)
 VALUES
     (
 		1,
-        'static/lesions/raw/1.png'
+        '1.png'
     ),
     (
 		1,
-        'static/lesions/raw/2.png'
+        '2.png'
     ),
     (
 		1,
-        'static/lesions/raw/3.png'
+        '3.png'
     ),
     (
 		2,
-        'static/lesions/raw/4.png'
+        '4.png'
     ),
     (
 		2,
-        'static/lesions/raw/5.png'
+        '5.png'
     );

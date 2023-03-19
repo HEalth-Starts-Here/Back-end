@@ -149,6 +149,25 @@ func validExtenstions (files []*multipart.FileHeader ) bool {
 	return true
 }
 
+func extractName (filePaths []string) (fileName []string){
+	imageNames := []string{}
+	for i := range filePaths {
+		j := len(filePaths[i]) - 1
+		for j >= 0 {
+			if filePaths[i][j] == '/' || filePaths[i][j] == '\\'{
+				imageNames = append(imageNames, filePaths[i][j + 1:])
+			}
+			if j == 0 {
+				imageNames = append(imageNames, filePaths[i][j:])
+
+			}
+			j--
+		}
+		imageNames = append(imageNames, )
+	}
+	return imageNames
+}
+
 func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	
@@ -175,7 +194,7 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 	formdata := r.MultipartForm
  	//get the *fileheaders
  	files := formdata.File["images"] // grab the filenames
-	filepaths := []string{}
+	filePaths := []string{}
  	for i, _ := range files { // loop through the files one by one
  		file, err := files[i].Open()
  		defer file.Close()
@@ -191,7 +210,7 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 			return
 		}
 		
-		filepaths = append(filepaths, files[i].Filename)
+		filePaths = append(filePaths, files[i].Filename)
 		println(config.DevConfigStore.LoadedFilesPath + files[i].Filename)
  		out, err := os.Create(config.DevConfigStore.LoadedFilesPath + files[i].Filename)
  		defer out.Close()
@@ -231,7 +250,8 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 		*characteristicsRequest[i] = uint8(uint8value)
 		
 	}
-	RecordCreatingRequest.FilePaths = filepaths
+	imageNames := extractName(filePaths)
+	// RecordCreatingRequest.FilePaths = filepaths
 
 	// if cast.IntToStr(sessionId) != EventCreatingRequest.UserId {
 	// 	http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
@@ -240,7 +260,7 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 
 	sanitizer.SanitizeRecordCreating(RecordCreatingRequest)
 
-	es, err := handler.DiaryUsecase.CreateRecord(diaryId, *RecordCreatingRequest)
+	es, err := handler.DiaryUsecase.CreateRecord(diaryId, *RecordCreatingRequest, imageNames)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -256,8 +276,36 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+
+	
 	w.WriteHeader(http.StatusCreated)
 	w.Write(out)
+
+	// TODO: return files
+	// fileBytes, err := ioutil.ReadFile("static/lesions/raw/lesion1.jpeg")
+	// if err != nil {
+	// 	log.Error(err)
+	// 	http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// }
+	
+	
+	// // w.WriteHeader(http.StatusOK)
+	// w.Header().Set("Content-Type", "application/octet-stream")
+	// w.Write(fileBytes)
+
+
+	// fileBytes, err = ioutil.ReadFile("static/lesions/raw/lesion2.jpeg")
+	// if err != nil {
+	// 	log.Error(err)
+	// 	http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// }
+	
+	
+	// // w.WriteHeader(http.StatusOK)
+	// w.Header().Set("Content-Type", "application/octet-stream")
+	// w.Write(fileBytes)
 }
 
 
