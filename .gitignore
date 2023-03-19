@@ -1,3 +1,6 @@
 logs.txt
 .vscode
 cmd/__debug_bin
+static/lesions/raw/*.jpeg
+static/lesions/raw/*.png
+static/lesions/raw/*.jpg
