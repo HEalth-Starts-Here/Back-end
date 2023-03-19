@@ -3,9 +3,11 @@ package diarydelivery
 import (
 	"hesh/internal/pkg/domain"
 	"mime/multipart"
+
 	// "path/filepath"
 	// "eventool/internal/pkg/sessions"
 	// "hesh/internal/pkg/utils/cast"
+	"hesh/internal/pkg/utils/cast"
 	"hesh/internal/pkg/utils/config"
 	"hesh/internal/pkg/utils/log"
 	"hesh/internal/pkg/utils/sanitizer"
@@ -149,23 +151,27 @@ func validExtenstions (files []*multipart.FileHeader ) bool {
 	return true
 }
 
-func extractName (filePaths []string) (fileName []string){
+func extractNames (filePaths []string) (fileName []string){
 	imageNames := []string{}
 	for i := range filePaths {
-		j := len(filePaths[i]) - 1
-		for j >= 0 {
-			if filePaths[i][j] == '/' || filePaths[i][j] == '\\'{
-				imageNames = append(imageNames, filePaths[i][j + 1:])
-			}
-			if j == 0 {
-				imageNames = append(imageNames, filePaths[i][j:])
-
-			}
-			j--
-		}
-		imageNames = append(imageNames, )
+		imageNames = append(imageNames, extractName(filePaths[i]))
 	}
 	return imageNames
+}
+
+func extractName (filePath string) (fileName string){
+	i := len(filePath) - 1
+	for i >= 0 {
+		if filePath[i] == '/' || filePath[i] == '\\'{
+			fileName = filePath[i + 1:]
+		}
+		if i == 0 {
+			fileName = filePath[i:]
+
+		}
+		i--
+	}
+	return fileName
 }
 
 func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
@@ -194,7 +200,8 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 	formdata := r.MultipartForm
  	//get the *fileheaders
  	files := formdata.File["images"] // grab the filenames
-	filePaths := []string{}
+	imageInfo := []domain.ImageInfoUsecase{}
+	// filePaths := []string{}
  	for i, _ := range files { // loop through the files one by one
  		file, err := files[i].Open()
  		defer file.Close()
@@ -209,8 +216,14 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 			http.Error(w, domain.Err.ErrObj.BadFileExtension.Error(), http.StatusBadRequest)
 			return
 		}
-		
-		filePaths = append(filePaths, files[i].Filename)
+		ar, err := cast.StringToFloat64((r.Form["areas"])[i])
+		if err != nil {
+			log.Error(err)
+			http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+			return
+ 		}
+		imageInfo = append(imageInfo, domain.ImageInfoUsecase{Name: extractName(files[i].Filename), Area: ar})
+		// filePaths = append(filePaths, files[i].Filename)
 		println(config.DevConfigStore.LoadedFilesPath + files[i].Filename)
  		out, err := os.Create(config.DevConfigStore.LoadedFilesPath + files[i].Filename)
  		defer out.Close()
@@ -250,17 +263,26 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 		*characteristicsRequest[i] = uint8(uint8value)
 		
 	}
-	imageNames := extractName(filePaths)
+	// imageNames := extractNames(filePaths)
 	// RecordCreatingRequest.FilePaths = filepaths
 
 	// if cast.IntToStr(sessionId) != EventCreatingRequest.UserId {
 	// 	http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 	// 	w.WriteHeader(http.StatusBadRequest)
 	// }
-
+	println()
+	println()
+	println()
 	sanitizer.SanitizeRecordCreating(RecordCreatingRequest)
 
-	es, err := handler.DiaryUsecase.CreateRecord(diaryId, *RecordCreatingRequest, imageNames)
+
+
+
+	// imageInfo := []domain.ImageInfoUsecase{}
+	// for i := range imageNames {
+	// 	imageInfo = append(imageInfo, domain.ImageInfoUsecase{Name:imageNames[i], Area: 1.1})
+	// }
+	es, err := handler.DiaryUsecase.CreateRecord(diaryId, *RecordCreatingRequest, imageInfo)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

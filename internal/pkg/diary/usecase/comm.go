@@ -74,7 +74,7 @@ func (eu DiaryUsecase) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, er
 	return diary, nil
 }
 
-func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCreatingRequest, filePaths []string) (domain.RecordCreatingResponse, error) {
+func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCreatingRequest, imageInfo []domain.ImageInfoUsecase) (domain.RecordCreatingResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreatingResponse{}, err
@@ -87,8 +87,11 @@ func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCrea
 	if !recordData.IsValid() {
 		return domain.RecordCreatingResponse{}, domain.Err.ErrObj.InvalidTitle
 	}
-
-	diaryCreatingResponse, err := eu.diaryRepo.CreateRecord(diaryId, recordData, filePaths)
+	Area := 0.0
+	for i := range imageInfo {
+		Area += imageInfo[i].Area
+	}
+	diaryCreatingResponse, err := eu.diaryRepo.CreateRecord(diaryId, recordData, imageInfo, Area)
 	if err != nil {
 		return domain.RecordCreatingResponse{}, err
 	}

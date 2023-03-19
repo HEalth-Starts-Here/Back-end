@@ -3,9 +3,11 @@ package cast
 import (
 	"encoding/binary"
 	"fmt"
-	"math"
-	"time"
 	"hesh/internal/pkg/utils/log"
+	"math"
+	"strconv"
+	"time"
+
 	"github.com/jackc/pgx/pgtype"
 )
 
@@ -50,6 +52,15 @@ func ToUint8(src []byte) uint8 {
 
 func ToFloat64(src []byte) float64 {
 	return math.Float64frombits(binary.BigEndian.Uint64(src))
+}
+
+func StringToFloat64(src string) (float64, error) {
+	s, err := strconv.ParseFloat(src, 64)
+	if err != nil {
+		log.Error(err)
+		return 0.0, err
+	}
+	return s, nil
 }
 
 func ToTime(src []byte) time.Time {

@@ -39,13 +39,14 @@ VALUES
     );
 
 INSERT INTO
-    records (diaryId, creatingDate, title, description, dryness, edema, itching, pain, peeling, redness)
+    records (diaryId, creatingDate, title, description, area, dryness, edema, itching, pain, peeling, redness)
 VALUES
     (
         1,
         '2022-04-10 15:47:24',
         'Title records 1 of 1 diary',
         'Description records 1 of 1 diary',
+        5.5,
         1,
         1,
         1,
@@ -58,6 +59,7 @@ VALUES
         '2022-04-10 15:47:24',
         'Title records 2 of 1 diary',
         'Description records 2 of 1 diary',
+        5.5,
         1,
         1,
         1,
@@ -70,6 +72,7 @@ VALUES
         '2022-04-10 15:47:24',
         'Title records of 1 diary',
         'Description records of 1 diary',
+        5.5,
         1,
         1,
         1,

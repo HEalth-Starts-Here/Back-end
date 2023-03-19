@@ -36,7 +36,7 @@ const (
 
 	queryCreateRecord = `
 	INSERT INTO
-    records (diaryId, creatingDate, title, description, dryness, edema, itching, pain, peeling, redness)
+    records (diaryId, creatingDate, title, description, area, dryness, edema, itching, pain, peeling, redness)
 	VALUES
     (
         $1,
@@ -48,9 +48,10 @@ const (
         $7,
         $8,
         $9,
-        $10
+        $10,
+        $11
     )
-	RETURNING id, diaryId, creatingDate, title, description, dryness, edema, itching, pain, peeling, redness;
+	RETURNING id, diaryId, creatingDate, title, description, area, dryness, edema, itching, pain, peeling, redness;
 	`
 // 	queryCheckEvent = `
 // 	SELECT count(*)
@@ -165,7 +166,7 @@ WHERE recordid = $1;
 
 queryCreateRecordImageListFirstPart = `
 INSERT INTO
-images (recordid, name)
+images (recordid, name, area)
 VALUES
 `
 queryCreateRecordImageListSecondPart = `

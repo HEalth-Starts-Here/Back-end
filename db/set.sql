@@ -30,13 +30,13 @@ CREATE TABLE records (
     creatingDate                        TIMESTAMP NOT NULL,
     title                               VARCHAR(50),
     description                         VARCHAR(3000),
+    area                                FLOAT DEFAULT 0.0,
     dryness                             SMALLINT DEFAULT 0 CHECK (dryness >= 0 AND dryness <= 10),
     edema                               SMALLINT DEFAULT 0 CHECK (edema >= 0 AND edema <= 10),
     itching                             SMALLINT DEFAULT 0 CHECK (itching >= 0 AND itching <= 10),
     pain                                SMALLINT DEFAULT 0 CHECK (pain >= 0 AND pain <= 10),
     peeling                             SMALLINT DEFAULT 0 CHECK (peeling >= 0 AND peeling <= 10),
     redness                             SMALLINT DEFAULT 0 CHECK (redness >= 0 AND redness <= 10)
-    area                                FLOAT DEFAULT 0.0
 );
 
 CREATE TABLE images (

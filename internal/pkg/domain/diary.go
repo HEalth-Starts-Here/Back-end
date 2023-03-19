@@ -103,7 +103,6 @@ type ImageInfo struct {
 	RecordId               uint64   `json:"recordid"`
 	Name	               string   `json:"name"`
 	Area	               float64  `json:"area"`
-	
 }
 
 type RecordCreatingResponse struct {
@@ -112,6 +111,7 @@ type RecordCreatingResponse struct {
 	CreatingDate           string   		 `json:"creatingdate"`
 	Description            string  			 `json:"description"`
 	Title                  string  			 `json:"title"`
+	Area			   	   float64			 `json:"area"`
 	Characteristics		   Characteristics	 `json:"characteristics"`
 	ImageList		   	   []ImageInfo		 `json:"imagelist"`
 
@@ -124,6 +124,11 @@ type Characteristics struct {
 	Pain 				   uint8 `json:"pain"`
 	Peeling 			   uint8 `json:"peeling"`
 	Redness 			   uint8 `json:"redness"`
+}
+
+type ImageInfoUsecase struct {
+	Name	               string   `json:"name"`
+	Area	               float64  `json:"area"`
 }
 
 // Area 				   float32 `json:"area"` // cm^2
@@ -142,7 +147,7 @@ type DiaryRepository interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
 	GetDiary() (DiaryListResponse, error)  
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	CreateRecord(diaryId uint64, record RecordCreatingRequest, imagenames []string) (RecordCreatingResponse, error)
+	CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreatingResponse, error)
 
 
 	// DiaryAlreadyExist(diary DiaryCreatingRequest) (bool, error)
@@ -159,7 +164,7 @@ type DiaryUsecase interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
 	GetDiary() (DiaryListResponse, error) 
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	CreateRecord(diaryId uint64, record RecordCreatingRequest, imagenames []string) (RecordCreatingResponse, error)
+	CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase) (RecordCreatingResponse, error)
 
 
 	// GetCategory() (CategoryListResponse, error)
