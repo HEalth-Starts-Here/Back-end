@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "./internal/pkg/mlservices/delivery/grpc/";
+
+message AffectedAreaRequest {
+    bytes image = 1;
+}
+
+message AffectedAreaResponse {
+    int32 area = 1;
+}
+
+service AffectedArea {
+    rpc calculateArea(AffectedAreaRequest) returns (AffectedAreaResponse);
+}

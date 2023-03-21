@@ -26,6 +26,7 @@ func InitDiaryUsc(pr domain.DiaryRepository) domain.DiaryUsecase {
 	}
 }
 
+
 func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreatingRequest) (domain.DiaryCreatingResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {

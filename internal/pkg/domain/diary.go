@@ -10,7 +10,6 @@ const (
 )
 
 type DiaryCreatingRequest struct {
-	// Category               uint32   `json:"category"`
 	MedicId                uint32   `json:"medicid"`
 	PatientId              uint32   `json:"patientid"`
 	Title                  string   `json:"title"`
@@ -60,7 +59,6 @@ func (er RecordCreatingRequest) IsValid() (isValid bool) {
 
 type DiaryCreatingResponse struct {
 	Id                     uint64   `json:"id"`
-	// Category               uint32   `json:"category"`
 	MedicId                uint32   `json:"medicid"`
 	PatientId              uint32   `json:"patientid"`
 	CreatingDate           string   `json:"creatingdate"`
