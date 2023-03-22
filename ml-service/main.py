@@ -29,17 +29,22 @@ class AffectedAreaService(pb_grpc.AffectedAreaServicer):
 
     def calculateArea(self, request, context):
         result = self._model.predict(request.image)
-        area = result[0].masks.masks.squeeze().nonzero().shape[0]
+        if result[0].masks:
+            area = result[0].masks.masks.squeeze().nonzero().shape[0]
 
-        resizer = Resize(result[0].orig_shape, antialias=False)
-        converter = ToPILImage()
+            resizer = Resize(result[0].orig_shape, antialias=False)
+            converter = ToPILImage()
 
-        mask = resizer(result[0].masks.masks)
-        mask_img = converter(mask)
-        byte_mask = io.BytesIO()
-        mask_img.save(byte_mask, format="JPEG")
+            mask = resizer(result[0].masks.masks)
+            mask_img = converter(mask)
+            byte_mask = io.BytesIO()
+            mask_img.save(byte_mask, format="JPEG")
+            mask = byte_mask.getvalue()
+        else:
+            area = 0
+            mask = None
 
-        return pb.AffectedAreaResponse(area=area, mask=byte_mask.getvalue())
+        return pb.AffectedAreaResponse(area=area, mask=mask)
 
 
 def serve():

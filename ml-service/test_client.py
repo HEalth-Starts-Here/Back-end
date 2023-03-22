@@ -10,10 +10,14 @@ from protos.affected_area_pb2_grpc import AffectedAreaStub
 if __name__ == "__main__":
     channel = grpc.insecure_channel("localhost:50051")
     client = AffectedAreaStub(channel)
+
     img = Image.open("skin-lesions2.jpg")
     img_bytes = io.BytesIO()
     img.save(img_bytes, format=img.format)
+
     request = AffectedAreaRequest(image=img_bytes.getvalue())
     response = client.calculateArea(request)
-    mask = Image.open(io.BytesIO(response.mask))
+    mask = None
+    if response.area > 0:
+        mask = Image.open(io.BytesIO(response.mask))
     print(f"area={response.area}, mask shape={mask}")
