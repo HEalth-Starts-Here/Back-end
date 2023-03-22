@@ -11,7 +11,9 @@ class AffectedAreaRequest(_message.Message):
     def __init__(self, image: _Optional[bytes] = ...) -> None: ...
 
 class AffectedAreaResponse(_message.Message):
-    __slots__ = ["area"]
+    __slots__ = ["area", "mask"]
     AREA_FIELD_NUMBER: _ClassVar[int]
+    MASK_FIELD_NUMBER: _ClassVar[int]
     area: int
-    def __init__(self, area: _Optional[int] = ...) -> None: ...
+    mask: bytes
+    def __init__(self, area: _Optional[int] = ..., mask: _Optional[bytes] = ...) -> None: ...

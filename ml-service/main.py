@@ -7,6 +7,7 @@ import protos.affected_area_pb2_grpc as pb_grpc
 from PIL import Image
 from ultralytics import YOLO
 from concurrent import futures
+from torchvision.transforms import Resize, ToPILImage
 
 
 MODEL_PATH = "models/best.pt"
@@ -28,9 +29,17 @@ class AffectedAreaService(pb_grpc.AffectedAreaServicer):
 
     def calculateArea(self, request, context):
         result = self._model.predict(request.image)
-        return pb.AffectedAreaResponse(
-            area=result[0].masks.masks.squeeze().nonzero().shape[0]
-        )
+        area = result[0].masks.masks.squeeze().nonzero().shape[0]
+
+        resizer = Resize(result[0].orig_shape, antialias=False)
+        converter = ToPILImage()
+
+        mask = resizer(result[0].masks.masks)
+        mask_img = converter(mask)
+        byte_mask = io.BytesIO()
+        mask_img.save(byte_mask, format="JPEG")
+
+        return pb.AffectedAreaResponse(area=area, mask=byte_mask.getvalue())
 
 
 def serve():

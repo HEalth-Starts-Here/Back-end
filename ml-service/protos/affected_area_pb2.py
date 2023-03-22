@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13\x61\x66\x66\x65\x63ted_area.proto\"$\n\x13\x41\x66\x66\x65\x63tedAreaRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\"$\n\x14\x41\x66\x66\x65\x63tedAreaResponse\x12\x0c\n\x04\x61rea\x18\x01 \x01(\x05\x32L\n\x0c\x41\x66\x66\x65\x63tedArea\x12<\n\rcalculateArea\x12\x14.AffectedAreaRequest\x1a\x15.AffectedAreaResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13\x61\x66\x66\x65\x63ted_area.proto\"$\n\x13\x41\x66\x66\x65\x63tedAreaRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\"2\n\x14\x41\x66\x66\x65\x63tedAreaResponse\x12\x0c\n\x04\x61rea\x18\x01 \x01(\x05\x12\x0c\n\x04mask\x18\x02 \x01(\x0c\x32L\n\x0c\x41\x66\x66\x65\x63tedArea\x12<\n\rcalculateArea\x12\x14.AffectedAreaRequest\x1a\x15.AffectedAreaResponseb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'affected_area_pb2', globals())
@@ -23,7 +23,7 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _AFFECTEDAREAREQUEST._serialized_start=23
   _AFFECTEDAREAREQUEST._serialized_end=59
   _AFFECTEDAREARESPONSE._serialized_start=61
-  _AFFECTEDAREARESPONSE._serialized_end=97
-  _AFFECTEDAREA._serialized_start=99
-  _AFFECTEDAREA._serialized_end=175
+  _AFFECTEDAREARESPONSE._serialized_end=111
+  _AFFECTEDAREA._serialized_start=113
+  _AFFECTEDAREA._serialized_end=189
 # @@protoc_insertion_point(module_scope)

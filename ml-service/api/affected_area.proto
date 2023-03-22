@@ -7,6 +7,7 @@ message AffectedAreaRequest {
 
 message AffectedAreaResponse {
     int32 area = 1;
+    bytes mask = 2;
 }
 
 service AffectedArea {

@@ -14,5 +14,6 @@ if __name__ == "__main__":
     img_bytes = io.BytesIO()
     img.save(img_bytes, format=img.format)
     request = AffectedAreaRequest(image=img_bytes.getvalue())
-    # print(img.tobytes())
-    print(client.calculateArea(request))
+    response = client.calculateArea(request)
+    mask = Image.open(io.BytesIO(response.mask))
+    print(f"area={response.area}, mask shape={mask}")
