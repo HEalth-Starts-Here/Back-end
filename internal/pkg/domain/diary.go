@@ -31,6 +31,18 @@ func (er *RecordCreatingRequest) SetDefault() () {
 	return
 }
 
+func (er *RecordCreatingResponse) SetDefault() () {
+	er.Id = 0
+	er.DiaryId = 0
+	er.CreatingDate = "2022-04-10 15:47:24"
+	er.Description = ""
+	er.Title = ""
+	er.Area = 0
+	er.Characteristics = Characteristics{}
+	er.ImageList = []ImageInfo{}
+	return
+}
+
 func (er DiaryCreatingRequest) IsValid() (isValid bool) {
 	if len(er.Title) > maxDiaryTitleLength || len(er.Description) > maxDiaryDescriptionLength{
 		return false

@@ -175,6 +175,12 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
 	}
 
+	println()
+	println()
+	println(resp2[0][0][0])
+	println()
+	println()
+
 	records := make([]domain.RecordCreatingResponse, 0)
 	for i := range resp2 {
 		recordCreatingResponse := domain.RecordCreatingResponse{
@@ -184,7 +190,33 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 			Description:            cast.ToString(resp2[i][3]),
 			Title:            	    cast.ToString(resp2[i][4]),
 			Area:            	    cast.ToFloat64(resp2[i][5]),
-			// TODO add characteristics and image info
+		Characteristics: domain.Characteristics{
+				Dryness:		    cast.ToUint8(resp2[i][6]),
+				Edema: 				cast.ToUint8(resp2[i][7]),
+				Itching: 			cast.ToUint8(resp2[i][8]),
+				Pain:				cast.ToUint8(resp2[i][9]),
+				Peeling: 			cast.ToUint8(resp2[i][10]),
+				Redness:			cast.ToUint8(resp2[i][11]),
+			},
+			
+			
+			// Id:                     cast.ToUint64(resp2[i][0]),
+			// // DiaryId:                0,
+			// DiaryId:                cast.ToUint64(resp2[i][1]),
+			// CreatingDate:           cast.TimeToStr(cast.ToTime(resp2[i][2]), true),
+			// Title:            	    cast.ToString(resp2[i][3]),
+			// Description:            cast.ToString(resp2[i][4]),
+			// Area:            	    cast.ToFloat64(resp2[i][5]),
+			// // Characteristics: domain.Characteristics{
+			// // 	Dryness:		    cast.ToUint8(resp2[i][6]),
+			// // 	Edema: 				cast.ToUint8(resp2[i][7]),
+			// // 	Itching: 			cast.ToUint8(resp2[i][8]),
+			// // 	Pain:				cast.ToUint8(resp2[i][9]),
+			// // 	Peeling: 			cast.ToUint8(resp2[i][10]),
+			// // 	Redness:			cast.ToUint8(resp2[i][11]),
+			// // },
+			// ImageList: []domain.ImageInfo{},
+			// // TODO add characteristics and image info
 		}
 		recordCreatingResponse.ImageList, err = dr.GetRecordImageLists(recordCreatingResponse.Id)
 		if err != nil {

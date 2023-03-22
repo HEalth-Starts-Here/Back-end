@@ -279,6 +279,7 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 	// for i := range imageNames {
 	// 	imageInfo = append(imageInfo, domain.ImageInfoUsecase{Name:imageNames[i], Area: 1.1})
 	// }
+	//TODO: Соз
 	es, err := handler.DiaryUsecase.CreateRecord(diaryId, *RecordCreatingRequest, imageInfo)
 	if err != nil {
 		log.Error(err)

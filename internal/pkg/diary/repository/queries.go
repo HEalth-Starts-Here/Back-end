@@ -27,8 +27,13 @@ const (
 	WHERE id = $1;
 	`
 
+	// queryGetCertainDiaryRecords = `
+	// SELECT (id, diaryId, creatingDate, title, description, area, dryness, edema, itching, pain, peeling, redness)
+	// FROM records
+	// WHERE diaryid = $1;
+	// `
 	queryGetCertainDiaryRecords = `
-	SELECT id, diaryid, creatingdate, description, title, area
+	SELECT id, diaryid, creatingdate, description, title, area, dryness, edema, itching, pain, peeling, redness
 	FROM records
 	WHERE diaryid = $1;
 	`

@@ -65,7 +65,9 @@ func (eu DiaryUsecase) GetDiary() (domain.DiaryListResponse, error) {
 }
 
 func (eu DiaryUsecase) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, error) {
-
+	diar1y := domain.RecordCreatingResponse{}
+	diar1y.SetDefault()
+	diary := domain.DiaryResponse{}
 	diary, err := eu.diaryRepo.GetCertainDiary(diaryId)
 	
 	if err != nil {

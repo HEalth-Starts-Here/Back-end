@@ -41,41 +41,10 @@ func (handler *MLServicesHandler) DetermineArea(w http.ResponseWriter, r *http.R
 	}
 	formdata := r.MultipartForm
  	fileHeader := formdata.File["image"] 
-	// filePaths := []string{}
-
-	// if !validExtenstion(file){
-	// 	log.Error(domain.Err.ErrObj.BadFileExtension)
-	// 	http.Error(w, domain.Err.ErrObj.BadFileExtension.Error(), http.StatusBadRequest)
-	// 	return
-	// }
 	println(config.DevConfigStore.LoadedFilesPath + (fileHeader[0]).Filename)
-	// out, err := os.Create(config.DevConfigStore.LoadedFilesPath + file[0].Filename)
-	// defer out.Close()
-	// if err != nil {
-	// 	log.Error(err)
-	// 	http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// _, err = io.Copy(out, file) // file not files[i] !
-
-	// if err != nil {
-	// 	log.Error(err)
-	// 	http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
 
 
-
-	// es, err := handler.DiaryUsecase.CreateRecord(diaryId, *RecordCreatingRequest, imageInfo)
-	// if err != nil {
-	// 	log.Error(err)
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// file, header, err := ctx.Request.FormFile("file")   
+	//TODO: check extension
 	file, err := fileHeader[0].Open()
 	defer file.Close()
 	if err != nil {
