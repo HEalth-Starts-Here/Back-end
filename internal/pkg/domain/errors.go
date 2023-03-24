@@ -45,6 +45,7 @@ type errObj struct {
 	// BadGenre error
 
 	InvalidTitle  error
+	InvalidTitleOrDescription  error
 	// PlaylistExist error
 
 	// UserAccess error
@@ -96,6 +97,7 @@ var Err = err{
 // 		BadGenre: errors.New("Genre request gives empty response from db"),
 
 		InvalidTitle:  errors.New("Invalid title"),
+		InvalidTitleOrDescription:  errors.New("Invalid title or description"),
 // 		PlaylistExist: errors.New("Playlist with this title already exist"),
 // 		UserAccess: errors.New("Permission denied"),
 	},

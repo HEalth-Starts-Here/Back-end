@@ -12,6 +12,13 @@ func SanitizeDiaryCreating(diary *domain.DiaryCreatingRequest) {
 	diary.Description = sanitizer.Sanitize(diary.Description)
 }
 
+func SanitizeDiaryUpdating(diary *domain.DiaryUpdatingRequest) {
+	sanitizer := bluemonday.UGCPolicy()
+	diary.Title = sanitizer.Sanitize(diary.Title)
+	diary.Description = sanitizer.Sanitize(diary.Description)
+}
+
+
 func SanitizeRecordCreating(record *domain.RecordCreatingRequest) {
 	sanitizer := bluemonday.UGCPolicy()
 	record.Title = sanitizer.Sanitize(record.Title)

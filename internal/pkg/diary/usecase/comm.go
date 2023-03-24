@@ -38,7 +38,7 @@ func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreatingRequest) (domai
 	// }
 
 	if !diaryData.IsValid() {
-		return domain.DiaryCreatingResponse{}, domain.Err.ErrObj.InvalidTitle
+		return domain.DiaryCreatingResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
 
 	diaryCreatingResponse, err := eu.diaryRepo.CreateDiary(diaryData)
@@ -88,12 +88,13 @@ func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCrea
 	// }
 
 	if !recordData.IsValid() {
-		return domain.RecordCreatingResponse{}, domain.Err.ErrObj.InvalidTitle
+		return domain.RecordCreatingResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
 	Area := 0.0
 	for i := range imageInfo {
 		Area += imageInfo[i].Area
 	}
+	// TODO solve the problem with the same filenames. For example with generating filenames or with creating folders for every record
 	diaryCreatingResponse, err := eu.diaryRepo.CreateRecord(diaryId, recordData, imageInfo, Area)
 	if err != nil {
 		return domain.RecordCreatingResponse{}, err
@@ -106,82 +107,27 @@ func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCrea
 	return diaryCreatingResponse, nil
 }
 
-// func (eu EventUsecase) GetCategory() (domain.CategoryListResponse, error) {
+func (eu DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdatingRequest) (domain.DiaryUpdatingResponse, error) {
+	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
+	// if err != nil {
+	// 	return domain.DiaryCreatingResponse{}, err
+	// }
 
-// 	categoryList, err := eu.eventRepo.GetCategory()
-	
-// 	if err != nil {
-// 		return domain.CategoryListResponse{}, err
-// 	}
+	// if alreadyExist {
+	// 	return domain.DiaryCreatingResponse{}, domain.Err.ErrObj.PlaylistExist
+	// }
 
-// 	return categoryList, nil
-// }
+	if !updateDiaryData.IsValid() {
+		return domain.DiaryUpdatingResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
+	}
+	diaryUpdatingResponse, err := eu.diaryRepo.UpdateDiary(updateDiaryData)
+	if err != nil {
+		return domain.DiaryUpdatingResponse{}, err
+	}
 
-// func (eu EventUsecase) EventSignUp(eventId uint64, userId uint64) (error)  {
-
-// 	userAge, err := eu.eventRepo.GetUserAge(userId)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	eventMinAge, eventMaxAge, err := eu.eventRepo.GetEventAges(eventId)
-// 	if err != nil {
-// 		return err
-// 	}
-
-
-// 	isValidUser, err := eu.IsUserValidForEvent(eventMinAge, eventMaxAge, userAge)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	if (!isValidUser){
-// 		return domain.Err.ErrObj.BadInput
-// 	}
-
-
-// 	err = eu.eventRepo.SignUpUserForEvent(eventId, userId)
-// 	if err != nil {
-// 		return domain.Err.ErrObj.UserAlreadySignUpForThisEvent
-// 	}
-
-// 	return nil
-// }
-
-// func (eu EventUsecase) IsUserValidForEvent(minAge uint16, maxAge uint16, age uint64) (bool, error)  {
-// 	if (cast.IntToStr(age) < cast.Uint16ToStr(minAge)){
-// 		return false, nil
-// 	}
-// 	if (cast.IntToStr(age) > cast.Uint16ToStr(maxAge) && cast.Uint16ToStr(maxAge) != "0"){
-// 		return false, nil
-// 	}
-
-// 	return true, nil
-// }
-
-// func (eu EventUsecase) CancelEventSignUp(eventId uint64, userId uint64) (error)  {
-
-// 	err := eu.eventRepo.CancelEventSignUp(eventId, userId)
-	
-// 	if err != nil {
-// 		return domain.Err.ErrObj.UserDontSignUpForThisEvent
-// 	}
-
-// 	return nil
-// }
-
-// func (eu EventUsecase) GetRecomendedEvent(userId uint64) (domain.EventListResponse, error) {
-
-// 	categories, err := eu.eventRepo.GetUserCategory(userId)
-	
-// 	if err != nil {
-// 		log.Error(err)
-// 		return domain.EventListResponse{}, err
-// 	}
-	
-// 	eventList, err := eu.GetEvent(categories)
-	
-// 	if err != nil {
-// 		return domain.EventListResponse{}, err
-// 	}
-
-// 	return eventList, nil
-// }
+	// diaryCreatingResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
+	// if err != nil {
+	// 	return domain.EventCreatingResponse{}, err
+	// }
+	return diaryUpdatingResponse, nil
+}

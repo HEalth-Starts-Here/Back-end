@@ -9,13 +9,6 @@ const (
 	maxRecordDescriptionLength = 3000
 )
 
-type DiaryCreatingRequest struct {
-	MedicId                uint32   `json:"medicid"`
-	PatientId              uint32   `json:"patientid"`
-	Title                  string   `json:"title"`
-	Description            string   `json:"description"`
-}
-
 func (er *DiaryCreatingRequest) SetDefault() () {
 	er.MedicId = 0
 	er.PatientId = 0
@@ -67,6 +60,32 @@ func (er RecordCreatingRequest) IsValid() (isValid bool) {
 		}
 	}
 	return true
+}
+
+func (er DiaryUpdatingRequest) IsValid() (isValid bool) {
+	if len(er.Title) > maxDiaryTitleLength || len(er.Description) > maxDiaryDescriptionLength{
+		return false
+	}
+	return true
+}
+
+type DiaryUpdatingRequest struct {
+	Id                	   uint64  	`json:"id"`
+	Title                  string   `json:"title"`
+	Description            string   `json:"description"`
+}
+
+type DiaryUpdatingResponse struct {
+	Id                     uint64   `json:"id"`
+	Title                  string   `json:"title"`
+	Description            string   `json:"description"`
+}
+
+type DiaryCreatingRequest struct {
+	MedicId                uint32   `json:"medicid"`
+	PatientId              uint32   `json:"patientid"`
+	Title                  string   `json:"title"`
+	Description            string   `json:"description"`
 }
 
 type DiaryCreatingResponse struct {
@@ -141,7 +160,9 @@ type DiaryRepository interface {
 	GetDiary() (DiaryListResponse, error)  
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreatingResponse, error)
+	UpdateDiary(diary DiaryUpdatingRequest) (DiaryUpdatingResponse, error)
 
+	
 
 	// DiaryAlreadyExist(diary DiaryCreatingRequest) (bool, error)
 	// GetCategory() (CategoryListResponse, error)
@@ -158,6 +179,7 @@ type DiaryUsecase interface {
 	GetDiary() (DiaryListResponse, error) 
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase) (RecordCreatingResponse, error)
+	UpdateDiary(diary DiaryUpdatingRequest) (DiaryUpdatingResponse, error)
 
 
 	// GetCategory() (CategoryListResponse, error)

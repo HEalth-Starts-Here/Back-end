@@ -299,3 +299,21 @@ func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCr
 	}	
 	return response, nil
 }
+
+func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdatingRequest) (domain.DiaryUpdatingResponse, error) {
+	resp, err := er.dbm.Query(  queryUpdateDiary,
+								diary.Title,
+								diary.Description,
+								diary.Id)
+	if err != nil {
+		log.Warn("{UpdateDiary} in query: " + queryUpdateDiary)
+		log.Error(err)
+		return domain.DiaryUpdatingResponse{}, err
+	}
+
+	return domain.DiaryUpdatingResponse{
+		Id:                     cast.ToUint64(resp[0][0]),
+		Title:                  cast.ToString(resp[0][1]),
+		Description:            cast.ToString(resp[0][2]),
+	}, nil
+}

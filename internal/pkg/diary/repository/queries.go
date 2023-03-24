@@ -173,8 +173,15 @@ INSERT INTO
 images (recordid, name, area)
 VALUES
 `
+
 queryCreateRecordImageListSecondPart = `
 RETURNING id, recordid, name, area;
 `
 
+queryUpdateDiary = `
+UPDATE diaries
+SET title = $1, description = $2
+WHERE id = $3
+RETURNING id, title, description;
+`
 )

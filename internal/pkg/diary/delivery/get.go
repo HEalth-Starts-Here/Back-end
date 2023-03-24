@@ -301,3 +301,53 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 
 	// TODO: return files
 }
+
+func (handler *DiaryHandler) UpdateDiary(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	// sessionId, err := sessions.CheckSession(r)
+	// if err == domain.Err.ErrObj.UserNotLoggedIn {
+	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
+	// 	return
+	// }
+
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	DiaryUpdatingRequest := new(domain.DiaryUpdatingRequest)
+	// DiaryCreatingRequest.SetDefault()
+	
+	err = easyjson.Unmarshal(b, DiaryUpdatingRequest)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// if cast.IntToStr(sessionId) != EventCreatingRequest.UserId {
+	// 	http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// }
+
+	sanitizer.SanitizeDiaryUpdating(DiaryUpdatingRequest)
+
+	es, err := handler.DiaryUsecase.UpdateDiary(*DiaryUpdatingRequest)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	out, err := easyjson.Marshal(es)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write(out)
+}
