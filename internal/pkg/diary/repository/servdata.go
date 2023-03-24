@@ -175,12 +175,6 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
 	}
 
-	println()
-	println()
-	println(resp2[0][0][0])
-	println()
-	println()
-
 	records := make([]domain.RecordCreatingResponse, 0)
 	for i := range resp2 {
 		recordCreatingResponse := domain.RecordCreatingResponse{
@@ -198,25 +192,6 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 				Peeling: 			cast.ToUint8(resp2[i][10]),
 				Redness:			cast.ToUint8(resp2[i][11]),
 			},
-			
-			
-			// Id:                     cast.ToUint64(resp2[i][0]),
-			// // DiaryId:                0,
-			// DiaryId:                cast.ToUint64(resp2[i][1]),
-			// CreatingDate:           cast.TimeToStr(cast.ToTime(resp2[i][2]), true),
-			// Title:            	    cast.ToString(resp2[i][3]),
-			// Description:            cast.ToString(resp2[i][4]),
-			// Area:            	    cast.ToFloat64(resp2[i][5]),
-			// // Characteristics: domain.Characteristics{
-			// // 	Dryness:		    cast.ToUint8(resp2[i][6]),
-			// // 	Edema: 				cast.ToUint8(resp2[i][7]),
-			// // 	Itching: 			cast.ToUint8(resp2[i][8]),
-			// // 	Pain:				cast.ToUint8(resp2[i][9]),
-			// // 	Peeling: 			cast.ToUint8(resp2[i][10]),
-			// // 	Redness:			cast.ToUint8(resp2[i][11]),
-			// // },
-			// ImageList: []domain.ImageInfo{},
-			// // TODO add characteristics and image info
 		}
 		recordCreatingResponse.ImageList, err = dr.GetRecordImageLists(recordCreatingResponse.Id)
 		if err != nil {
@@ -236,6 +211,9 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 }
 
 func (er *dbdiaryrepository) CreateRecordImageLists(recordId uint64, imageInfo []domain.ImageInfoUsecase) ([]domain.ImageInfo, error) {
+	if len(imageInfo) == 0 {
+		return []domain.ImageInfo{}, nil
+	}
 	query := strings.Builder{}
 	// arrayForQuery := ""
 	query.Write([]byte(queryCreateRecordImageListFirstPart))
@@ -318,138 +296,6 @@ func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCr
 	if err != nil {
 		log.Error(err)
 		return domain.RecordCreatingResponse{}, err
-	}	// resp, err = er.dbm.Query(queryGetImageList, response.Id)
-	// if err != nil {
-	// 	log.Warn("{CreateRecord} in query: " + queryGetImageList)
-	// 	log.Error(err)
-	// 	return domain.RecordCreatingResponse{}, err
-	// }
-
-	// for i := range resp {
-	// 	response.ImageList = append(response.ImageList, cast.ToString(resp[i][0]))
-	// }
-
+	}	
 	return response, nil
 }
-
-
-// func (cr *dbeventrepository) GetCategory() (domain.CategoryListResponse, error) {
-// 	var resp []database.DBbyterow
-// 	var err error
-// 	resp, err = cr.dbm.Query(queryGetCategoryList)
-
-// 	if err != nil {
-// 		log.Warn("{GetCategory} in query: " + queryGetCategoryList)
-// 		log.Error(err)
-// 		return domain.CategoryListResponse{}, domain.Err.ErrObj.InternalServer
-// 	}
-
-// 	if len(resp) == 0 {
-// 		log.Warn("{GetCategory}")
-// 		log.Error(domain.Err.ErrObj.SmallDb)
-// 		return domain.CategoryListResponse{}, domain.Err.ErrObj.SmallDb
-// 	}
-
-// 	categoryList := make([]domain.CategoryResponse, 0)
-// 	for i := range resp {
-// 		categoryList = append(categoryList, domain.CategoryResponse{
-// 			Name:      cast.ToString(resp[i][0]),
-// 			ImagePath: cast.ToString(resp[i][1]),
-// 		})
-// 	}
-
-// 	out := domain.CategoryListResponse{
-// 		CategoryList: categoryList,
-// 	}
-
-// 	return out, nil
-// }
-
-// func (er *dbeventrepository) SignUpUserForEvent(eventId uint64, userId uint64) error {
-// 	_, err := er.dbm.Query(querySignUpUserForEvent, cast.IntToStr(eventId), cast.IntToStr(userId))
-// 	if err != nil {
-// 		log.Warn("{SignUpUserForEvent} in query: " + querySignUpUserForEvent)
-// 		log.Error(err)
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
-// func (er *dbeventrepository) CancelEventSignUp(eventId uint64, userId uint64) error {
-// 	query := queryCancelSignUpUserForEvent
-// 	_, err := er.dbm.Query(query, cast.IntToStr(eventId), cast.IntToStr(userId))
-// 	if err != nil {
-// 		log.Warn("{CancelEventSignUp} in query: " + query)
-// 		log.Error(err)
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
-// func (ur *dbeventrepository) GetUserCategory(id uint64) ([]string, error) {
-// 	query := usrrepository.QueryGetCategory
-// 	resp, err := ur.dbm.Query(query, id)
-
-// 	if len(resp) == 0 {
-// 		log.Warn("{GetCategory}")
-// 		log.Error(domain.Err.ErrObj.NoCategory)
-// 		return nil, domain.Err.ErrObj.NoCategory
-// 	}
-// 	if err != nil {
-// 		log.Warn("{GetCategory} in query: " + query)
-// 		log.Error(err)
-// 		return nil, domain.Err.ErrObj.InternalServer
-// 	}
-
-// 	category := make([]string, 0)
-// 	for i := range resp {
-// 		category = append(category, cast.ToString(resp[i][0]))
-// 	}
-
-// 	return category, nil
-// }
-
-// func (ur *dbeventrepository) GetUserAge(id uint64) (uint64, error) {
-// 	query := queryGetUserAge
-// 	resp, err := ur.dbm.Query(query, id)
-
-// 	if len(resp) == 0 {
-// 		log.Warn("{GetCategory}")
-// 		er := domain.Err.ErrObj.NoUser
-// 		log.Error(er)
-// 		return 0, er
-// 	}
-// 	if err != nil {
-// 		log.Warn("{GetCategory} in query: " + query)
-// 		log.Error(err)
-// 		return 0, domain.Err.ErrObj.InternalServer
-// 	}
-
-// 	age := cast.ToUint64(resp[0][0])
-
-// 	return age, nil
-// }
-
-// func (ur *dbeventrepository) GetEventAges(id uint64) (uint16, uint16, error) {
-// 	query := queryGetEventAges
-// 	resp, err := ur.dbm.Query(query, id)
-
-// 	if len(resp) == 0 {
-// 		log.Warn("{GetEventAges}")
-// 		er := domain.Err.ErrObj.NoUser
-// 		log.Error(er)
-// 		return 0, 0, er
-// 	}
-// 	if err != nil {
-// 		log.Warn("{GetEventAges} in query: " + query)
-// 		log.Error(err)
-// 		return 0, 0, domain.Err.ErrObj.InternalServer
-// 	}
-
-// 	minAge := cast.ToUint16(resp[0][0])
-// 	maxAge := cast.ToUint16(resp[0][1])
-
-// 	return minAge, maxAge, nil
-// }
