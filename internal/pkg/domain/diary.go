@@ -138,6 +138,12 @@ type RecordCreatingResponse struct {
 
 }
 
+type RecordUpdatingRequest struct {
+	Id                	   uint64  	`json:"id"`
+	Title                  string   `json:"title"`
+	Description            string   `json:"description"`
+}
+
 type Characteristics struct {
 	Dryness 			   uint8 `json:"dryness"`
 	Edema 				   uint8 `json:"edema"`
