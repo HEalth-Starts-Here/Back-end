@@ -22,11 +22,22 @@ func createFile(root, dir, name string) (*os.File, error) {
 	return file, err
 }
 
-func UploadFile(reader io.Reader, root, path, ext string) (string, error) {
-	randString, err := randomizer.GenerateRandomString(6)
-	if err != nil {
-		return "", err
+func UploadFile(reader io.Reader, root, path, ext string, alreadyUsed map[string]struct{}) (string, error) {
+	randString := "" 
+	for {
+		randStringTemporary, err := randomizer.GenerateRandomString(6)
+		if err != nil {
+			return "", err
+		}
+		randString = randStringTemporary
+		log.Info("randString" + randString)
+		_, alreadyUsed := alreadyUsed[randString]
+		if !alreadyUsed {
+			break
+		}
 	}
+	log.Info("randString" + randString)
+
 	filename := randString + ext
 	log.Info("Created file with name " + filename)
 	file, err := createFile(root, path, filename)

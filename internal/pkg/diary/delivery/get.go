@@ -187,6 +187,39 @@ func extractName (filePath string) (fileName string){
 	return fileName
 }
 
+func readAndSaveMultipartDataFiles ( r *http.Request) ([]domain.ImageInfoUsecase, error, int) {
+
+	formdata := r.MultipartForm
+ 	//get the *fileheaders
+ 	files := formdata.File["images"] // grab the filenames
+	imageInfo := []domain.ImageInfoUsecase{}
+	// filePaths := []string{}	
+ 	for i, _ := range files { // loop through the files one by one
+ 		file, err := files[i].Open()
+ 		defer file.Close()
+ 		if err != nil {
+			return []domain.ImageInfoUsecase{}, domain.Err.ErrObj.InternalServer, http.StatusInternalServerError
+ 		}
+		
+		if !validExtenstions(files){
+			return []domain.ImageInfoUsecase{}, domain.Err.ErrObj.BadFileExtension, http.StatusBadRequest
+		}
+		ar, err := cast.StringToFloat64((r.Form["areas"])[i])
+		if err != nil {
+			return []domain.ImageInfoUsecase{}, domain.Err.ErrObj.BadInput, http.StatusBadRequest
+ 		}
+		imageInfo = append(imageInfo, domain.ImageInfoUsecase{Name: extractName(files[i].Filename), Area: ar})
+		// TODO is fileNames already used
+		// usedFileNames := handler.DiaryUsecase.GetAllFileNames()
+		// already check extension validity
+		(imageInfo[i]).Name, err = filesaver.UploadFile(file, "", config.DevConfigStore.LoadedFilesPath, filepath.Ext(files[i].Filename), nil)
+		if err != nil {
+			return []domain.ImageInfoUsecase{}, domain.Err.ErrObj.InternalServer, http.StatusInternalServerError
+		}
+ 	}
+	return imageInfo,nil, http.StatusCreated
+}
+
 func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	
@@ -210,60 +243,14 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 		return
 	}
-	formdata := r.MultipartForm
- 	//get the *fileheaders
- 	files := formdata.File["images"] // grab the filenames
-	imageInfo := []domain.ImageInfoUsecase{}
-	// filePaths := []string{}
- 	for i, _ := range files { // loop through the files one by one
- 		file, err := files[i].Open()
- 		defer file.Close()
- 		if err != nil {
-			log.Error(err)
-			http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
-			return
- 		}
-		
-		if !validExtenstions(files){
-			log.Error(domain.Err.ErrObj.BadFileExtension)
-			http.Error(w, domain.Err.ErrObj.BadFileExtension.Error(), http.StatusBadRequest)
-			return
-		}
-		ar, err := cast.StringToFloat64((r.Form["areas"])[i])
-		if err != nil {
-			log.Error(err)
-			http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
-			return
- 		}
-		imageInfo = append(imageInfo, domain.ImageInfoUsecase{Name: extractName(files[i].Filename), Area: ar})
-		// filePaths = append(filePaths, files[i].Filename)
-		// already check extension validity
-		// extension, _ := getExtension(files[i])
-		(imageInfo[i]).Name, err = filesaver.UploadFile(file, "", config.DevConfigStore.LoadedFilesPath, filepath.Ext(files[i].Filename))
-		if err != nil {
-			log.Error(err)
-			http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
-			return
-		}
-		// (imageInfo[i]).Name = filepath.Base()
- 		// // out, err := os.Create(config.DevConfigStore.LoadedFilesPath + files[i].Filename)
- 		// out, err := os.Create(config.DevConfigStore.LoadedFilesPath + + extension)
- 		// defer out.Close()
- 		// if err != nil {
-		// 	log.Error(err)
-		// 	http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
-		// 	return
- 		// }
 
- 		// _, err = io.Copy(out, file) // file not files[i] !
-
- 		if err != nil {
-			log.Error(err)
-			http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
-			return
- 		}
- 	}
-
+	imageInfo, err, httpCode := readAndSaveMultipartDataFiles(r)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(httpCode)
+		return
+	}
 	RecordCreatingRequest := new(domain.RecordCreatingRequest)
 	RecordCreatingRequest.SetDefault()
 	RecordCreatingRequest.Title = fmt.Sprintf("%v", (r.Form["title"])[0])
@@ -286,19 +273,8 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 		
 	}
 
-	// if cast.IntToStr(sessionId) != EventCreatingRequest.UserId {
-	// 	http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// }
 	sanitizer.SanitizeRecordCreating(RecordCreatingRequest)
 
-
-
-
-	// imageInfo := []domain.ImageInfoUsecase{}
-	// for i := range imageNames {
-	// 	imageInfo = append(imageInfo, domain.ImageInfoUsecase{Name:imageNames[i], Area: 1.1})
-	// }
 	//TODO: Соз
 	es, err := handler.DiaryUsecase.CreateRecord(diaryId, *RecordCreatingRequest, imageInfo)
 	if err != nil {
