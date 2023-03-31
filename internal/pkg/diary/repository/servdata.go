@@ -42,6 +42,14 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreatingRequest) (dom
 	}, nil
 }
 
+func (er *dbdiaryrepository) DeleteDiary(diaryId uint64) (error) {
+	_, err := er.dbm.Query(queryDeleteDiary, diaryId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() +"} in query: " + queryCreateDiary)
+		log.Error(err)
+	}
+	return err
+}
 // func (er *dbdiaryrepository) CreateEventCategory(eventId uint64, categories []string) ([]string, error) {
 // 	// var sb strings.Builder
 // 	// sb.WriteString(queryCreateEventCategoryFirstPart)

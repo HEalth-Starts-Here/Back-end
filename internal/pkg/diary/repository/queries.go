@@ -14,6 +14,11 @@ const (
     )
 	RETURNING id, medicId, patientId, creatingDate, title, description;
 	`
+	
+	queryDeleteDiary = `
+	DELETE FROM diaries
+	WHERE id = $1;
+	`
 
 	queryDiaryList = `
 	SELECT id, medicId, patientId, creatingDate, title, description

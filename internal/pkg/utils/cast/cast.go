@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hesh/internal/pkg/utils/log"
 	"math"
+	"runtime"
 	"strconv"
 	"time"
 
@@ -101,4 +102,9 @@ func DateToStringUnderscore(src []byte) (string, error) {
 		return "", err
 	}
 	return timeString, err
+}
+
+func GetCurrentFuncName() string {
+	pc, _, _, _ := runtime.Caller(1)
+	return fmt.Sprintf("%s", runtime.FuncForPC(pc).Name())
 }

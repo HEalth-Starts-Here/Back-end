@@ -53,6 +53,24 @@ func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreatingRequest) (domai
 	return diaryCreatingResponse, nil
 }
 
+func (eu DiaryUsecase) DeleteDiary(diaryId uint64) (error) {
+	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
+	// if err != nil {
+	// 	return domain.DiaryCreatingResponse{}, err
+	// }
+
+	// if alreadyExist {
+	// 	return domain.DiaryCreatingResponse{}, domain.Err.ErrObj.PlaylistExist
+	// }
+
+	err := eu.diaryRepo.DeleteDiary(diaryId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (eu DiaryUsecase) GetDiary() (domain.DiaryListResponse, error) {
 	
 	feed, err := eu.diaryRepo.GetDiary()

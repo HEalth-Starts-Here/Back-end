@@ -97,6 +97,9 @@ type DiaryCreatingResponse struct {
 	Description            string   `json:"description"`
 }
 
+// type DiaryDeletingRequest struct {
+// }
+
 // type RecordsCreatingResponse struct {
 // 	Id                     uint64   `json:"id"`
 // 	DiaryId                uint64   `json:"diaryid"`
@@ -162,6 +165,7 @@ type ImageInfoUsecase struct {
 
 type DiaryRepository interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
+	DeleteDiary(diaryid uint64) (error)
 	GetDiary() (DiaryListResponse, error)  
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreatingResponse, error)
@@ -181,6 +185,7 @@ type DiaryRepository interface {
 
 type DiaryUsecase interface {
 	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
+	DeleteDiary(diaryid uint64) (error)
 	GetDiary() (DiaryListResponse, error) 
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase) (RecordCreatingResponse, error)
