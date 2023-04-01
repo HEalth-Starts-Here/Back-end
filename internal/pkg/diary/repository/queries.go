@@ -169,8 +169,7 @@ const (
 
 queryGetImageList = `
 SELECT id, recordid, name, area
-FROM images
-WHERE recordid = $1;
+FROM images;
 `
 
 queryCreateRecordImageListFirstPart = `

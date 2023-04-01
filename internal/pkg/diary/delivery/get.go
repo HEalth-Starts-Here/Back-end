@@ -9,12 +9,12 @@ import (
 	// "hesh/internal/pkg/utils/cast"
 	"hesh/internal/pkg/utils/cast"
 	"hesh/internal/pkg/utils/config"
+	"hesh/internal/pkg/utils/filesaver"
 	"hesh/internal/pkg/utils/log"
 	"hesh/internal/pkg/utils/sanitizer"
-	"hesh/internal/pkg/utils/filesaver"
 
-	"strconv"
 	"path/filepath"
+	"strconv"
 
 	// "strings"
 
@@ -212,7 +212,7 @@ func extractName (filePath string) (fileName string){
 	return fileName
 }
 
-func readAndSaveMultipartDataFiles ( r *http.Request) ([]domain.ImageInfoUsecase, error, int) {
+func readMultipartDataImages ( r *http.Request) ([]domain.ImageInfoUsecase, error, int) {
 
 	formdata := r.MultipartForm
  	//get the *fileheaders
@@ -223,6 +223,7 @@ func readAndSaveMultipartDataFiles ( r *http.Request) ([]domain.ImageInfoUsecase
  		file, err := files[i].Open()
  		defer file.Close()
  		if err != nil {
+			// TODO: add mapping from error to http code
 			return []domain.ImageInfoUsecase{}, domain.Err.ErrObj.InternalServer, http.StatusInternalServerError
  		}
 		
@@ -234,15 +235,26 @@ func readAndSaveMultipartDataFiles ( r *http.Request) ([]domain.ImageInfoUsecase
 			return []domain.ImageInfoUsecase{}, domain.Err.ErrObj.BadInput, http.StatusBadRequest
  		}
 		imageInfo = append(imageInfo, domain.ImageInfoUsecase{Name: extractName(files[i].Filename), Area: ar})
-		// TODO is fileNames already used
-		// usedFileNames := handler.DiaryUsecase.GetAllFileNames()
-		// already check extension validity
-		(imageInfo[i]).Name, err = filesaver.UploadFile(file, "", config.DevConfigStore.LoadedFilesPath, filepath.Ext(files[i].Filename), nil)
-		if err != nil {
-			return []domain.ImageInfoUsecase{}, domain.Err.ErrObj.InternalServer, http.StatusInternalServerError
-		}
  	}
-	return imageInfo,nil, http.StatusCreated
+	return imageInfo, nil, http.StatusCreated
+}
+
+func saveMultipartDataFiles (fileNames []string, fileHeaders []*multipart.FileHeader) (error, int) {
+	// TODO: add mapping from error to http code
+	for i, _ := range fileNames{
+		file, err := fileHeaders[i].Open()
+		defer file.Close()
+		if err != nil {
+		   return domain.Err.ErrObj.InternalServer, http.StatusInternalServerError
+		}
+		extension := filepath.Ext(fileNames[i])
+		nameWithouExtension := fileNames[i][:len(fileNames[i]) - len(extension)]
+		_, err = filesaver.UploadFile(file, "", config.DevConfigStore.LoadedFilesPath, nameWithouExtension, filepath.Ext(fileNames[i]))
+		if err != nil {
+			return domain.Err.ErrObj.InternalServer, http.StatusInternalServerError
+		}
+	}
+	return nil, http.StatusCreated
 }
 
 func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request) {
@@ -268,14 +280,20 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 		return
 	}
-
-	imageInfo, err, httpCode := readAndSaveMultipartDataFiles(r)
+	imageInfo, err, httpCode := readMultipartDataImages(r)
 	if err != nil {
 		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), httpCode)
 		w.WriteHeader(httpCode)
 		return
 	}
+	// imageInfo, err, httpCode := readAndSaveMultipartDataFiles(r)
+	// if err != nil {
+	// 	log.Error(err)
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	w.WriteHeader(httpCode)
+	// 	return
+	// }
 	RecordCreatingRequest := new(domain.RecordCreatingRequest)
 	RecordCreatingRequest.SetDefault()
 	RecordCreatingRequest.Title = fmt.Sprintf("%v", (r.Form["title"])[0])
@@ -300,7 +318,7 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 
 	sanitizer.SanitizeRecordCreating(RecordCreatingRequest)
 
-	//TODO: Соз
+	//TODO: check if file with this name already esist
 	es, err := handler.DiaryUsecase.CreateRecord(diaryId, *RecordCreatingRequest, imageInfo)
 	if err != nil {
 		log.Error(err)
@@ -308,6 +326,12 @@ func (handler *DiaryHandler) CreateRecord(w http.ResponseWriter, r *http.Request
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	// We check if file with this name alredy exist in usecase
+	imageNames := []string{}
+	for i := range imageInfo {
+		imageNames = append(imageNames, imageInfo[i].Name)
+	}
+	saveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
 
 	out, err := easyjson.Marshal(es)
 	if err != nil {

@@ -23,6 +23,29 @@ func InitDiaryRep(manager *database.DBManager) domain.DiaryRepository {
 	}
 }
 
+func (cr *dbdiaryrepository) GetImageNames() (map[string]struct{}, error) {
+	var resp []database.DBbyterow
+	var err error
+	query := ""
+
+	query = queryGetImageList
+	resp, err = cr.dbm.Query(query)
+
+
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return nil, domain.Err.ErrObj.InternalServer
+	}
+
+	imageNames := make(map[string]struct{}, 0)
+	for i := range resp {
+		imageNames[cast.ToString(resp[i][0])] = struct{}{}
+	}
+
+	return imageNames, nil
+}
+
 func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreatingRequest) (domain.DiaryCreatingResponse, error) {
 	resp, err := er.dbm.Query(queryCreateDiary, diary.MedicId,
 		diary.PatientId, time.Now().Format("2006.01.02 15:04:05"), diary.Title, diary.Description)
@@ -257,6 +280,7 @@ func (er *dbdiaryrepository) CreateRecordImageLists(recordId uint64, imageInfo [
 }
 
 func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCreatingRequest, imageInfo []domain.ImageInfoUsecase, Area float64) (domain.RecordCreatingResponse, error) {
+	// print(record)
 	resp, err := er.dbm.Query(queryCreateRecord, 
 		diaryId, 
 		time.Now().Format("2006.01.02 15:04:05"), 

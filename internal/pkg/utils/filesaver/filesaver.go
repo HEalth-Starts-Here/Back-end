@@ -21,24 +21,31 @@ func createFile(root, dir, name string) (*os.File, error) {
 	file, err := os.Create(root + dir + name)
 	return file, err
 }
+func GetUniqueFileNames (quantity int, alreadyUsed map[string]struct{}) ([]string){
+	fileNames := make([]string, 0)
+	for i := 0; i < quantity; i++{
+		randStringTemporary := ""
+		for {
+			randStringTemporary, err := randomizer.GenerateRandomString(6)
+			if err != nil {
+				return nil
+			}
+			fileNames = append(fileNames, randStringTemporary)
 
-func UploadFile(reader io.Reader, root, path, ext string, alreadyUsed map[string]struct{}) (string, error) {
-	randString := "" 
-	for {
-		randStringTemporary, err := randomizer.GenerateRandomString(6)
-		if err != nil {
-			return "", err
+			_, alreadyUsed := alreadyUsed[randStringTemporary]
+			if !alreadyUsed {
+				break
+			}
 		}
-		randString = randStringTemporary
-		log.Info("randString" + randString)
-		_, alreadyUsed := alreadyUsed[randString]
-		if !alreadyUsed {
-			break
-		}
+		alreadyUsed[randStringTemporary] = struct{}{}
 	}
-	log.Info("randString" + randString)
+	return fileNames
+}
 
-	filename := randString + ext
+func UploadFile(reader io.Reader, root, path, name, ext string) (string, error) {
+	log.Info("randString" + name)
+
+	filename := name + ext
 	log.Info("Created file with name " + filename)
 	file, err := createFile(root, path, filename)
 	if err != nil {

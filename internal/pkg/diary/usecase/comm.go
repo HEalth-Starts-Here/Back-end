@@ -2,6 +2,9 @@ package plausecase
 
 import (
 	"hesh/internal/pkg/domain"
+	"hesh/internal/pkg/utils/filesaver"
+	"path/filepath"
+
 	// "hesh/internal/pkg/utils/cast"
 	// "hesh/internal/pkg/utils/log"
 
@@ -111,6 +114,15 @@ func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCrea
 	Area := 0.0
 	for i := range imageInfo {
 		Area += imageInfo[i].Area
+	}
+	alreadyUsed, err := eu.diaryRepo.GetImageNames()
+	if err != nil {
+		return domain.RecordCreatingResponse{}, err
+	}
+	imageNames := filesaver.GetUniqueFileNames(len(imageInfo), alreadyUsed)
+	for i := 0; i < len(imageInfo); i++ {
+		imageInfo[i].Name = imageNames[i] + filepath.Ext(imageInfo[i].Name)
+
 	}
 	// TODO solve the problem with the same filenames. For example with generating filenames or with creating folders for every record
 	diaryCreatingResponse, err := eu.diaryRepo.CreateRecord(diaryId, recordData, imageInfo, Area)

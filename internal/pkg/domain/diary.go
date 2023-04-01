@@ -170,7 +170,7 @@ type DiaryRepository interface {
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreatingResponse, error)
 	UpdateDiary(diary DiaryUpdatingRequest) (DiaryUpdatingResponse, error)
-
+	GetImageNames()(map[string]struct{}, error)
 	
 
 	// DiaryAlreadyExist(diary DiaryCreatingRequest) (bool, error)

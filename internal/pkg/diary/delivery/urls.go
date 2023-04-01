@@ -10,10 +10,4 @@ const (
 	PutCertainDiaryUrl	  = diaryUrl + "/update"
 	PutRecordUrl		  = diaryUrl + "/recordUpdate"
 	DetermineAreaUrl       = "/determinearea"
-	// GetRecomendedEvent    = GetEventUrl + "/recomended"
-	// GetCatagoryUrl        = eventUrl + "/category"
-	// EventSignUpUrl		  = eventUrl + "/signup/{id:[0-9]+}"
-	// CancelEventSignUpUrl  = eventUrl + "/signup/cancel/{id:[0-9]+}"
-	// DeleteEventUrl = eventUrl + "/delete"
-	// AlterEventUrl  = eventUrl + "/alter"
 )
