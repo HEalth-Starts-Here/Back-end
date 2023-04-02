@@ -19,8 +19,11 @@ func SanitizeDiaryCreating(diary *domain.DiaryCreateRequest) {
 }
 
 func SanitizeDiaryUpdating(diary *domain.DiaryUpdateRequest) {
-	sanitizeText(&diary.Title)
-	sanitizeText(&diary.Description)
+	sanitizeText(&diary.DiaryBasicInfo.Title)
+	sanitizeText(&diary.DiaryBasicInfo.Complaints)
+	sanitizeText(&diary.DiaryBasicInfo.Anamnesis)
+	sanitizeText(&diary.DiaryBasicInfo.Objectively)
+	sanitizeText(&diary.DiaryBasicInfo.Diagnosis)
 }
 
 func SanitizeRecordCreating(record *domain.RecordCreateRequest) {

@@ -498,10 +498,14 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain5(in *jlexer.Lexer, out *DiaryUp
 		switch key {
 		case "id":
 			out.Id = uint64(in.Uint64())
-		case "title":
-			out.Title = string(in.String())
-		case "description":
-			out.Description = string(in.String())
+		case "medicid":
+			out.MedicId = uint32(in.Uint32())
+		case "patientid":
+			out.PatientId = uint32(in.Uint32())
+		case "creatingdate":
+			out.CreatingDate = string(in.String())
+		case "diarybasicinfo":
+			(out.DiaryBasicInfo).UnmarshalEasyJSON(in)
 		default:
 			in.SkipRecursive()
 		}
@@ -522,14 +526,24 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain5(out *jwriter.Writer, in DiaryU
 		out.Uint64(uint64(in.Id))
 	}
 	{
-		const prefix string = ",\"title\":"
+		const prefix string = ",\"medicid\":"
 		out.RawString(prefix)
-		out.String(string(in.Title))
+		out.Uint32(uint32(in.MedicId))
 	}
 	{
-		const prefix string = ",\"description\":"
+		const prefix string = ",\"patientid\":"
 		out.RawString(prefix)
-		out.String(string(in.Description))
+		out.Uint32(uint32(in.PatientId))
+	}
+	{
+		const prefix string = ",\"creatingdate\":"
+		out.RawString(prefix)
+		out.String(string(in.CreatingDate))
+	}
+	{
+		const prefix string = ",\"diarybasicinfo\":"
+		out.RawString(prefix)
+		(in.DiaryBasicInfo).MarshalEasyJSON(out)
 	}
 	out.RawByte('}')
 }
@@ -576,12 +590,8 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain6(in *jlexer.Lexer, out *DiaryUp
 			continue
 		}
 		switch key {
-		case "id":
-			out.Id = uint64(in.Uint64())
-		case "title":
-			out.Title = string(in.String())
-		case "description":
-			out.Description = string(in.String())
+		case "diarybasicinfo":
+			(out.DiaryBasicInfo).UnmarshalEasyJSON(in)
 		default:
 			in.SkipRecursive()
 		}
@@ -597,19 +607,9 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain6(out *jwriter.Writer, in DiaryU
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"id\":"
+		const prefix string = ",\"diarybasicinfo\":"
 		out.RawString(prefix[1:])
-		out.Uint64(uint64(in.Id))
-	}
-	{
-		const prefix string = ",\"title\":"
-		out.RawString(prefix)
-		out.String(string(in.Title))
-	}
-	{
-		const prefix string = ",\"description\":"
-		out.RawString(prefix)
-		out.String(string(in.Description))
+		(in.DiaryBasicInfo).MarshalEasyJSON(out)
 	}
 	out.RawByte('}')
 }

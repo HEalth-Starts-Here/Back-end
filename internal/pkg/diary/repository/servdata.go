@@ -373,12 +373,15 @@ func (er *dbdiaryrepository) CreateRecord(diaryId uint64, record domain.RecordCr
 	return response, nil
 }
 
-func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdateRequest) (domain.DiaryUpdateResponse, error) {
+func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdateRequest, diaryId uint64) (domain.DiaryUpdateResponse, error) {
 	query := queryUpdateDiary
 	resp, err := er.dbm.Query(query,
-		diary.Title,
-		diary.Description,
-		diary.Id)
+		diary.DiaryBasicInfo.Title,
+		diary.DiaryBasicInfo.Complaints,
+		diary.DiaryBasicInfo.Anamnesis,
+		diary.DiaryBasicInfo.Objectively,
+		diary.DiaryBasicInfo.Diagnosis,
+		diaryId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
@@ -386,8 +389,16 @@ func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdateRequest) (domai
 	}
 
 	return domain.DiaryUpdateResponse{
-		Id:          cast.ToUint64(resp[0][0]),
-		Title:       cast.ToString(resp[0][1]),
-		Description: cast.ToString(resp[0][2]),
+		Id:          	cast.ToUint64(resp[0][0]),
+		MedicId:        cast.ToUint32(resp[0][1]),
+		PatientId:      cast.ToUint32(resp[0][2]),
+		CreatingDate:   cast.TimeToStr(cast.ToTime(resp[0][3]), true),
+		DiaryBasicInfo: domain.DiaryBasicInfo{
+			Title: 			cast.ToString(resp[0][4]),
+			Complaints: 	cast.ToString(resp[0][5]),
+			Anamnesis: 		cast.ToString(resp[0][6]),
+			Objectively:	cast.ToString(resp[0][7]),
+			Diagnosis:		cast.ToString(resp[0][8]),
+		},
 	}, nil
 }

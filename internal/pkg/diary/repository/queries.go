@@ -199,8 +199,8 @@ RETURNING id, recordid, name, area;
 
 queryUpdateDiary = `
 UPDATE diaries
-SET title = $1, description = $2
-WHERE id = $3
-RETURNING id, title, description;
+SET title = $1, complaints = $2, anamnesis = $3, objectively = $4, diagnosis = $5
+WHERE id = $6
+RETURNING id, medicid, patientid, creatingdate, title, complaints, anamnesis, objectively, diagnosis;
 `
 )

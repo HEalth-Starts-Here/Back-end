@@ -158,7 +158,7 @@ func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCrea
 	return DiaryCreateResponse, nil
 }
 
-func (eu DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdateRequest) (domain.DiaryUpdateResponse, error) {
+func (eu DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdateRequest, diaryId uint64) (domain.DiaryUpdateResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -171,7 +171,7 @@ func (eu DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdateRequest) (d
 	if !updateDiaryData.IsValid() {
 		return domain.DiaryUpdateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
-	DiaryUpdateResponse, err := eu.diaryRepo.UpdateDiary(updateDiaryData)
+	DiaryUpdateResponse, err := eu.diaryRepo.UpdateDiary(updateDiaryData, diaryId)
 	if err != nil {
 		return domain.DiaryUpdateResponse{}, err
 	}

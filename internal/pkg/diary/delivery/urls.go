@@ -8,7 +8,7 @@ const (
 	DeleteDiaryUrl		  = diaryUrl + "/delete/{id:[0-9]+}"
 	GetCertainDiaryUrl    = GetDiaryUrl + "/{id:[0-9]+}"
 	CreateRecordUrl       = CreateDiaryUrl + "/{id:[0-9]+}"
-	PutCertainDiaryUrl	  = diaryUrl + "/update"
+	UpdateDiaryUrl	  	  = diaryUrl + "/update/{id:[0-9]+}"
 	PutRecordUrl		  = diaryUrl + "/recordUpdate"
 	DetermineAreaUrl      = "/determinearea"
 )

@@ -64,22 +64,22 @@ func (er RecordCreateRequest) IsValid() (isValid bool) {
 }
 
 func (er DiaryUpdateRequest) IsValid() (isValid bool) {
-	if len(er.Title) > maxDiaryTitleLength || len(er.Description) > maxDiaryObjectivelyLength {
+	if len(er.DiaryBasicInfo.Title) > maxDiaryTitleLength || len(er.DiaryBasicInfo.Objectively) > maxDiaryObjectivelyLength {
 		return false
 	}
 	return true
 }
 
 type DiaryUpdateRequest struct {
-	Id          uint64 `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	DiaryBasicInfo	DiaryBasicInfo `json:"diarybasicinfo"`
 }
 
 type DiaryUpdateResponse struct {
-	Id          uint64 `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	Id				uint64 `json:"id"`
+	MedicId			uint32 `json:"medicid"`
+	PatientId		uint32 `json:"patientid"`
+	CreatingDate	string `json:"creatingdate"`
+	DiaryBasicInfo	DiaryBasicInfo `json:"diarybasicinfo"`
 }
 
 type DiaryBasicInfo struct {
@@ -185,7 +185,7 @@ type DiaryRepository interface {
 	GetDiary() (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreateResponse, error)
-	UpdateDiary(diary DiaryUpdateRequest) (DiaryUpdateResponse, error)
+	UpdateDiary(diary DiaryUpdateRequest, diaryId uint64) (DiaryUpdateResponse, error)
 	GetImageNames() (map[string]struct{}, error)
 
 	// DiaryAlreadyExist(diary DiaryCreateRequest) (bool, error)
@@ -205,7 +205,7 @@ type DiaryUsecase interface {
 	GetDiary() (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase) (RecordCreateResponse, error)
-	UpdateDiary(diary DiaryUpdateRequest) (DiaryUpdateResponse, error)
+	UpdateDiary(diary DiaryUpdateRequest, diaryId uint64) (DiaryUpdateResponse, error)
 
 	// GetCategory() (CategoryListResponse, error)
 	// EventSignUp(eventId uint64, userId uint64)(error)

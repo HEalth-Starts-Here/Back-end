@@ -44,6 +44,7 @@ func (handler *DiaryHandler) CreateDiary(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	// TODO add check is this user exist
 	queryParameter := r.URL.Query().Get("vk_user_id")
 	medicId64, err := strconv.ParseUint(queryParameter, 10, 32)
 	medicId := (uint32)(medicId64)
@@ -417,6 +418,14 @@ func (handler *DiaryHandler) UpdateDiary(w http.ResponseWriter, r *http.Request)
 	// 	return
 	// }
 
+	params := mux.Vars(r)
+	diaryId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		return
+	}
+
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -441,7 +450,7 @@ func (handler *DiaryHandler) UpdateDiary(w http.ResponseWriter, r *http.Request)
 
 	sanitizer.SanitizeDiaryUpdating(DiaryUpdateRequest)
 
-	es, err := handler.DiaryUsecase.UpdateDiary(*DiaryUpdateRequest)
+	es, err := handler.DiaryUsecase.UpdateDiary(*DiaryUpdateRequest, diaryId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
