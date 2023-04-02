@@ -36,7 +36,7 @@ const (
 	queryDiaryList = `
 	SELECT id, medicid, medics.name, patientid, patients.name, creatingdate, title, objectively
 	FROM diaries
-	JOIN patients ON diaries.patientid = patients.vkid
+	LEFT JOIN patients ON diaries.patientid = patients.vkid
 	JOIN medics ON diaries.medicid = medics.vkid
 	WHERE medicid = $1 OR patientid = $1
 	ORDER BY creatingdate;
