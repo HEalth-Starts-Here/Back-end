@@ -1,24 +1,22 @@
 package domain
 
 // TODO write valid path
-const (
-
-)
+const ()
 
 type DetermineAreaResponse struct {
-	Area 		int32		`json:"area"`
+	Area int32 `json:"area"`
 }
 
 type MLServicesRepository interface {
-	// CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
-	// GetDiary() (DiaryListResponse, error)  
+	// CreateDiary(diary DiaryCreateRequest) (DiaryCreateResponse, error)
+	// GetDiary() (DiaryListResponse, error)
 	// GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	// CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreatingResponse, error)
+	// CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreateResponse, error)
 }
 
 type MLServicesUsecase interface {
-	// CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
-	// GetDiary() (DiaryListResponse, error) 
+	// CreateDiary(diary DiaryCreateRequest) (DiaryCreateResponse, error)
+	// GetDiary() (DiaryListResponse, error)
 	// GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	// CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase) (RecordCreatingResponse, error)
+	// CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase) (RecordCreateResponse, error)
 }

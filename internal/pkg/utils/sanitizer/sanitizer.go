@@ -6,21 +6,24 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 )
 
-func SanitizeDiaryCreating(diary *domain.DiaryCreatingRequest) {
+func sanitizeText (text *string) {
 	sanitizer := bluemonday.UGCPolicy()
-	diary.Title = sanitizer.Sanitize(diary.Title)
-	diary.Description = sanitizer.Sanitize(diary.Description)
+	*text = sanitizer.Sanitize(*text)
 }
 
-func SanitizeDiaryUpdating(diary *domain.DiaryUpdatingRequest) {
-	sanitizer := bluemonday.UGCPolicy()
-	diary.Title = sanitizer.Sanitize(diary.Title)
-	diary.Description = sanitizer.Sanitize(diary.Description)
+func SanitizeDiaryCreating(diary *domain.DiaryCreateRequest) {
+	sanitizeText(&diary.DiaryBasicInfo.Title)
+	sanitizeText(&diary.DiaryBasicInfo.Complaints)
+	sanitizeText(&diary.DiaryBasicInfo.Anamnesis)
+	sanitizeText(&diary.DiaryBasicInfo.Objectively)
 }
 
+func SanitizeDiaryUpdating(diary *domain.DiaryUpdateRequest) {
+	sanitizeText(&diary.Title)
+	sanitizeText(&diary.Description)
+}
 
-func SanitizeRecordCreating(record *domain.RecordCreatingRequest) {
-	sanitizer := bluemonday.UGCPolicy()
-	record.Title = sanitizer.Sanitize(record.Title)
-	record.Description = sanitizer.Sanitize(record.Description)
+func SanitizeRecordCreating(record *domain.RecordCreateRequest) {
+	sanitizeText(&record.Title)
+	sanitizeText(&record.Description)
 }

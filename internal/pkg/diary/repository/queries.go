@@ -3,16 +3,19 @@ package diaryrepository
 const (
 	queryCreateDiary = `
 	INSERT INTO
-    diaries (medicId, patientId, creatingDate, title, description)
+    diaries (medicId, patientId, creatingDate, title, complaints, anamnesis, objectively, diagnosis)
 	VALUES
     (
 		$1,
         $2,
         $3,
         $4,
-        $5
+        $5,
+        $6,
+        $7,
+        $8
     )
-	RETURNING id, medicId, patientId, creatingDate, title, description;
+	RETURNING id, medicId, patientId, creatingDate, title, complaints, anamnesis, objectively, diagnosis;
 	`
 	
 	queryDeleteDiary = `
@@ -21,7 +24,7 @@ const (
 	`
 
 	queryDiaryList = `
-	SELECT id, medicId, patientId, creatingDate, title, description
+	SELECT id, medicId, patientId, creatingDate, title, complaints, anamnesis, objectively, diagnosis
 	FROM diaries
 	ORDER BY diaries.id;
 	`

@@ -1,6 +1,7 @@
 package mlservicesrepository
 
 const (
+	// TODO: delete redundant queries
 	queryCreateDiary = `
 	INSERT INTO
     diaries (medicId, patientId, creatingDate, title, description)

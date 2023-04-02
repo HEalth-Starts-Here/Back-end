@@ -3,28 +3,29 @@ package domain
 // TODO write valid path
 const (
 	// BaseEventPicture = "/home/ubuntu/lolkek/static/event/event.png"
-	maxDiaryTitleLength = 200
-	maxRecordTitleLength = 200
-	maxDiaryDescriptionLength = 3000
+	maxDiaryTitleLength        = 200
+	maxRecordTitleLength       = 200
+	maxDiaryObjectivelyLength  = 1000
 	maxRecordDescriptionLength = 3000
 )
 
-func (er *DiaryCreatingRequest) SetDefault() () {
-	er.MedicId = 0
-	er.PatientId = 0
-	er.Title = ""
-	er.Description = ""
+func (er *DiaryCreateRequest) SetDefault() {
+	er.DiaryBasicInfo.Title = ""
+	er.DiaryBasicInfo.Complaints = ""
+	er.DiaryBasicInfo.Anamnesis = ""
+	er.DiaryBasicInfo.Objectively = ""
+	er.DiaryBasicInfo.Diagnosis = ""
 	return
 }
 
-func (er *RecordCreatingRequest) SetDefault() () {
+func (er *RecordCreateRequest) SetDefault() {
 	er.Description = ""
 	er.Title = ""
 	er.Characteristics = Characteristics{}
 	return
 }
 
-func (er *RecordCreatingResponse) SetDefault() () {
+func (er *RecordCreateResponse) SetDefault() {
 	er.Id = 0
 	er.DiaryId = 0
 	er.CreatingDate = "2022-04-10 15:47:24"
@@ -36,164 +37,157 @@ func (er *RecordCreatingResponse) SetDefault() () {
 	return
 }
 
-func (er DiaryCreatingRequest) IsValid() (isValid bool) {
-	if len(er.Title) > maxDiaryTitleLength || len(er.Description) > maxDiaryDescriptionLength{
+func (er DiaryCreateRequest) IsValid() (isValid bool) {
+	if len(er.DiaryBasicInfo.Title) > maxDiaryTitleLength || len(er.DiaryBasicInfo.Objectively) > maxDiaryObjectivelyLength {
 		return false
 	}
 	return true
 }
 
-func (er RecordCreatingRequest) IsValid() (isValid bool) {
-	if len(er.Title) > maxRecordTitleLength || len(er.Description) > maxRecordDescriptionLength{
+func (er RecordCreateRequest) IsValid() (isValid bool) {
+	if len(er.Title) > maxRecordTitleLength || len(er.Description) > maxRecordDescriptionLength {
 		return false
 	}
-	characteristicsList := [](*uint8){  &er.Characteristics.Dryness, 
-										&er.Characteristics.Edema, 
-										&er.Characteristics.Itching, 
-										&er.Characteristics.Pain, 
-										&er.Characteristics.Peeling, 
-										&er.Characteristics.Redness,
-									}
-	for ch := range characteristicsList{
-		if ch > 10{
+	characteristicsList := [](*uint8){&er.Characteristics.Dryness,
+		&er.Characteristics.Edema,
+		&er.Characteristics.Itching,
+		&er.Characteristics.Pain,
+		&er.Characteristics.Peeling,
+		&er.Characteristics.Redness,
+	}
+	for ch := range characteristicsList {
+		if ch > 10 {
 			return false
 		}
 	}
 	return true
 }
 
-func (er DiaryUpdatingRequest) IsValid() (isValid bool) {
-	if len(er.Title) > maxDiaryTitleLength || len(er.Description) > maxDiaryDescriptionLength{
+func (er DiaryUpdateRequest) IsValid() (isValid bool) {
+	if len(er.Title) > maxDiaryTitleLength || len(er.Description) > maxDiaryObjectivelyLength {
 		return false
 	}
 	return true
 }
 
-type DiaryUpdatingRequest struct {
-	Id                	   uint64  	`json:"id"`
-	Title                  string   `json:"title"`
-	Description            string   `json:"description"`
+type DiaryUpdateRequest struct {
+	Id          uint64 `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
 
-type DiaryUpdatingResponse struct {
-	Id                     uint64   `json:"id"`
-	Title                  string   `json:"title"`
-	Description            string   `json:"description"`
+type DiaryUpdateResponse struct {
+	Id          uint64 `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
 
-type DiaryCreatingRequest struct {
-	MedicId                uint32   `json:"medicid"`
-	PatientId              uint32   `json:"patientid"`
-	Title                  string   `json:"title"`
-	Description            string   `json:"description"`
+type DiaryBasicInfo struct {
+	Title       string `json:"title"`
+	Complaints  string `json:"complaints"`
+	Anamnesis   string `json:"anamnesis"`
+	Objectively string `json:"objectively"`
+	Diagnosis   string `json:"diagnosis"`
 }
 
-type DiaryCreatingResponse struct {
-	Id                     uint64   `json:"id"`
-	MedicId                uint32   `json:"medicid"`
-	PatientId              uint32   `json:"patientid"`
-	CreatingDate           string   `json:"creatingdate"`
-	Title                  string   `json:"title"`
-	Description            string   `json:"description"`
+type DiaryCreateRequest struct {
+	// MedicId		   uint32 `json:"medicid"`
+	// PatientId	   uint32 `json:"patientid"`
+	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
 }
 
-// type DiaryDeletingRequest struct {
-// }
-
-// type RecordsCreatingResponse struct {
-// 	Id                     uint64   `json:"id"`
-// 	DiaryId                uint64   `json:"diaryid"`
-// 	Description            string   `json:"description"`
-// 	PosterPath             string   `json:"posterpath"`
-// }
+type DiaryCreateResponse struct {
+	Id             uint64 `json:"id"`
+	MedicId        uint32 `json:"medicid"`
+	PatientId      uint32 `json:"patientid"`
+	CreatingDate   string `json:"creatingdate"`
+	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
+}
 
 type DiaryListResponse struct {
-	DiaryList []DiaryCreatingResponse `json:"diarylist"`
+	DiaryList []DiaryCreateResponse `json:"diarylist"`
 }
 
 type DiaryResponse struct {
-	Diary DiaryCreatingResponse `json:"diary"`
-	RecordsList []RecordCreatingResponse `json:"records"`
+	Diary       DiaryCreateResponse    `json:"diary"`
+	RecordsList []RecordCreateResponse `json:"records"`
 }
 
-type RecordCreatingRequest struct {
-	Title           	   string     		 `json:"title"` 
-	Description            string			 `json:"description"`
-	Characteristics		   Characteristics	 `json:"characteristics"`
+type RecordCreateRequest struct {
+	Title           string          `json:"title"`
+	Description     string          `json:"description"`
+	Characteristics Characteristics `json:"characteristics"`
 }
 
 type ImageInfo struct {
-	Id                     uint64   `json:"id"`
-	RecordId               uint64   `json:"recordid"`
-	Name	               string   `json:"name"`
-	Area	               float64  `json:"area"`
+	Id       uint64  `json:"id"`
+	RecordId uint64  `json:"recordid"`
+	Name     string  `json:"name"`
+	Area     float64 `json:"area"`
 }
 
-type RecordCreatingResponse struct {
-	Id                     uint64 		     `json:"id"`
-	DiaryId                uint64  			 `json:"diaryid"`
-	CreatingDate           string   		 `json:"creatingdate"`
-	Description            string  			 `json:"description"`
-	Title                  string  			 `json:"title"`
-	Area			   	   float64			 `json:"area"`
-	Characteristics		   Characteristics	 `json:"characteristics"`
-	ImageList		   	   []ImageInfo		 `json:"imagelist"`
-
+type RecordCreateResponse struct {
+	Id              uint64          `json:"id"`
+	DiaryId         uint64          `json:"diaryid"`
+	CreatingDate    string          `json:"creatingdate"`
+	Description     string          `json:"description"`
+	Title           string          `json:"title"`
+	Area            float64         `json:"area"`
+	Characteristics Characteristics `json:"characteristics"`
+	ImageList       []ImageInfo     `json:"imagelist"`
 }
 
-type RecordUpdatingRequest struct {
-	Id                	   uint64  					`json:"id"`
-	RecordCreatingRequest  RecordCreatingRequest   	`json:"recordcreatingrequest"`
+type RecordUpdateRequest struct {
+	Id                  uint64              `json:"id"`
+	RecordCreateRequest RecordCreateRequest `json:"RecordCreateRequest"`
 }
 
 type Characteristics struct {
-	Dryness 			   uint8 `json:"dryness"`
-	Edema 				   uint8 `json:"edema"`
-	Itching 			   uint8 `json:"itching"` // defin all not required
-	Pain 				   uint8 `json:"pain"`
-	Peeling 			   uint8 `json:"peeling"`
-	Redness 			   uint8 `json:"redness"`
+	Dryness uint8 `json:"dryness"`
+	Edema   uint8 `json:"edema"`
+	Itching uint8 `json:"itching"` // defin all not required
+	Pain    uint8 `json:"pain"`
+	Peeling uint8 `json:"peeling"`
+	Redness uint8 `json:"redness"`
 }
 
 type ImageInfoUsecase struct {
-	Name	               string   `json:"name"`
-	Area	               float64  `json:"area"`
+	Name string  `json:"name"`
+	Area float64 `json:"area"`
 }
 
 // Area 				   float32 `json:"area"` // cm^2
-// // TODO Define palm area as 1%	
+// // TODO Define palm area as 1%
 
 type DiaryRepository interface {
-	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
-	DeleteDiary(diaryid uint64) (error)
-	GetDiary() (DiaryListResponse, error)  
+	CreateDiary(diary DiaryCreateRequest, medicId uint32) (DiaryCreateResponse, error)
+	DeleteDiary(diaryid uint64) error
+	GetDiary() (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreatingResponse, error)
-	UpdateDiary(diary DiaryUpdatingRequest) (DiaryUpdatingResponse, error)
-	GetImageNames()(map[string]struct{}, error)
-	
+	CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreateResponse, error)
+	UpdateDiary(diary DiaryUpdateRequest) (DiaryUpdateResponse, error)
+	GetImageNames() (map[string]struct{}, error)
 
-	// DiaryAlreadyExist(diary DiaryCreatingRequest) (bool, error)
+	// DiaryAlreadyExist(diary DiaryCreateRequest) (bool, error)
 	// GetCategory() (CategoryListResponse, error)
 	// CreateEventCategory(eventId uint64, categories []string) ([]string, error)
 	// SignUpUserForEvent(eventId uint64, userId uint64) (error)
-	// CancelEventSignUp(eventId uint64, userId uint64) (error) 
+	// CancelEventSignUp(eventId uint64, userId uint64) (error)
 	// GetUserCategory(id uint64) ([]string, error)
 	// GetUserAge(id uint64) (uint64, error)
 	// GetEventAges(id uint64) (uint16, uint16, error)
 }
 
 type DiaryUsecase interface {
-	CreateDiary(diary DiaryCreatingRequest) (DiaryCreatingResponse, error)
-	DeleteDiary(diaryid uint64) (error)
-	GetDiary() (DiaryListResponse, error) 
+	CreateDiary(diary DiaryCreateRequest, medicId uint32) (DiaryCreateResponse, error)
+	DeleteDiary(diaryid uint64) error
+	GetDiary() (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	CreateRecord(diaryId uint64, record RecordCreatingRequest, imageInfo []ImageInfoUsecase) (RecordCreatingResponse, error)
-	UpdateDiary(diary DiaryUpdatingRequest) (DiaryUpdatingResponse, error)
-
+	CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase) (RecordCreateResponse, error)
+	UpdateDiary(diary DiaryUpdateRequest) (DiaryUpdateResponse, error)
 
 	// GetCategory() (CategoryListResponse, error)
 	// EventSignUp(eventId uint64, userId uint64)(error)
-	// CancelEventSignUp(eventId uint64, userId uint64) (error) 
+	// CancelEventSignUp(eventId uint64, userId uint64) (error)
 	// GetRecomendedEvent(userId uint64) (EventListResponse, error)
 }

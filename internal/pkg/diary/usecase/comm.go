@@ -29,41 +29,40 @@ func InitDiaryUsc(pr domain.DiaryRepository) domain.DiaryUsecase {
 	}
 }
 
-
-func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreatingRequest) (domain.DiaryCreatingResponse, error) {
+func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId uint32) (domain.DiaryCreateResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
-	// 	return domain.DiaryCreatingResponse{}, err
+	// 	return domain.DiaryCreateResponse{}, err
 	// }
 
 	// if alreadyExist {
-	// 	return domain.DiaryCreatingResponse{}, domain.Err.ErrObj.PlaylistExist
+	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
 
 	if !diaryData.IsValid() {
-		return domain.DiaryCreatingResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
+		return domain.DiaryCreateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
 
-	diaryCreatingResponse, err := eu.diaryRepo.CreateDiary(diaryData)
+	DiaryCreateResponse, err := eu.diaryRepo.CreateDiary(diaryData, medicId)
 	if err != nil {
-		return domain.DiaryCreatingResponse{}, err
+		return domain.DiaryCreateResponse{}, err
 	}
 
-	// diaryCreatingResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
+	// DiaryCreateResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
 	// if err != nil {
 	// 	return domain.EventCreatingResponse{}, err
 	// }
-	return diaryCreatingResponse, nil
+	return DiaryCreateResponse, nil
 }
 
-func (eu DiaryUsecase) DeleteDiary(diaryId uint64) (error) {
+func (eu DiaryUsecase) DeleteDiary(diaryId uint64) error {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
-	// 	return domain.DiaryCreatingResponse{}, err
+	// 	return domain.DiaryCreateResponse{}, err
 	// }
 
 	// if alreadyExist {
-	// 	return domain.DiaryCreatingResponse{}, domain.Err.ErrObj.PlaylistExist
+	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
 
 	err := eu.diaryRepo.DeleteDiary(diaryId)
@@ -75,9 +74,9 @@ func (eu DiaryUsecase) DeleteDiary(diaryId uint64) (error) {
 }
 
 func (eu DiaryUsecase) GetDiary() (domain.DiaryListResponse, error) {
-	
+
 	feed, err := eu.diaryRepo.GetDiary()
-	
+
 	if err != nil {
 		return domain.DiaryListResponse{}, err
 	}
@@ -86,11 +85,11 @@ func (eu DiaryUsecase) GetDiary() (domain.DiaryListResponse, error) {
 }
 
 func (eu DiaryUsecase) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, error) {
-	diar1y := domain.RecordCreatingResponse{}
+	diar1y := domain.RecordCreateResponse{}
 	diar1y.SetDefault()
 	diary := domain.DiaryResponse{}
 	diary, err := eu.diaryRepo.GetCertainDiary(diaryId)
-	
+
 	if err != nil {
 		return domain.DiaryResponse{}, err
 	}
@@ -98,18 +97,18 @@ func (eu DiaryUsecase) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, er
 	return diary, nil
 }
 
-func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCreatingRequest, imageInfo []domain.ImageInfoUsecase) (domain.RecordCreatingResponse, error) {
+func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCreateRequest, imageInfo []domain.ImageInfoUsecase) (domain.RecordCreateResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
-	// 	return domain.DiaryCreatingResponse{}, err
+	// 	return domain.DiaryCreateResponse{}, err
 	// }
 
 	// if alreadyExist {
-	// 	return domain.DiaryCreatingResponse{}, domain.Err.ErrObj.PlaylistExist
+	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
 
 	if !recordData.IsValid() {
-		return domain.RecordCreatingResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
+		return domain.RecordCreateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
 	Area := 0.0
 	for i := range imageInfo {
@@ -117,7 +116,7 @@ func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCrea
 	}
 	alreadyUsed, err := eu.diaryRepo.GetImageNames()
 	if err != nil {
-		return domain.RecordCreatingResponse{}, err
+		return domain.RecordCreateResponse{}, err
 	}
 	imageNames := filesaver.GetUniqueFileNames(len(imageInfo), alreadyUsed)
 	for i := 0; i < len(imageInfo); i++ {
@@ -125,39 +124,39 @@ func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCrea
 
 	}
 	// TODO solve the problem with the same filenames. For example with generating filenames or with creating folders for every record
-	diaryCreatingResponse, err := eu.diaryRepo.CreateRecord(diaryId, recordData, imageInfo, Area)
+	DiaryCreateResponse, err := eu.diaryRepo.CreateRecord(diaryId, recordData, imageInfo, Area)
 	if err != nil {
-		return domain.RecordCreatingResponse{}, err
+		return domain.RecordCreateResponse{}, err
 	}
 
-	// diaryCreatingResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
+	// DiaryCreateResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
 	// if err != nil {
 	// 	return domain.EventCreatingResponse{}, err
 	// }
-	return diaryCreatingResponse, nil
+	return DiaryCreateResponse, nil
 }
 
-func (eu DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdatingRequest) (domain.DiaryUpdatingResponse, error) {
+func (eu DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdateRequest) (domain.DiaryUpdateResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
-	// 	return domain.DiaryCreatingResponse{}, err
+	// 	return domain.DiaryCreateResponse{}, err
 	// }
 
 	// if alreadyExist {
-	// 	return domain.DiaryCreatingResponse{}, domain.Err.ErrObj.PlaylistExist
+	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
 
 	if !updateDiaryData.IsValid() {
-		return domain.DiaryUpdatingResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
+		return domain.DiaryUpdateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
-	diaryUpdatingResponse, err := eu.diaryRepo.UpdateDiary(updateDiaryData)
+	DiaryUpdateResponse, err := eu.diaryRepo.UpdateDiary(updateDiaryData)
 	if err != nil {
-		return domain.DiaryUpdatingResponse{}, err
+		return domain.DiaryUpdateResponse{}, err
 	}
 
-	// diaryCreatingResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
+	// DiaryCreateResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
 	// if err != nil {
 	// 	return domain.EventCreatingResponse{}, err
 	// }
-	return diaryUpdatingResponse, nil
+	return DiaryUpdateResponse, nil
 }
