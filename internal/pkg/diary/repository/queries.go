@@ -24,11 +24,13 @@ const (
 	`
 
 	queryDiaryList = `
-	SELECT id, medicId, patientId, creatingDate, title, complaints, anamnesis, objectively, diagnosis
+	SELECT id, medicid, medics.name, patientid, patients.name, creatingdate, title, objectively
 	FROM diaries
-	ORDER BY diaries.id;
+	JOIN patients ON diaries.patientid = patients.vkid
+	JOIN medics ON diaries.medicid = medics.vkid
+	ORDER BY creatingdate;
 	`
-	
+
 	queryGetCertainDiaryMainInfo = `
 	SELECT id, medicId, patientId, creatingDate, title, description
 	FROM diaries

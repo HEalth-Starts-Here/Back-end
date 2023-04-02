@@ -47,10 +47,6 @@ func (handler *DiaryHandler) CreateDiary(w http.ResponseWriter, r *http.Request)
 	queryParameter := r.URL.Query().Get("vk_user_id")
 	medicId64, err := strconv.ParseUint(queryParameter, 10, 32)
 	medicId := (uint32)(medicId64)
-
-	println(medicId)
-	println(medicId)
-	println(medicId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)

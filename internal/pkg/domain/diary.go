@@ -103,9 +103,18 @@ type DiaryCreateResponse struct {
 	CreatingDate   string `json:"creatingdate"`
 	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
 }
-
+type DiaryInList struct {
+	Id				uint64 `json:"id"`
+	Title   		string `json:"title"`
+	MedicId			uint32 `json:"medicid"`
+	MedicName   	string `json:"medicname"`
+	PatientId   	uint32 `json:"patientid"`
+	PatientName		string `json:"patientname"`
+	CreatingDate	string `json:"creatingdate"`
+	Objectively		string `json:"objectively"`
+}
 type DiaryListResponse struct {
-	DiaryList []DiaryCreateResponse `json:"diarylist"`
+	DiaryList []DiaryInList `json:"diarylist"`
 }
 
 type DiaryResponse struct {

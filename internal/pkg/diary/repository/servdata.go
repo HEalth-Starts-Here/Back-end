@@ -45,12 +45,6 @@ func (cr *dbdiaryrepository) GetImageNames() (map[string]struct{}, error) {
 
 func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicId uint32) (domain.DiaryCreateResponse, error) {
 	query := queryCreateDiary
-	println(diary.DiaryBasicInfo.Title) 
-	println(diary.DiaryBasicInfo.Complaints)
-	println(diary.DiaryBasicInfo.Anamnesis)
-	println(diary.DiaryBasicInfo.Objectively)
-	println(diary.DiaryBasicInfo.Diagnosis)
-	println(medicId)
 	resp, err := er.dbm.Query(	query, 
 								medicId,
 								0, 
@@ -143,20 +137,17 @@ func (cr *dbdiaryrepository) GetDiary() (domain.DiaryListResponse, error) {
 		return domain.DiaryListResponse{}, domain.Err.ErrObj.InternalServer
 	}
 
-	diaries := make([]domain.DiaryCreateResponse, 0)
+	diaries := make([]domain.DiaryInList, 0)
 	for i := range resp {
-		diaries = append(diaries, domain.DiaryCreateResponse{
-			Id:           cast.ToUint64(resp[i][0]),
-			MedicId:      cast.ToUint32(resp[i][1]),
-			PatientId:    cast.ToUint32(resp[i][2]),
-			CreatingDate: cast.TimeToStr(cast.ToTime(resp[i][3]), true),
-			DiaryBasicInfo: domain.DiaryBasicInfo{
-				Title:        cast.ToString(resp[i][4]),
-				Complaints:   cast.ToString(resp[i][5]),
-				Anamnesis:    cast.ToString(resp[i][6]),
-				Objectively:  cast.ToString(resp[i][7]),
-				Diagnosis:    cast.ToString(resp[i][8]),
-			},
+		diaries = append(diaries, domain.DiaryInList{
+			Id: 			cast.ToUint64(resp[i][0]),
+			MedicId:		cast.ToUint32(resp[i][1]),
+			MedicName:		cast.ToString(resp[i][2]),
+			PatientId:		cast.ToUint32(resp[i][3]),
+			PatientName:	cast.ToString(resp[i][4]),
+			CreatingDate:	cast.TimeToStr(cast.ToTime(resp[0][5]), true),
+			Title: 			cast.ToString(resp[i][6]),
+			Objectively:	cast.ToString(resp[i][7]),
 		})
 	}
 
