@@ -123,13 +123,26 @@ type DiaryInList struct {
 	CreatingDate	string `json:"creatingdate"`
 	Objectively		string `json:"objectively"`
 }
+
 type DiaryListResponse struct {
 	DiaryList []DiaryInList `json:"diarylist"`
 }
 
+type RecordBasicInfo struct {
+	CreatingDate		string `json:"creatingdate"`
+	Title				string `json:"title"`
+	Details				string `json:"details"`
+}
+
+type Records struct { 
+	MedicRecordList   []RecordBasicInfo `json:"medicrecordlist"`
+	PatientRecordList []RecordBasicInfo `json:"patientrecordlist"`
+}
+
 type DiaryResponse struct {
-	Diary       DiaryCreateResponse    `json:"diary"`
-	RecordsList []RecordCreateResponse `json:"records"`
+	PatientName			string `json:"patientname"`
+	Diary				DiaryLinkResponse `json:"diary"`
+	Records				Records `json:"records"`
 }
 
 type RecordCreateRequest struct {
@@ -182,7 +195,7 @@ type DiaryRepository interface {
 	CreateDiary(diary DiaryCreateRequest, medicId uint32) (DiaryCreateResponse, error)
 	LinkDiary(diaryId uint64, medicId uint32) (DiaryLinkResponse, error)
 	DeleteDiary(diaryid uint64) error
-	GetDiary() (DiaryListResponse, error)
+	GetDiary(userId uint32) (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreateResponse, error)
 	UpdateDiary(diary DiaryUpdateRequest, diaryId uint64) (DiaryUpdateResponse, error)
@@ -202,7 +215,7 @@ type DiaryUsecase interface {
 	CreateDiary(diary DiaryCreateRequest, medicId uint32) (DiaryCreateResponse, error)
 	LinkDiary(diaryId uint64, medicId uint32) (DiaryLinkResponse, error)
 	DeleteDiary(diaryid uint64) error
-	GetDiary() (DiaryListResponse, error)
+	GetDiary(userId uint32) (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase) (RecordCreateResponse, error)
 	UpdateDiary(diary DiaryUpdateRequest, diaryId uint64) (DiaryUpdateResponse, error)

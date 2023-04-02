@@ -95,9 +95,9 @@ func (eu DiaryUsecase) DeleteDiary(diaryId uint64) error {
 	return nil
 }
 
-func (eu DiaryUsecase) GetDiary() (domain.DiaryListResponse, error) {
+func (eu DiaryUsecase) GetDiary(userId uint32) (domain.DiaryListResponse, error) {
 
-	feed, err := eu.diaryRepo.GetDiary()
+	feed, err := eu.diaryRepo.GetDiary(userId)
 
 	if err != nil {
 		return domain.DiaryListResponse{}, err

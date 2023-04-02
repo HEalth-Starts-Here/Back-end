@@ -38,13 +38,16 @@ const (
 	FROM diaries
 	JOIN patients ON diaries.patientid = patients.vkid
 	JOIN medics ON diaries.medicid = medics.vkid
+	WHERE medicid = $1 OR patientid = $1
 	ORDER BY creatingdate;
 	`
 
 	queryGetCertainDiaryMainInfo = `
-	SELECT id, medicId, patientId, creatingDate, title, description
-	FROM diaries
-	WHERE id = $1;
+	SELECT patients.name, diaries.id, medicid, medics.name, patientid, creatingDate, title, complaints, anamnesis, objectively, diagnosis
+	FROM diaries 
+	JOIN patients on diaries.patientid = patients.vkid
+	JOIN medics on diaries.medicid = medics.vkid
+	WHERE diaries.id = $1;
 	`
 
 	// queryGetCertainDiaryRecords = `
@@ -52,9 +55,15 @@ const (
 	// FROM records
 	// WHERE diaryid = $1;
 	// `
-	queryGetCertainDiaryRecords = `
-	SELECT id, diaryid, creatingdate, description, title, area, dryness, edema, itching, pain, peeling, redness
-	FROM records
+	queryGetCertainDiaryMedicRecords = `
+	SELECT creatingdate, title, details
+	FROM medicRecords
+	WHERE diaryid = $1;
+	`
+
+	queryGetCertainDiaryPatientRecords = `
+	SELECT creatingdate, title, details
+	FROM patientRecords
 	WHERE diaryid = $1;
 	`
 

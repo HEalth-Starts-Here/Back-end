@@ -151,12 +151,12 @@ func (er *dbdiaryrepository) DeleteDiary(diaryId uint64) error {
 // 	return false, nil
 // }
 
-func (cr *dbdiaryrepository) GetDiary() (domain.DiaryListResponse, error) {
+func (cr *dbdiaryrepository) GetDiary(userId uint32) (domain.DiaryListResponse, error) {
 	var resp []database.DBbyterow
 	var err error
 
 	query := queryDiaryList
-	resp, err = cr.dbm.Query(query)
+	resp, err = cr.dbm.Query(query, userId)
 
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
@@ -223,23 +223,27 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		return domain.DiaryResponse{}, domain.Err.ErrObj.SmallDb
 	}
 
-	diary := domain.DiaryCreateResponse{
-		Id:           cast.ToUint64(resp[0][0]),
-		MedicId:      cast.ToUint32(resp[0][1]),
-		PatientId:    cast.ToUint32(resp[0][2]),
-		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][3]), true),
-		DiaryBasicInfo: domain.DiaryBasicInfo{
-			Title:        cast.ToString(resp[0][4]),
-			Complaints:   cast.ToString(resp[0][5]),
-			Anamnesis:    cast.ToString(resp[0][6]),
-			Objectively:  cast.ToString(resp[0][7]),
-			Diagnosis:    cast.ToString(resp[0][8]),
+	diary := domain.DiaryResponse{
+		PatientName: cast.ToString(resp[0][0]),
+		Diary: domain.DiaryLinkResponse{
+			Id: cast.ToUint64(resp[0][1]),
+			MedicId: cast.ToUint32(resp[0][2]),
+			MedicName: cast.ToString(resp[0][3]),
+			PatientId: cast.ToUint32(resp[0][4]),
+			CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][5]), true),
+			DiaryBasicInfo: domain.DiaryBasicInfo{
+				Title:        cast.ToString(resp[0][6]),
+				Complaints:   cast.ToString(resp[0][7]),
+				Anamnesis:    cast.ToString(resp[0][8]),
+				Objectively:  cast.ToString(resp[0][9]),
+				Diagnosis:    cast.ToString(resp[0][10]),
+			},
 		},
 	}
 
 	var resp2 []database.DBbyterow
 	var err2 error
-	query2 := queryGetCertainDiaryRecords
+	query2 := queryGetCertainDiaryMedicRecords
 	resp2, err2 = dr.dbm.Query(query2, diaryId)
 
 	if err2 != nil {
@@ -248,35 +252,44 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
 	}
 
-	records := make([]domain.RecordCreateResponse, 0)
+	records1 := make([]domain.RecordBasicInfo, 0)
 	for i := range resp2 {
-		RecordCreateResponse := domain.RecordCreateResponse{
-			Id:           cast.ToUint64(resp2[i][0]),
-			DiaryId:      cast.ToUint64(resp2[i][1]),
-			CreatingDate: cast.TimeToStr(cast.ToTime(resp2[i][2]), true),
-			Description:  cast.ToString(resp2[i][3]),
-			Title:        cast.ToString(resp2[i][4]),
-			Area:         cast.ToFloat64(resp2[i][5]),
-			Characteristics: domain.Characteristics{
-				Dryness: cast.ToUint8(resp2[i][6]),
-				Edema:   cast.ToUint8(resp2[i][7]),
-				Itching: cast.ToUint8(resp2[i][8]),
-				Pain:    cast.ToUint8(resp2[i][9]),
-				Peeling: cast.ToUint8(resp2[i][10]),
-				Redness: cast.ToUint8(resp2[i][11]),
-			},
+		RecordCreateResponse := domain.RecordBasicInfo{
+			CreatingDate:    cast.TimeToStr(cast.ToTime(resp2[i][0]), true),
+			Title:     		 cast.ToString(resp2[i][1]),
+			Details: 		 cast.ToString(resp2[i][2]),
 		}
-		RecordCreateResponse.ImageList, err = dr.GetRecordImageLists(RecordCreateResponse.Id)
-		if err != nil {
-			log.Error(err)
-			return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
+		records1 = append(records1, RecordCreateResponse)
+	}
+
+
+	var resp3 []database.DBbyterow
+	var err3 error
+	query3 := queryGetCertainDiaryPatientRecords
+	resp3, err3 = dr.dbm.Query(query3, diaryId)
+
+	if err3 != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query3)
+		log.Error(err3)
+		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
+	}
+	records2 := make([]domain.RecordBasicInfo, 0)
+	for i := range resp3 {
+		RecordCreateResponse := domain.RecordBasicInfo{
+			CreatingDate:    cast.TimeToStr(cast.ToTime(resp3[i][0]), true),
+			Title:     		 cast.ToString(resp3[i][1]),
+			Details: 		 cast.ToString(resp3[i][2]),
 		}
-		records = append(records, RecordCreateResponse)
+		records2 = append(records2, RecordCreateResponse)
 	}
 
 	out := domain.DiaryResponse{
-		Diary:       diary,
-		RecordsList: records,
+		PatientName: diary.PatientName,
+		Diary:       diary.Diary,
+		Records: domain.Records{
+			MedicRecordList: records1,
+			PatientRecordList: records2,
+		},
 	}
 
 	return out, nil
