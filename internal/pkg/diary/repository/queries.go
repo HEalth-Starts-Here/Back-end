@@ -45,8 +45,8 @@ const (
 	queryGetCertainDiaryMainInfo = `
 	SELECT patients.name, diaries.id, medicid, medics.name, patientid, creatingDate, title, complaints, anamnesis, objectively, diagnosis
 	FROM diaries 
-	JOIN patients on diaries.patientid = patients.vkid
-	JOIN medics on diaries.medicid = medics.vkid
+	LEFT JOIN patients on diaries.patientid = patients.vkid
+	LEFT JOIN medics on diaries.medicid = medics.vkid
 	WHERE diaries.id = $1;
 	`
 
