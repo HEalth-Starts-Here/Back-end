@@ -47,7 +47,7 @@ func (handler *DiaryHandler) CreateDiary(w http.ResponseWriter, r *http.Request)
 	// TODO add check is this user exist
 	queryParameter := r.URL.Query().Get("vk_user_id")
 	medicId64, err := strconv.ParseUint(queryParameter, 10, 32)
-	medicId := (uint32)(medicId64)
+	medicId := (uint64)(medicId64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
@@ -109,7 +109,7 @@ func (handler *DiaryHandler) LinkDiary(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	medicId := (uint32)(medicId64)
+	medicId := (uint64)(medicId64)
 
 	params := mux.Vars(r)
 	diaryId, err := strconv.ParseUint(params["id"], 10, 64)
@@ -175,7 +175,7 @@ func (handler *DiaryHandler) GetDiary(w http.ResponseWriter, r *http.Request) {
 	// categories := strings.Split(categoryString, " ")
 	queryParameter := r.URL.Query().Get("vk_user_id")
 	userId64, err := strconv.ParseUint(queryParameter, 10, 32)
-	userId := (uint32)(userId64)
+	userId := (uint64)(userId64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)

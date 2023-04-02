@@ -29,7 +29,7 @@ func InitDiaryUsc(pr domain.DiaryRepository) domain.DiaryUsecase {
 	}
 }
 
-func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId uint32) (domain.DiaryCreateResponse, error) {
+func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId uint64) (domain.DiaryCreateResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -55,7 +55,7 @@ func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId 
 	return DiaryCreateResponse, nil
 }
 
-func (eu DiaryUsecase) LinkDiary(diaryId uint64, medicId uint32) (domain.DiaryLinkResponse, error) {
+func (eu DiaryUsecase) LinkDiary(diaryId uint64, medicId uint64) (domain.DiaryLinkResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -95,7 +95,7 @@ func (eu DiaryUsecase) DeleteDiary(diaryId uint64) error {
 	return nil
 }
 
-func (eu DiaryUsecase) GetDiary(userId uint32) (domain.DiaryListResponse, error) {
+func (eu DiaryUsecase) GetDiary(userId uint64) (domain.DiaryListResponse, error) {
 
 	feed, err := eu.diaryRepo.GetDiary(userId)
 

@@ -71,15 +71,15 @@ func (er DiaryUpdateRequest) IsValid() (isValid bool) {
 }
 
 type DiaryUpdateRequest struct {
-	DiaryBasicInfo	DiaryBasicInfo `json:"diarybasicinfo"`
+	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
 }
 
 type DiaryUpdateResponse struct {
-	Id				uint64 `json:"id"`
-	MedicId			uint32 `json:"medicid"`
-	PatientId		uint32 `json:"patientid"`
-	CreatingDate	string `json:"creatingdate"`
-	DiaryBasicInfo	DiaryBasicInfo `json:"diarybasicinfo"`
+	Id             uint64         `json:"id"`
+	MedicId        uint64         `json:"medicid"`
+	PatientId      uint64         `json:"patientid"`
+	CreatingDate   string         `json:"creatingdate"`
+	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
 }
 
 type DiaryBasicInfo struct {
@@ -91,37 +91,37 @@ type DiaryBasicInfo struct {
 }
 
 type DiaryCreateRequest struct {
-	// MedicId		   uint32 `json:"medicid"`
-	// PatientId	   uint32 `json:"patientid"`
+	// MedicId		   uint64 `json:"medicid"`
+	// PatientId	   uint64 `json:"patientid"`
 	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
 }
 
 type DiaryCreateResponse struct {
-	Id             uint64 `json:"id"`
-	MedicId        uint32 `json:"medicid"`
-	PatientId      uint32 `json:"patientid"`
-	CreatingDate   string `json:"creatingdate"`
+	Id             uint64         `json:"id"`
+	MedicId        uint64         `json:"medicid"`
+	PatientId      uint64         `json:"patientid"`
+	CreatingDate   string         `json:"creatingdate"`
 	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
 }
 
 type DiaryLinkResponse struct {
-	Id             uint64 `json:"id"`
-	MedicId        uint32 `json:"medicid"`
-	MedicName      string `json:"medicname"`
-	PatientId      uint32 `json:"patientid"`
-	CreatingDate   string `json:"creatingdate"`
+	Id             uint64         `json:"id"`
+	MedicId        uint64         `json:"medicid"`
+	MedicName      string         `json:"medicname"`
+	PatientId      uint64         `json:"patientid"`
+	CreatingDate   string         `json:"creatingdate"`
 	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
 }
 
 type DiaryInList struct {
-	Id				uint64 `json:"id"`
-	Title   		string `json:"title"`
-	MedicId			uint32 `json:"medicid"`
-	MedicName   	string `json:"medicname"`
-	PatientId   	uint32 `json:"patientid"`
-	PatientName		string `json:"patientname"`
-	CreatingDate	string `json:"creatingdate"`
-	Objectively		string `json:"objectively"`
+	Id           uint64 `json:"id"`
+	Title        string `json:"title"`
+	MedicId      uint64 `json:"medicid"`
+	MedicName    string `json:"medicname"`
+	PatientId    uint64 `json:"patientid"`
+	PatientName  string `json:"patientname"`
+	CreatingDate string `json:"creatingdate"`
+	Objectively  string `json:"objectively"`
 }
 
 type DiaryListResponse struct {
@@ -129,20 +129,20 @@ type DiaryListResponse struct {
 }
 
 type RecordBasicInfo struct {
-	CreatingDate		string `json:"creatingdate"`
-	Title				string `json:"title"`
-	Details				string `json:"details"`
+	CreatingDate string `json:"creatingdate"`
+	Title        string `json:"title"`
+	Details      string `json:"details"`
 }
 
-type Records struct { 
+type Records struct {
 	MedicRecordList   []RecordBasicInfo `json:"medicrecordlist"`
 	PatientRecordList []RecordBasicInfo `json:"patientrecordlist"`
 }
 
 type DiaryResponse struct {
-	PatientName			string `json:"patientname"`
-	Diary				DiaryLinkResponse `json:"diary"`
-	Records				Records `json:"records"`
+	PatientName string            `json:"patientname"`
+	Diary       DiaryLinkResponse `json:"diary"`
+	Records     Records           `json:"records"`
 }
 
 type RecordCreateRequest struct {
@@ -192,10 +192,10 @@ type ImageInfoUsecase struct {
 // // TODO Define palm area as 1%
 
 type DiaryRepository interface {
-	CreateDiary(diary DiaryCreateRequest, medicId uint32) (DiaryCreateResponse, error)
-	LinkDiary(diaryId uint64, medicId uint32) (DiaryLinkResponse, error)
+	CreateDiary(diary DiaryCreateRequest, medicId uint64) (DiaryCreateResponse, error)
+	LinkDiary(diaryId uint64, medicId uint64) (DiaryLinkResponse, error)
 	DeleteDiary(diaryid uint64) error
-	GetDiary(userId uint32) (DiaryListResponse, error)
+	GetDiary(userId uint64) (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreateResponse, error)
 	UpdateDiary(diary DiaryUpdateRequest, diaryId uint64) (DiaryUpdateResponse, error)
@@ -212,10 +212,10 @@ type DiaryRepository interface {
 }
 
 type DiaryUsecase interface {
-	CreateDiary(diary DiaryCreateRequest, medicId uint32) (DiaryCreateResponse, error)
-	LinkDiary(diaryId uint64, medicId uint32) (DiaryLinkResponse, error)
+	CreateDiary(diary DiaryCreateRequest, medicId uint64) (DiaryCreateResponse, error)
+	LinkDiary(diaryId uint64, medicId uint64) (DiaryLinkResponse, error)
 	DeleteDiary(diaryid uint64) error
-	GetDiary(userId uint32) (DiaryListResponse, error)
+	GetDiary(userId uint64) (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase) (RecordCreateResponse, error)
 	UpdateDiary(diary DiaryUpdateRequest, diaryId uint64) (DiaryUpdateResponse, error)

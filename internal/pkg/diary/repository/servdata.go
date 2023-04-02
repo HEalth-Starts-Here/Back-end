@@ -43,17 +43,17 @@ func (cr *dbdiaryrepository) GetImageNames() (map[string]struct{}, error) {
 	return imageNames, nil
 }
 
-func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicId uint32) (domain.DiaryCreateResponse, error) {
+func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicId uint64) (domain.DiaryCreateResponse, error) {
 	query := queryCreateDiary
-	resp, err := er.dbm.Query(	query, 
-								medicId,
-								0, 
-								time.Now().Format("2006.01.02 15:04:05"), 
-								diary.DiaryBasicInfo.Title, 
-								diary.DiaryBasicInfo.Complaints, 
-								diary.DiaryBasicInfo.Anamnesis,
-								diary.DiaryBasicInfo.Objectively,
-								diary.DiaryBasicInfo.Diagnosis)
+	resp, err := er.dbm.Query(query,
+		medicId,
+		0,
+		time.Now().Format("2006.01.02 15:04:05"),
+		diary.DiaryBasicInfo.Title,
+		diary.DiaryBasicInfo.Complaints,
+		diary.DiaryBasicInfo.Anamnesis,
+		diary.DiaryBasicInfo.Objectively,
+		diary.DiaryBasicInfo.Diagnosis)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
@@ -62,24 +62,24 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 
 	return domain.DiaryCreateResponse{
 		Id:           cast.ToUint64(resp[0][0]),
-		MedicId:      cast.ToUint32(resp[0][1]),
-		PatientId:    cast.ToUint32(resp[0][2]),
+		MedicId:      cast.ToUint64(resp[0][1]),
+		PatientId:    cast.ToUint64(resp[0][2]),
 		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][3]), true),
 		DiaryBasicInfo: domain.DiaryBasicInfo{
-			Title:        cast.ToString(resp[0][4]),
-			Complaints:   cast.ToString(resp[0][5]),
-			Anamnesis:    cast.ToString(resp[0][6]),
-			Objectively:  cast.ToString(resp[0][7]),
-			Diagnosis:    cast.ToString(resp[0][8]),
+			Title:       cast.ToString(resp[0][4]),
+			Complaints:  cast.ToString(resp[0][5]),
+			Anamnesis:   cast.ToString(resp[0][6]),
+			Objectively: cast.ToString(resp[0][7]),
+			Diagnosis:   cast.ToString(resp[0][8]),
 		},
 	}, nil
 }
 
-func (er *dbdiaryrepository) LinkDiary(diaryId uint64, medicId uint32) (domain.DiaryLinkResponse, error) {
+func (er *dbdiaryrepository) LinkDiary(diaryId uint64, medicId uint64) (domain.DiaryLinkResponse, error) {
 	query := queryLinkDiary
-	resp, err := er.dbm.Query(	query, 
-								diaryId,
-								medicId)
+	resp, err := er.dbm.Query(query,
+		diaryId,
+		medicId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
@@ -88,16 +88,16 @@ func (er *dbdiaryrepository) LinkDiary(diaryId uint64, medicId uint32) (domain.D
 
 	return domain.DiaryLinkResponse{
 		Id:           cast.ToUint64(resp[0][0]),
-		MedicId:      cast.ToUint32(resp[0][1]),
+		MedicId:      cast.ToUint64(resp[0][1]),
 		MedicName:    cast.ToString(resp[0][2]),
-		PatientId:    cast.ToUint32(resp[0][3]),
+		PatientId:    cast.ToUint64(resp[0][3]),
 		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][4]), true),
 		DiaryBasicInfo: domain.DiaryBasicInfo{
-			Title:        cast.ToString(resp[0][5]),
-			Complaints:   cast.ToString(resp[0][6]),
-			Anamnesis:    cast.ToString(resp[0][7]),
-			Objectively:  cast.ToString(resp[0][8]),
-			Diagnosis:    cast.ToString(resp[0][9]),
+			Title:       cast.ToString(resp[0][5]),
+			Complaints:  cast.ToString(resp[0][6]),
+			Anamnesis:   cast.ToString(resp[0][7]),
+			Objectively: cast.ToString(resp[0][8]),
+			Diagnosis:   cast.ToString(resp[0][9]),
 		},
 	}, nil
 }
@@ -151,7 +151,7 @@ func (er *dbdiaryrepository) DeleteDiary(diaryId uint64) error {
 // 	return false, nil
 // }
 
-func (cr *dbdiaryrepository) GetDiary(userId uint32) (domain.DiaryListResponse, error) {
+func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, error) {
 	var resp []database.DBbyterow
 	var err error
 
@@ -167,14 +167,14 @@ func (cr *dbdiaryrepository) GetDiary(userId uint32) (domain.DiaryListResponse, 
 	diaries := make([]domain.DiaryInList, 0)
 	for i := range resp {
 		diaries = append(diaries, domain.DiaryInList{
-			Id: 			cast.ToUint64(resp[i][0]),
-			MedicId:		cast.ToUint32(resp[i][1]),
-			MedicName:		cast.ToString(resp[i][2]),
-			PatientId:		cast.ToUint32(resp[i][3]),
-			PatientName:	cast.ToString(resp[i][4]),
-			CreatingDate:	cast.TimeToStr(cast.ToTime(resp[0][5]), true),
-			Title: 			cast.ToString(resp[i][6]),
-			Objectively:	cast.ToString(resp[i][7]),
+			Id:           cast.ToUint64(resp[i][0]),
+			MedicId:      cast.ToUint64(resp[i][1]),
+			MedicName:    cast.ToString(resp[i][2]),
+			PatientId:    cast.ToUint64(resp[i][3]),
+			PatientName:  cast.ToString(resp[i][4]),
+			CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][5]), true),
+			Title:        cast.ToString(resp[i][6]),
+			Objectively:  cast.ToString(resp[i][7]),
 		})
 	}
 
@@ -226,17 +226,17 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	diary := domain.DiaryResponse{
 		PatientName: cast.ToString(resp[0][0]),
 		Diary: domain.DiaryLinkResponse{
-			Id: cast.ToUint64(resp[0][1]),
-			MedicId: cast.ToUint32(resp[0][2]),
-			MedicName: cast.ToString(resp[0][3]),
-			PatientId: cast.ToUint32(resp[0][4]),
+			Id:           cast.ToUint64(resp[0][1]),
+			MedicId:      cast.ToUint64(resp[0][2]),
+			MedicName:    cast.ToString(resp[0][3]),
+			PatientId:    cast.ToUint64(resp[0][4]),
 			CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][5]), true),
 			DiaryBasicInfo: domain.DiaryBasicInfo{
-				Title:        cast.ToString(resp[0][6]),
-				Complaints:   cast.ToString(resp[0][7]),
-				Anamnesis:    cast.ToString(resp[0][8]),
-				Objectively:  cast.ToString(resp[0][9]),
-				Diagnosis:    cast.ToString(resp[0][10]),
+				Title:       cast.ToString(resp[0][6]),
+				Complaints:  cast.ToString(resp[0][7]),
+				Anamnesis:   cast.ToString(resp[0][8]),
+				Objectively: cast.ToString(resp[0][9]),
+				Diagnosis:   cast.ToString(resp[0][10]),
 			},
 		},
 	}
@@ -255,13 +255,12 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	records1 := make([]domain.RecordBasicInfo, 0)
 	for i := range resp2 {
 		RecordCreateResponse := domain.RecordBasicInfo{
-			CreatingDate:    cast.TimeToStr(cast.ToTime(resp2[i][0]), true),
-			Title:     		 cast.ToString(resp2[i][1]),
-			Details: 		 cast.ToString(resp2[i][2]),
+			CreatingDate: cast.TimeToStr(cast.ToTime(resp2[i][0]), true),
+			Title:        cast.ToString(resp2[i][1]),
+			Details:      cast.ToString(resp2[i][2]),
 		}
 		records1 = append(records1, RecordCreateResponse)
 	}
-
 
 	var resp3 []database.DBbyterow
 	var err3 error
@@ -276,9 +275,9 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	records2 := make([]domain.RecordBasicInfo, 0)
 	for i := range resp3 {
 		RecordCreateResponse := domain.RecordBasicInfo{
-			CreatingDate:    cast.TimeToStr(cast.ToTime(resp3[i][0]), true),
-			Title:     		 cast.ToString(resp3[i][1]),
-			Details: 		 cast.ToString(resp3[i][2]),
+			CreatingDate: cast.TimeToStr(cast.ToTime(resp3[i][0]), true),
+			Title:        cast.ToString(resp3[i][1]),
+			Details:      cast.ToString(resp3[i][2]),
 		}
 		records2 = append(records2, RecordCreateResponse)
 	}
@@ -287,7 +286,7 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		PatientName: diary.PatientName,
 		Diary:       diary.Diary,
 		Records: domain.Records{
-			MedicRecordList: records1,
+			MedicRecordList:   records1,
 			PatientRecordList: records2,
 		},
 	}
@@ -402,16 +401,16 @@ func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdateRequest, diaryI
 	}
 
 	return domain.DiaryUpdateResponse{
-		Id:          	cast.ToUint64(resp[0][0]),
-		MedicId:        cast.ToUint32(resp[0][1]),
-		PatientId:      cast.ToUint32(resp[0][2]),
-		CreatingDate:   cast.TimeToStr(cast.ToTime(resp[0][3]), true),
+		Id:           cast.ToUint64(resp[0][0]),
+		MedicId:      cast.ToUint64(resp[0][1]),
+		PatientId:    cast.ToUint64(resp[0][2]),
+		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][3]), true),
 		DiaryBasicInfo: domain.DiaryBasicInfo{
-			Title: 			cast.ToString(resp[0][4]),
-			Complaints: 	cast.ToString(resp[0][5]),
-			Anamnesis: 		cast.ToString(resp[0][6]),
-			Objectively:	cast.ToString(resp[0][7]),
-			Diagnosis:		cast.ToString(resp[0][8]),
+			Title:       cast.ToString(resp[0][4]),
+			Complaints:  cast.ToString(resp[0][5]),
+			Anamnesis:   cast.ToString(resp[0][6]),
+			Objectively: cast.ToString(resp[0][7]),
+			Diagnosis:   cast.ToString(resp[0][8]),
 		},
 	}, nil
 }
