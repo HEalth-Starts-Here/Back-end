@@ -111,46 +111,6 @@ func (er *dbdiaryrepository) DeleteDiary(diaryId uint64) error {
 	return err
 }
 
-// func (er *dbdiaryrepository) CreateEventCategory(eventId uint64, categories []string) ([]string, error) {
-// 	// var sb strings.Builder
-// 	// sb.WriteString(queryCreateEventCategoryFirstPart)
-// 	// for i, el := range(categories) {
-// 	// 	sb.WriteString(queryCreateEventCategorySecondPart)
-// 	// 	sb.WriteString(string(i * 2))
-// 	// 	sb.WriteString(queryCreateEventCategoryThirdPart)
-// 	// 	sb.WriteString(string(i * 2 + 1))
-// 	// 	sb.WriteString(queryCreateEventCategoryForthPart)
-// 	// 	sb.WriteString(",")
-// 	// }
-// 	// sb.WriteString(queryCreateEventCategoryFifthPart)
-// 	// var resp []database.DBbyterow
-// 	var err error
-// 	for i, _ := range categories {
-// 		_, err = er.dbm.Query(queryCreateEventCategory, eventId, categories[i])
-// 		if err != nil {
-// 			log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
-// 			log.Error(err)
-// 			return nil, err
-// 		}
-// 	}
-
-// 	return categories, nil
-// }
-
-// func (er *dbeventrepository) EventAlreadyExist(event domain.EventCreatingRequest) (bool, error) {
-// 	resp, err := er.dbm.Query(queryCheckEvent, event.Title, event.Longitude, event.Latitude)
-// 	if err != nil {
-// 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
-// 		log.Error(err)
-// 		return false, err
-// 	}
-
-// 	if cast.ToUint64(resp[0][0]) != 0 {
-// 		return true, nil
-// 	}
-// 	return false, nil
-// }
-
 func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, error) {
 	var resp []database.DBbyterow
 	var err error
@@ -264,6 +224,7 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 
 	var resp3 []database.DBbyterow
 	var err3 error
+	//TODO replace this query with queryGetCertainDiaryRecords
 	query3 := queryGetCertainDiaryPatientRecords
 	resp3, err3 = dr.dbm.Query(query3, diaryId)
 
