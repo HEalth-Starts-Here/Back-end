@@ -103,6 +103,16 @@ type DiaryCreateResponse struct {
 	CreatingDate   string `json:"creatingdate"`
 	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
 }
+
+type DiaryLinkResponse struct {
+	Id             uint64 `json:"id"`
+	MedicId        uint32 `json:"medicid"`
+	MedicName      string `json:"medicname"`
+	PatientId      uint32 `json:"patientid"`
+	CreatingDate   string `json:"creatingdate"`
+	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
+}
+
 type DiaryInList struct {
 	Id				uint64 `json:"id"`
 	Title   		string `json:"title"`
@@ -170,6 +180,7 @@ type ImageInfoUsecase struct {
 
 type DiaryRepository interface {
 	CreateDiary(diary DiaryCreateRequest, medicId uint32) (DiaryCreateResponse, error)
+	LinkDiary(diaryId uint64, medicId uint32) (DiaryLinkResponse, error)
 	DeleteDiary(diaryid uint64) error
 	GetDiary() (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
@@ -189,6 +200,7 @@ type DiaryRepository interface {
 
 type DiaryUsecase interface {
 	CreateDiary(diary DiaryCreateRequest, medicId uint32) (DiaryCreateResponse, error)
+	LinkDiary(diaryId uint64, medicId uint32) (DiaryLinkResponse, error)
 	DeleteDiary(diaryid uint64) error
 	GetDiary() (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)

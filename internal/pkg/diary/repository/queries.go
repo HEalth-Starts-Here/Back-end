@@ -18,6 +18,16 @@ const (
 	RETURNING id, medicId, patientId, creatingDate, title, complaints, anamnesis, objectively, diagnosis;
 	`
 	
+	queryLinkDiary = `
+	UPDATE diaries
+	SET patientid = $2
+	FROM diaries d
+	JOIN medics m
+	ON d.medicid = m.vkid
+	WHERE diaries.id = $1
+	RETURNING d.id, d.medicid, m.name, d.patientid, d.creatingdate, d.title, d.complaints, d.anamnesis, d.objectively, d.diagnosis;
+	`
+
 	queryDeleteDiary = `
 	DELETE FROM diaries
 	WHERE id = $1;

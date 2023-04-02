@@ -75,6 +75,33 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 	}, nil
 }
 
+func (er *dbdiaryrepository) LinkDiary(diaryId uint64, medicId uint32) (domain.DiaryLinkResponse, error) {
+	query := queryLinkDiary
+	resp, err := er.dbm.Query(	query, 
+								diaryId,
+								medicId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.DiaryLinkResponse{}, err
+	}
+
+	return domain.DiaryLinkResponse{
+		Id:           cast.ToUint64(resp[0][0]),
+		MedicId:      cast.ToUint32(resp[0][1]),
+		MedicName:    cast.ToString(resp[0][2]),
+		PatientId:    cast.ToUint32(resp[0][3]),
+		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][4]), true),
+		DiaryBasicInfo: domain.DiaryBasicInfo{
+			Title:        cast.ToString(resp[0][5]),
+			Complaints:   cast.ToString(resp[0][6]),
+			Anamnesis:    cast.ToString(resp[0][7]),
+			Objectively:  cast.ToString(resp[0][8]),
+			Diagnosis:    cast.ToString(resp[0][9]),
+		},
+	}, nil
+}
+
 func (er *dbdiaryrepository) DeleteDiary(diaryId uint64) error {
 	_, err := er.dbm.Query(queryDeleteDiary, diaryId)
 	if err != nil {
