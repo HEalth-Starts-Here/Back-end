@@ -1,4 +1,5 @@
 import io
+import sys
 import torch
 import torchvision
 import numpy as np
@@ -10,6 +11,10 @@ from protos.iqa_pb2_grpc import IQAServicer
 
 from src.entities.predict_params import PredictParams
 from src.models.iqa_models import HyperNet, TargetNet
+from src.entities.logger import setup_default_logger
+
+
+logger = setup_default_logger("iqa_logs", sys.stdout)
 
 
 class IQAService(IQAServicer):
@@ -39,7 +44,6 @@ class IQAService(IQAServicer):
         img = Image.open(io.BytesIO(request.image)).convert("RGB")
         for _ in range(self.params.num_parts):
             img_tensor = self._transforms(img)
-            # img_tensor = torch.tensor(img_tensor.cuda()).unsqueeze(0)
             img_tensor = img_tensor.cuda().unsqueeze(0)
             weights = self._model_hyper(img_tensor)
 
@@ -50,4 +54,5 @@ class IQAService(IQAServicer):
             pred = model_target(weights["target_in_vec"])
             pred_scores.append(float(pred.item()))
         score = np.mean(sorted(pred_scores)[-self.params.num_top_parts:])
+        logger.info(f"Image score: {score}")
         return IQAResponse(quality=score > self.params.quality_threshold)
