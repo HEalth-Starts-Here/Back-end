@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+message IQARequest {
+    bytes image = 1;
+}
+
+message IQAResponse {
+    bool quality = 1;
+}
+
+service IQA {
+    rpc calculateQuality(IQARequest) returns (IQAResponse);
+}

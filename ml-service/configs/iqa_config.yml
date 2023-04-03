@@ -1,0 +1,8 @@
+service: "IQA"
+port: "[::]:50051"
+predict_params: 
+  model_path: "models/koniq_pretrained.pkl"
+  num_parts: 10
+  num_top_parts: 3
+  quality_threshold: 40.0
+max_workers: 10
