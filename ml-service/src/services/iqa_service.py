@@ -1,4 +1,5 @@
 import io
+import os
 import sys
 import torch
 import torchvision
@@ -12,6 +13,7 @@ from protos.iqa_pb2_grpc import IQAServicer
 from src.entities.predict_params import PredictParams
 from src.models.iqa_models import HyperNet, TargetNet
 from src.entities.logger import setup_default_logger
+from src.utils import download_file
 
 
 logger = setup_default_logger("iqa_logs", sys.stdout)
@@ -22,9 +24,14 @@ class IQAService(IQAServicer):
         self.params = params
         self.device = torch.device("gpu" if torch.cuda.is_available() else "cpu")
 
+        if params.download_params and not os.path.exists(self.params.model_path):
+            download_file(self.params.download_params)
+
         self._model_hyper = HyperNet(16, 112, 224, 112, 56, 28, 14, 7).to(self.device)
         self._model_hyper.train(False)
-        self._model_hyper.load_state_dict((torch.load(self.params.model_path)))
+        self._model_hyper.load_state_dict(
+            torch.load(self.params.model_path, map_location=self.device)
+        )
 
         self._transforms = torchvision.transforms.Compose(
             [
