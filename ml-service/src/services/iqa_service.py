@@ -22,7 +22,7 @@ logger = setup_default_logger("iqa_logs", sys.stdout)
 class IQAService(IQAServicer):
     def __init__(self, params: PredictParams) -> None:
         self.params = params
-        self.device = torch.device("gpu" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         if params.download_params and not os.path.exists(self.params.model_path):
             download_file(self.params.download_params)
