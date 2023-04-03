@@ -52,7 +52,7 @@ class HyperNet(nn.Module):
         self.f4 = target_fc4_size
         self.feature_size = feature_size
 
-        self.res = resnet50_backbone(lda_out_channels, target_in_size, pretrained=True)
+        self.res = resnet50_backbone(lda_out_channels, target_in_size)
 
         self.pool = nn.AdaptiveAvgPool2d((1, 1))
 
@@ -393,5 +393,5 @@ def weights_init_xavier(m):
     elif classname.find("Linear") != -1:
         init.kaiming_normal_(m.weight.data)
     elif classname.find("BatchNorm2d") != -1:
-        init.uniform_(m.weight.data, 1.0, 0.02)
+        init.uniform_(m.weight.data, 0.02, 1.0)
         init.constant_(m.bias.data, 0.0)

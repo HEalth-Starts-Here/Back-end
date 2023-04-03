@@ -20,8 +20,9 @@ logger = setup_default_logger("iqa_logs", sys.stdout)
 class IQAService(IQAServicer):
     def __init__(self, params: PredictParams) -> None:
         self.params = params
+        self.device = torch.device("gpu" if torch.cuda.is_available() else "cpu")
 
-        self._model_hyper = HyperNet(16, 112, 224, 112, 56, 28, 14, 7).cuda()
+        self._model_hyper = HyperNet(16, 112, 224, 112, 56, 28, 14, 7).to(self.device)
         self._model_hyper.train(False)
         self._model_hyper.load_state_dict((torch.load(self.params.model_path)))
 
@@ -43,11 +44,11 @@ class IQAService(IQAServicer):
         pred_scores = []
         img = Image.open(io.BytesIO(request.image)).convert("RGB")
         for _ in range(self.params.num_parts):
-            img_tensor = self._transforms(img)
-            img_tensor = img_tensor.cuda().unsqueeze(0)
+            img_tensor = self._transforms(img).to(self.device)
+            img_tensor = img_tensor.unsqueeze(0)
             weights = self._model_hyper(img_tensor)
 
-            model_target = TargetNet(weights).cuda()
+            model_target = TargetNet(weights).to(self.device)
             for param in model_target.parameters():
                 param.requires_grad = False
 
