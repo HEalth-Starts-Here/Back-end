@@ -15,4 +15,5 @@ func SetMLServicesHandlers(router *mux.Router, mlsu domain.MLServicesUsecase) {
 		MLServicesUsecase: mlsu,
 	}
 	router.HandleFunc(DetermineAreaUrl, handler.DetermineArea).Methods("POST", "OPTIONS")
+	router.HandleFunc(EstimateImageUrl, handler.ImageQualityAssesment).Methods("POST", "OPTIONS")
 }

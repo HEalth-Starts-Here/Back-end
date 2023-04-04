@@ -17,7 +17,73 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjsonCb88da03DecodeHeshInternalPkgDomain(in *jlexer.Lexer, out *DetermineAreaResponse) {
+func easyjsonCb88da03DecodeHeshInternalPkgDomain(in *jlexer.Lexer, out *ImageQualityAssesment) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "assesment":
+			out.Assesment = bool(in.Bool())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonCb88da03EncodeHeshInternalPkgDomain(out *jwriter.Writer, in ImageQualityAssesment) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"assesment\":"
+		out.RawString(prefix[1:])
+		out.Bool(bool(in.Assesment))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v ImageQualityAssesment) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonCb88da03EncodeHeshInternalPkgDomain(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v ImageQualityAssesment) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonCb88da03EncodeHeshInternalPkgDomain(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *ImageQualityAssesment) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonCb88da03DecodeHeshInternalPkgDomain(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *ImageQualityAssesment) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonCb88da03DecodeHeshInternalPkgDomain(l, v)
+}
+func easyjsonCb88da03DecodeHeshInternalPkgDomain1(in *jlexer.Lexer, out *DetermineAreaResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -48,7 +114,7 @@ func easyjsonCb88da03DecodeHeshInternalPkgDomain(in *jlexer.Lexer, out *Determin
 		in.Consumed()
 	}
 }
-func easyjsonCb88da03EncodeHeshInternalPkgDomain(out *jwriter.Writer, in DetermineAreaResponse) {
+func easyjsonCb88da03EncodeHeshInternalPkgDomain1(out *jwriter.Writer, in DetermineAreaResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -63,23 +129,23 @@ func easyjsonCb88da03EncodeHeshInternalPkgDomain(out *jwriter.Writer, in Determi
 // MarshalJSON supports json.Marshaler interface
 func (v DetermineAreaResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonCb88da03EncodeHeshInternalPkgDomain(&w, v)
+	easyjsonCb88da03EncodeHeshInternalPkgDomain1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v DetermineAreaResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonCb88da03EncodeHeshInternalPkgDomain(w, v)
+	easyjsonCb88da03EncodeHeshInternalPkgDomain1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *DetermineAreaResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonCb88da03DecodeHeshInternalPkgDomain(&r, v)
+	easyjsonCb88da03DecodeHeshInternalPkgDomain1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *DetermineAreaResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonCb88da03DecodeHeshInternalPkgDomain(l, v)
+	easyjsonCb88da03DecodeHeshInternalPkgDomain1(l, v)
 }

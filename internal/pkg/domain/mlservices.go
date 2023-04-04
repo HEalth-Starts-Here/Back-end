@@ -3,6 +3,10 @@ package domain
 // TODO write valid path
 const ()
 
+type ImageQualityAssesment struct {
+	Assesment bool `json:"assesment"`
+}
+
 type DetermineAreaResponse struct {
 	Area int32 `json:"area"`
 }
