@@ -215,9 +215,10 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	records1 := make([]domain.RecordBasicInfo, 0)
 	for i := range resp2 {
 		RecordCreateResponse := domain.RecordBasicInfo{
-			CreatingDate: cast.TimeToStr(cast.ToTime(resp2[i][0]), true),
-			Title:        cast.ToString(resp2[i][1]),
-			Details:      cast.ToString(resp2[i][2]),
+			Id:			  cast.ToUint64(resp2[i][0]),
+			CreatingDate: cast.TimeToStr(cast.ToTime(resp2[i][1]), true),
+			Title:        cast.ToString(resp2[i][2]),
+			Details:      cast.ToString(resp2[i][3]),
 		}
 		records1 = append(records1, RecordCreateResponse)
 	}
@@ -236,9 +237,10 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	records2 := make([]domain.RecordBasicInfo, 0)
 	for i := range resp3 {
 		RecordCreateResponse := domain.RecordBasicInfo{
-			CreatingDate: cast.TimeToStr(cast.ToTime(resp3[i][0]), true),
-			Title:        cast.ToString(resp3[i][1]),
-			Details:      cast.ToString(resp3[i][2]),
+			Id:			  cast.ToUint64(resp2[i][0]),
+			CreatingDate: cast.TimeToStr(cast.ToTime(resp2[i][1]), true),
+			Title:        cast.ToString(resp2[i][2]),
+			Details:      cast.ToString(resp2[i][3]),
 		}
 		records2 = append(records2, RecordCreateResponse)
 	}

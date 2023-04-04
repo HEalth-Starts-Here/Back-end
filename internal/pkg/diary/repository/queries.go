@@ -56,13 +56,13 @@ const (
 	// WHERE diaryid = $1;
 	// `
 	queryGetCertainDiaryMedicRecords = `
-	SELECT creatingdate, title, details
+	SELECT id, creatingdate, title, details
 	FROM medicRecords
 	WHERE diaryid = $1;
 	`
 
 	queryGetCertainDiaryPatientRecords = `
-	SELECT creatingdate, title, details
+	SELECT id, creatingdate, title, details
 	FROM patientRecords
 	WHERE diaryid = $1;
 	`

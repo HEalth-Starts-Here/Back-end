@@ -473,6 +473,8 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain4(in *jlexer.Lexer, out *RecordB
 			continue
 		}
 		switch key {
+		case "id":
+			out.Id = uint64(in.Uint64())
 		case "creatingdate":
 			out.CreatingDate = string(in.String())
 		case "title":
@@ -494,8 +496,13 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain4(out *jwriter.Writer, in Record
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"creatingdate\":"
+		const prefix string = ",\"id\":"
 		out.RawString(prefix[1:])
+		out.Uint64(uint64(in.Id))
+	}
+	{
+		const prefix string = ",\"creatingdate\":"
+		out.RawString(prefix)
 		out.String(string(in.CreatingDate))
 	}
 	{

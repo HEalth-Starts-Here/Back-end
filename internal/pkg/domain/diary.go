@@ -129,6 +129,7 @@ type DiaryListResponse struct {
 }
 
 type RecordBasicInfo struct {
+	Id 			 uint64 `json:"id"`
 	CreatingDate string `json:"creatingdate"`
 	Title        string `json:"title"`
 	Details      string `json:"details"`
