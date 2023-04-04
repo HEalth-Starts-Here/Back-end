@@ -29,7 +29,7 @@ func InitDiaryUsc(pr domain.DiaryRepository) domain.DiaryUsecase {
 	}
 }
 
-func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId uint64) (domain.DiaryCreateResponse, error) {
+func (du DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId uint64) (domain.DiaryCreateResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -43,7 +43,7 @@ func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId 
 		return domain.DiaryCreateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
 
-	DiaryCreateResponse, err := eu.diaryRepo.CreateDiary(diaryData, medicId)
+	DiaryCreateResponse, err := du.diaryRepo.CreateDiary(diaryData, medicId)
 	if err != nil {
 		return domain.DiaryCreateResponse{}, err
 	}
@@ -55,7 +55,7 @@ func (eu DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId 
 	return DiaryCreateResponse, nil
 }
 
-func (eu DiaryUsecase) LinkDiary(diaryId uint64, medicId uint64) (domain.DiaryLinkResponse, error) {
+func (du DiaryUsecase) LinkDiary(diaryId uint64, medicId uint64) (domain.DiaryLinkResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -65,7 +65,7 @@ func (eu DiaryUsecase) LinkDiary(diaryId uint64, medicId uint64) (domain.DiaryLi
 	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
 
-	DiaryCreateResponse, err := eu.diaryRepo.LinkDiary(diaryId, medicId)
+	DiaryCreateResponse, err := du.diaryRepo.LinkDiary(diaryId, medicId)
 	if err != nil {
 		return domain.DiaryLinkResponse{}, err
 	}
@@ -77,7 +77,7 @@ func (eu DiaryUsecase) LinkDiary(diaryId uint64, medicId uint64) (domain.DiaryLi
 	return DiaryCreateResponse, nil
 }
 
-func (eu DiaryUsecase) DeleteDiary(diaryId uint64) error {
+func (du DiaryUsecase) DeleteDiary(diaryId uint64) error {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -87,7 +87,7 @@ func (eu DiaryUsecase) DeleteDiary(diaryId uint64) error {
 	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
 
-	err := eu.diaryRepo.DeleteDiary(diaryId)
+	err := du.diaryRepo.DeleteDiary(diaryId)
 	if err != nil {
 		return err
 	}
@@ -95,9 +95,9 @@ func (eu DiaryUsecase) DeleteDiary(diaryId uint64) error {
 	return nil
 }
 
-func (eu DiaryUsecase) GetDiary(userId uint64) (domain.DiaryListResponse, error) {
+func (du DiaryUsecase) GetDiary(userId uint64) (domain.DiaryListResponse, error) {
 
-	feed, err := eu.diaryRepo.GetDiary(userId)
+	feed, err := du.diaryRepo.GetDiary(userId)
 
 	if err != nil {
 		return domain.DiaryListResponse{}, err
@@ -106,20 +106,33 @@ func (eu DiaryUsecase) GetDiary(userId uint64) (domain.DiaryListResponse, error)
 	return feed, nil
 }
 
-func (eu DiaryUsecase) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, error) {
-	diar1y := domain.RecordCreateResponse{}
-	diar1y.SetDefault()
+func (du DiaryUsecase) GetCertainDiary(diaryId uint64, userId uint64) (domain.DiaryResponse, error) {
 	diary := domain.DiaryResponse{}
-	diary, err := eu.diaryRepo.GetCertainDiary(diaryId)
-
+	diary, err := du.diaryRepo.GetCertainDiary(diaryId)
 	if err != nil {
 		return domain.DiaryResponse{}, err
+	}
+
+	isExisted, isMedic, err := du.diaryRepo.GetUserRole(userId) 
+	if err != nil {
+		return domain.DiaryResponse{}, err
+	}
+
+	if (!isExisted) {
+		return domain.DiaryResponse{}, domain.Err.ErrObj.UserNotExist
+	}
+
+	if (!isMedic) {
+		diary.Diary.DiaryBasicInfo.Anamnesis = ""
+		diary.Diary.DiaryBasicInfo.Objectively = ""
+		diary.Diary.DiaryBasicInfo.Diagnosis = ""
+		diary.Diary.DiaryBasicInfo.Complaints = ""
 	}
 
 	return diary, nil
 }
 
-func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCreateRequest, imageInfo []domain.ImageInfoUsecase) (domain.RecordCreateResponse, error) {
+func (du DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCreateRequest, imageInfo []domain.ImageInfoUsecase) (domain.RecordCreateResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -136,7 +149,7 @@ func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCrea
 	for i := range imageInfo {
 		Area += imageInfo[i].Area
 	}
-	alreadyUsed, err := eu.diaryRepo.GetImageNames()
+	alreadyUsed, err := du.diaryRepo.GetImageNames()
 	if err != nil {
 		return domain.RecordCreateResponse{}, err
 	}
@@ -146,7 +159,7 @@ func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCrea
 
 	}
 	// TODO solve the problem with the same filenames. For example with generating filenames or with creating folders for every record
-	DiaryCreateResponse, err := eu.diaryRepo.CreateRecord(diaryId, recordData, imageInfo, Area)
+	DiaryCreateResponse, err := du.diaryRepo.CreateRecord(diaryId, recordData, imageInfo, Area)
 	if err != nil {
 		return domain.RecordCreateResponse{}, err
 	}
@@ -158,7 +171,7 @@ func (eu DiaryUsecase) CreateRecord(diaryId uint64, recordData domain.RecordCrea
 	return DiaryCreateResponse, nil
 }
 
-func (eu DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdateRequest, diaryId uint64) (domain.DiaryUpdateResponse, error) {
+func (du DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdateRequest, diaryId uint64) (domain.DiaryUpdateResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -171,7 +184,7 @@ func (eu DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdateRequest, di
 	if !updateDiaryData.IsValid() {
 		return domain.DiaryUpdateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
-	DiaryUpdateResponse, err := eu.diaryRepo.UpdateDiary(updateDiaryData, diaryId)
+	DiaryUpdateResponse, err := du.diaryRepo.UpdateDiary(updateDiaryData, diaryId)
 	if err != nil {
 		return domain.DiaryUpdateResponse{}, err
 	}

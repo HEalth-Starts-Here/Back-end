@@ -174,8 +174,7 @@ func (handler *DiaryHandler) GetDiary(w http.ResponseWriter, r *http.Request) {
 	// categoryString := r.URL.Query().Get("category")
 	// categories := strings.Split(categoryString, " ")
 	queryParameter := r.URL.Query().Get("vk_user_id")
-	userId64, err := strconv.ParseUint(queryParameter, 10, 32)
-	userId := (uint64)(userId64)
+	userId, err := strconv.ParseUint(queryParameter, 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
@@ -211,8 +210,16 @@ func (handler *DiaryHandler) GetCertainDiary(w http.ResponseWriter, r *http.Requ
 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 		return
 	}
+	
+	queryParameter := r.URL.Query().Get("vk_user_id")
+	userId, err := strconv.ParseUint(queryParameter, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	diary, err := handler.DiaryUsecase.GetCertainDiary(diaryId)
+	diary, err := handler.DiaryUsecase.GetCertainDiary(diaryId, userId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

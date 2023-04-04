@@ -67,6 +67,16 @@ const (
 	WHERE diaryid = $1;
 	`
 
+	queryGetUserRole = `
+	SELECT true
+	FROM medics 
+	WHERE vkid = $1 
+	UNION ALL 
+	SELECT false
+	FROM patients 
+	WHERE vkid = $1;
+	`
+
 	queryGetCertainDiaryRecords = `
 	SELECT diaries.medicid as userid, mr.creatingdate, mr.title, details
 	FROM medicRecords mr
@@ -99,25 +109,25 @@ const (
 	RETURNING id, diaryId, creatingDate, title, description, area, dryness, edema, itching, pain, peeling, redness;
 	`
 
-queryGetImageList = `
-SELECT id, recordid, name, area
-FROM images;
-`
+	queryGetImageList = `
+	SELECT id, recordid, name, area
+	FROM images;
+	`
 
-queryCreateRecordImageListFirstPart = `
-INSERT INTO
-images (recordid, name, area)
-VALUES
-`
+	queryCreateRecordImageListFirstPart = `
+	INSERT INTO
+	images (recordid, name, area)
+	VALUES
+	`
 
-queryCreateRecordImageListSecondPart = `
-RETURNING id, recordid, name, area;
-`
+	queryCreateRecordImageListSecondPart = `
+	RETURNING id, recordid, name, area;
+	`
 
-queryUpdateDiary = `
-UPDATE diaries
-SET title = $1, complaints = $2, anamnesis = $3, objectively = $4, diagnosis = $5
-WHERE id = $6
-RETURNING id, medicid, patientid, creatingdate, title, complaints, anamnesis, objectively, diagnosis;
-`
+	queryUpdateDiary = `
+	UPDATE diaries
+	SET title = $1, complaints = $2, anamnesis = $3, objectively = $4, diagnosis = $5
+	WHERE id = $6
+	RETURNING id, medicid, patientid, creatingdate, title, complaints, anamnesis, objectively, diagnosis;
+	`
 )

@@ -164,6 +164,23 @@ func (er *dbdiaryrepository) GetRecordImageLists(recordId uint64) ([]domain.Imag
 	}
 	return response, nil
 }
+func (er *dbdiaryrepository) GetUserRole(userId uint64) (bool, bool, error) {
+	query := queryGetUserRole
+	resp, err := er.dbm.Query(query, userId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return false, false, err
+	}
+	if len(resp) == 0 {
+		return false, false, nil
+	}
+	println(cast.ToBool(resp[0][0]))
+	println(cast.ToBool(resp[0][0]))
+	println(cast.ToBool(resp[0][0]))
+	println(cast.ToBool(resp[0][0]))
+	return true, cast.ToBool(resp[0][0]), nil
+}
 
 func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, error) {
 	var resp []database.DBbyterow
