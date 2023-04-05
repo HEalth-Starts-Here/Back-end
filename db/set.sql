@@ -53,6 +53,7 @@ CREATE TABLE patientRecords (
 CREATE TABLE images (
     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
     -- TODO add foreign key refer to patientRecords
+    isMedic                             BOOLEAN,
     recordId                            BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
     name                                VARCHAR(200)
 );

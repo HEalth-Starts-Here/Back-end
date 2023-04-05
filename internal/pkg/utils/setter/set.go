@@ -20,6 +20,10 @@ import (
 	userdelivery "hesh/internal/pkg/user/delivery"
 	userrepository "hesh/internal/pkg/user/repository"
 	userusecase "hesh/internal/pkg/user/usecase"
+
+	recorddelivery "hesh/internal/pkg/record/delivery"
+	recordrepository "hesh/internal/pkg/record/repository"
+	recordusecase "hesh/internal/pkg/record/usecase"
 	// eventdelivery "hesh/internal/pkg/event/delivery"
 	// eventrepository "hesh/internal/pkg/event/repository"
 	// eventusecase "hesh/internal/pkg/event/usecase"
@@ -38,6 +42,7 @@ type Services struct {
 	Diary Data
 	MLServices Data
 	User Data
+	Record Data
 }
 
 // func setAutMcs() autmcs.AutherClient {
@@ -54,16 +59,20 @@ func SetHandlers(svs Services) {
 	diaryRep := diaryrepository.InitDiaryRep(svs.Diary.Db)
 	mlservicesRep := mlservicesrepository.InitMLServicesRep(svs.MLServices.Db)
 	userRep := userrepository.InitUserRep(svs.User.Db)
+	recordRep := recordrepository.InitRecordRep(svs.Record.Db)
 
 	// userUsc := usrusecase.InitUsrUsc(userRep)
 	diaryUsc := diaryusecase.InitDiaryUsc(diaryRep)
 	mlservicesUsc := mlservicesusecase.InitMLServicesUsc(mlservicesRep)
 	userUsc := userusecase.InitUserUsc(userRep)
+	recordUsc := recordusecase.InitRecordUsc(recordRep)
 
 	// usrdelivery.SetUsrHandlers(svs.User.Api, userUsc)
 	diarydelivery.SetDiaryHandlers(svs.Diary.Api, diaryUsc)
 	mlservicesdelivery.SetMLServicesHandlers(svs.MLServices.Api, mlservicesUsc)
 	userdelivery.SetUserHandlers(svs.User.Api, userUsc)
+	recorddelivery.SetRecordHandlers(svs.Record.Api, recordUsc)
+
 
 	// autdelivery.SetAutHandlers(svs.Aut.Api, setAutMcs())
 }

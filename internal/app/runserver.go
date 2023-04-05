@@ -46,6 +46,7 @@ func RunServer() {
 	Diary: setter.Data{Db: db, Api: api},
 	MLServices: setter.Data{Db: db, Api: api},
 	User: setter.Data{Db: db, Api: api},
+	Record: setter.Data{Db: db, Api: api},
 
 	// 	// Com: setter.Data{Db: nil, Api: api},
 	// 	// Rat: setter.Data{Db: nil, Api: api},

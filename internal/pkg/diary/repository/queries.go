@@ -109,21 +109,6 @@ const (
 	RETURNING id, diaryId, creatingDate, title, description, area, dryness, edema, itching, pain, peeling, redness;
 	`
 
-	queryGetImageList = `
-	SELECT id, recordid, name, area
-	FROM images;
-	`
-
-	queryCreateRecordImageListFirstPart = `
-	INSERT INTO
-	images (recordid, name, area)
-	VALUES
-	`
-
-	queryCreateRecordImageListSecondPart = `
-	RETURNING id, recordid, name, area;
-	`
-
 	queryUpdateDiary = `
 	UPDATE diaries
 	SET title = $1, complaints = $2, anamnesis = $3, objectively = $4, diagnosis = $5

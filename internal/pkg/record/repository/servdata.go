@@ -1,0 +1,200 @@
+package recordrepository
+
+import (
+	"hesh/internal/pkg/database"
+	"hesh/internal/pkg/domain"
+	"strconv"
+	"strings"
+	"time"
+
+	"hesh/internal/pkg/utils/cast"
+	"hesh/internal/pkg/utils/log"
+)
+
+type dbrecordrepository struct {
+	dbm *database.DBManager
+}
+
+func InitRecordRep(manager *database.DBManager) domain.RecordRepository {
+	return &dbrecordrepository{
+		dbm: manager,
+	}
+}
+
+func (cr *dbrecordrepository) GetImageNames() (map[string]struct{}, error) {
+	var resp []database.DBbyterow
+	var err error
+	query := ""
+
+	query = queryGetImageList
+	resp, err = cr.dbm.Query(query)
+
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return nil, domain.Err.ErrObj.InternalServer
+	}
+
+	imageNames := make(map[string]struct{}, 0)
+	for i := range resp {
+		imageNames[cast.ToString(resp[i][0])] = struct{}{}
+	}
+
+	return imageNames, nil
+}
+
+func (er *dbrecordrepository) CreateRecordImageLists(isMedic bool,recordId uint64, imageInfo []string) ([]uint64, error) {
+	if len(imageInfo) == 0 {
+		return []uint64{}, nil
+	}
+	queryBuilder := strings.Builder{}
+	// arrayForQuery := ""
+	queryBuilder.Write([]byte(queryCreateRecordImageListFirstPart))
+	for i := range imageInfo {
+		isMedicString := strconv.FormatBool(isMedic)
+		queryBuilder.Write([]byte("("))
+		queryBuilder.Write([]byte(isMedicString))
+		queryBuilder.Write([]byte(","))
+		queryBuilder.Write([]byte(cast.IntToStr(recordId)))
+		queryBuilder.Write([]byte(","))
+		queryBuilder.Write([]byte("'" + imageInfo[i] + "'"))
+		queryBuilder.Write([]byte(")"))
+		if i != len(imageInfo)-1 {
+			queryBuilder.Write([]byte(","))
+		}
+	}
+	queryBuilder.Write([]byte(queryCreateRecordImageListSecondPart))
+	query := queryBuilder.String()
+	resp, err := er.dbm.Query(queryBuilder.String())
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return []uint64{}, err
+	}
+	response := []uint64{}
+	for i := range resp {
+		response = append(response,	cast.ToUint64(resp[i][0]))
+	}
+	
+	return response, nil
+}
+
+func (rr *dbrecordrepository) CreateMedicRecord(diaryId uint64, record domain.MedicRecordCreateRequest) (domain.MedicRecordCreateResponse, error) {
+	query := queryCreateMedicRecord
+	resp, err := rr.dbm.Query(query,
+		diaryId,
+		time.Now().Format("2006.01.02 15:04:05"),
+		record.BasicInfo.Title,
+		record.BasicInfo.Treatment,
+		record.BasicInfo.Recommendations,
+		record.BasicInfo.Details)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.MedicRecordCreateResponse{}, err
+	}
+
+	response := domain.MedicRecordCreateResponse{
+		Id:           cast.ToUint64(resp[0][0]),
+		DiaryId:      cast.ToUint64(resp[0][1]),
+		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][2]), true),
+		BasicInfo: domain.MedicRecordBasicInfo{
+			Title: cast.ToString(resp[0][3]),
+			Treatment: cast.ToString(resp[0][4]),
+			Recommendations: cast.ToString(resp[0][5]),
+			Details: cast.ToString(resp[0][6]),
+		},
+		ImageList: nil,
+	}
+	
+	if err != nil {
+		log.Error(err)
+		return domain.MedicRecordCreateResponse{}, err
+	}
+	return response, nil
+}
+
+func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string)  ([]uint64, [][]string, error) {
+	if len(imageIds) == 0 {
+		return []uint64{}, [][]string{}, nil
+	}
+	queryBuilder := strings.Builder{}
+	// arrayForQuery := ""
+	queryBuilder.Write([]byte(queryCreateImageTagListFirstPart))
+	for i := range imageIds {
+		for j := range(tags[i]) {
+			queryBuilder.Write([]byte("("))
+			queryBuilder.Write([]byte(cast.IntToStr(imageIds[i])))
+			queryBuilder.Write([]byte(","))
+			queryBuilder.Write([]byte(tags[i][j]))
+			// if(j != len(tags[i]) - 1){
+			// 	queryBuilder.Write([]byte(","))
+			// }
+			queryBuilder.Write([]byte(")"))
+			if i != len(imageIds) || j != len(tags[i]) - 1 {
+				queryBuilder.Write([]byte(","))
+			}
+		}
+	}
+	queryBuilder.Write([]byte(queryCreateImageTagListSecondPart))
+	query := queryBuilder.String()
+	_, err := rr.dbm.Query(queryBuilder.String())
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return []uint64{}, [][]string{},err
+	}
+
+	// response := []uint64{}
+	// for i := range resp {
+	// 	response = append(response,	cast.ToUint64(resp[i][0]))
+	// }
+
+	// TODO parse response from query
+	return imageIds, tags, nil
+}
+
+// func (cr *dbdiaryrepository) GetImageNames() (map[string]struct{}, error) {
+// 	var resp []database.DBbyterow
+// 	var err error
+// 	query := ""
+
+// 	query = queryGetImageList
+// 	resp, err = cr.dbm.Query(query)
+
+// 	if err != nil {
+// 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+// 		log.Error(err)
+// 		return nil, domain.Err.ErrObj.InternalServer
+// 	}
+
+// 	imageNames := make(map[string]struct{}, 0)
+// 	for i := range resp {
+// 		imageNames[cast.ToString(resp[i][0])] = struct{}{}
+// 	}
+
+// 	return imageNames, nil
+// }
+
+
+
+// func (er *dbdiaryrepository) GetRecordImageLists(recordId uint64) ([]domain.ImageInfo, error) {
+// 	query := queryGetImageList
+// 	resp, err := er.dbm.Query(query, recordId)
+// 	if err != nil {
+// 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+// 		log.Error(err)
+// 		return []domain.ImageInfo{}, err
+// 	}
+// 	response := []domain.ImageInfo{}
+// 	for i := range resp {
+// 		response = append(response, domain.ImageInfo{
+// 			Id:       cast.ToUint64(resp[i][0]),
+// 			RecordId: cast.ToUint64(resp[i][1]),
+// 			Name:     cast.ToString(resp[i][2]),
+// 			Area:     cast.ToFloat64(resp[i][3]),
+// 		})
+// 	}
+// 	return response, nil
+// }
+

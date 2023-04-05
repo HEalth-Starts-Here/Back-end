@@ -30,7 +30,23 @@ func SanitizeDiaryUpdating(diary *domain.DiaryUpdateRequest) {
 	sanitizeText(&diary.DiaryBasicInfo.Diagnosis)
 }
 
-func SanitizeRecordCreating(record *domain.RecordCreateRequest) {
+func SanitizeMedicRecordBasicInfo (record *domain.MedicRecordBasicInfo){
 	sanitizeText(&record.Title)
-	sanitizeText(&record.Description)
+	sanitizeText(&record.Treatment)
+	sanitizeText(&record.Recommendations)
+	sanitizeText(&record.Details)
+}
+
+func SanitizeImageInfo (imageInfo *domain.RecordImageInfo){
+	sanitizeText(&imageInfo.ImageName)
+	for i := 0; i< (len(imageInfo.Tags)); i++ {
+		sanitizeText(&imageInfo.Tags[i])
+	}
+}
+
+func SanitizeMedicRecordCreateRequest(record *domain.MedicRecordCreateRequest) {
+	SanitizeMedicRecordBasicInfo(&record.BasicInfo)
+	for i := range (record.Images){
+		SanitizeImageInfo(&record.Images[i])
+	}
 }
