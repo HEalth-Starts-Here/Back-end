@@ -205,6 +205,32 @@ func (cr *dbrecordrepository) GetRecordImageNames(isMedic bool, recordId uint64)
 }
 
 
+func (er *dbrecordrepository) UpdateMedicRecordText(recordId uint64, medicRecordBasicInfo domain.MedicRecordBasicInfo) (domain.MedicRecordUpdateTextResponse, error) {
+	query := queryUpdateTextMedicRecord
+	resp, err := er.dbm.Query(query,
+		medicRecordBasicInfo.Title,
+		medicRecordBasicInfo.Treatment,
+		medicRecordBasicInfo.Recommendations,
+		medicRecordBasicInfo.Details,
+		recordId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.MedicRecordUpdateTextResponse{}, err
+	}
+
+	return domain.MedicRecordUpdateTextResponse{
+		Id:           cast.ToUint64(resp[0][0]),
+		DiaryId:      cast.ToUint64(resp[0][1]),
+		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][2]), true),
+		BasicInfo: domain.MedicRecordBasicInfo{
+			Title:       		cast.ToString(resp[0][3]),
+			Treatment:       	cast.ToString(resp[0][4]),
+			Recommendations:    cast.ToString(resp[0][5]),
+			Details:			cast.ToString(resp[0][6]),
+		},
+	}, nil
+}
 
 // func (er *dbdiaryrepository) GetRecordImageLists(recordId uint64) ([]domain.ImageInfo, error) {
 // 	query := queryGetImageList

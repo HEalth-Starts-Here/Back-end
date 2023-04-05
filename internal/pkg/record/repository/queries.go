@@ -51,5 +51,11 @@ const (
 	WHERE id = $1;
 	`
 
+	queryUpdateTextMedicRecord = `
+	UPDATE medicrecords
+	SET title = $1, treatment = $2, recommendations = $3, details = $4
+	WHERE id = $5
+	RETURNING id, diaryid, creatingdate, title, treatment, recommendations, details;
+	`
 
 )

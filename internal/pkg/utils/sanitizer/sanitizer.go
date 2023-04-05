@@ -50,3 +50,4 @@ func SanitizeMedicRecordCreateRequest(record *domain.MedicRecordCreateRequest) {
 		SanitizeImageInfo(&record.Images[i])
 	}
 }
+

@@ -116,3 +116,29 @@ func (ru RecordUsecase) GetMedicRecord (userId, recordId uint64) (domain.MedicRe
 	}
 	return response, nil
 }
+
+
+func (du RecordUsecase) UpdateMedicRecordText(medicId uint64, recordId uint64, updateTextMedicRecordData domain.MedicRecordBasicInfo) (domain.MedicRecordUpdateTextResponse, error) {
+	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
+	// if err != nil {
+	// 	return domain.DiaryCreateResponse{}, err
+	// }
+
+	// if alreadyExist {
+	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
+	// }
+
+	if !updateTextMedicRecordData.IsValid() {
+		return domain.MedicRecordUpdateTextResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
+	}
+	DiaryUpdateResponse, err := du.recordRepo.UpdateMedicRecordText(recordId, updateTextMedicRecordData)
+	if err != nil {
+		return domain.MedicRecordUpdateTextResponse{}, err
+	}
+
+	// DiaryCreateResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
+	// if err != nil {
+	// 	return domain.EventCreatingResponse{}, err
+	// }
+	return DiaryUpdateResponse, nil
+}

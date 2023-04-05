@@ -122,7 +122,7 @@ func (v *RecordImageInfo) UnmarshalJSON(data []byte) error {
 func (v *RecordImageInfo) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson15d5d517DecodeHeshInternalPkgDomain(l, v)
 }
-func easyjson15d5d517DecodeHeshInternalPkgDomain1(in *jlexer.Lexer, out *MedicRecordCreateResponse) {
+func easyjson15d5d517DecodeHeshInternalPkgDomain1(in *jlexer.Lexer, out *MedicRecordUpdateTextResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -141,10 +141,97 @@ func easyjson15d5d517DecodeHeshInternalPkgDomain1(in *jlexer.Lexer, out *MedicRe
 			continue
 		}
 		switch key {
-		case "id":
-			out.Id = uint64(in.Uint64())
 		case "diaryid":
 			out.DiaryId = uint64(in.Uint64())
+		case "id":
+			out.Id = uint64(in.Uint64())
+		case "creatingdate":
+			out.CreatingDate = string(in.String())
+		case "basicinfo":
+			(out.BasicInfo).UnmarshalEasyJSON(in)
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson15d5d517EncodeHeshInternalPkgDomain1(out *jwriter.Writer, in MedicRecordUpdateTextResponse) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"diaryid\":"
+		out.RawString(prefix[1:])
+		out.Uint64(uint64(in.DiaryId))
+	}
+	{
+		const prefix string = ",\"id\":"
+		out.RawString(prefix)
+		out.Uint64(uint64(in.Id))
+	}
+	{
+		const prefix string = ",\"creatingdate\":"
+		out.RawString(prefix)
+		out.String(string(in.CreatingDate))
+	}
+	{
+		const prefix string = ",\"basicinfo\":"
+		out.RawString(prefix)
+		(in.BasicInfo).MarshalEasyJSON(out)
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v MedicRecordUpdateTextResponse) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson15d5d517EncodeHeshInternalPkgDomain1(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v MedicRecordUpdateTextResponse) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson15d5d517EncodeHeshInternalPkgDomain1(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *MedicRecordUpdateTextResponse) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson15d5d517DecodeHeshInternalPkgDomain1(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *MedicRecordUpdateTextResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson15d5d517DecodeHeshInternalPkgDomain1(l, v)
+}
+func easyjson15d5d517DecodeHeshInternalPkgDomain2(in *jlexer.Lexer, out *MedicRecordCreateResponse) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "diaryid":
+			out.DiaryId = uint64(in.Uint64())
+		case "id":
+			out.Id = uint64(in.Uint64())
 		case "creatingdate":
 			out.CreatingDate = string(in.String())
 		case "basicinfo":
@@ -182,19 +269,19 @@ func easyjson15d5d517DecodeHeshInternalPkgDomain1(in *jlexer.Lexer, out *MedicRe
 		in.Consumed()
 	}
 }
-func easyjson15d5d517EncodeHeshInternalPkgDomain1(out *jwriter.Writer, in MedicRecordCreateResponse) {
+func easyjson15d5d517EncodeHeshInternalPkgDomain2(out *jwriter.Writer, in MedicRecordCreateResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"id\":"
+		const prefix string = ",\"diaryid\":"
 		out.RawString(prefix[1:])
-		out.Uint64(uint64(in.Id))
+		out.Uint64(uint64(in.DiaryId))
 	}
 	{
-		const prefix string = ",\"diaryid\":"
+		const prefix string = ",\"id\":"
 		out.RawString(prefix)
-		out.Uint64(uint64(in.DiaryId))
+		out.Uint64(uint64(in.Id))
 	}
 	{
 		const prefix string = ",\"creatingdate\":"
@@ -228,27 +315,27 @@ func easyjson15d5d517EncodeHeshInternalPkgDomain1(out *jwriter.Writer, in MedicR
 // MarshalJSON supports json.Marshaler interface
 func (v MedicRecordCreateResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson15d5d517EncodeHeshInternalPkgDomain1(&w, v)
+	easyjson15d5d517EncodeHeshInternalPkgDomain2(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MedicRecordCreateResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson15d5d517EncodeHeshInternalPkgDomain1(w, v)
+	easyjson15d5d517EncodeHeshInternalPkgDomain2(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MedicRecordCreateResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson15d5d517DecodeHeshInternalPkgDomain1(&r, v)
+	easyjson15d5d517DecodeHeshInternalPkgDomain2(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MedicRecordCreateResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson15d5d517DecodeHeshInternalPkgDomain1(l, v)
+	easyjson15d5d517DecodeHeshInternalPkgDomain2(l, v)
 }
-func easyjson15d5d517DecodeHeshInternalPkgDomain2(in *jlexer.Lexer, out *MedicRecordCreateRequest) {
+func easyjson15d5d517DecodeHeshInternalPkgDomain3(in *jlexer.Lexer, out *MedicRecordCreateRequest) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -302,7 +389,7 @@ func easyjson15d5d517DecodeHeshInternalPkgDomain2(in *jlexer.Lexer, out *MedicRe
 		in.Consumed()
 	}
 }
-func easyjson15d5d517EncodeHeshInternalPkgDomain2(out *jwriter.Writer, in MedicRecordCreateRequest) {
+func easyjson15d5d517EncodeHeshInternalPkgDomain3(out *jwriter.Writer, in MedicRecordCreateRequest) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -333,27 +420,27 @@ func easyjson15d5d517EncodeHeshInternalPkgDomain2(out *jwriter.Writer, in MedicR
 // MarshalJSON supports json.Marshaler interface
 func (v MedicRecordCreateRequest) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson15d5d517EncodeHeshInternalPkgDomain2(&w, v)
+	easyjson15d5d517EncodeHeshInternalPkgDomain3(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MedicRecordCreateRequest) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson15d5d517EncodeHeshInternalPkgDomain2(w, v)
+	easyjson15d5d517EncodeHeshInternalPkgDomain3(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MedicRecordCreateRequest) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson15d5d517DecodeHeshInternalPkgDomain2(&r, v)
+	easyjson15d5d517DecodeHeshInternalPkgDomain3(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MedicRecordCreateRequest) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson15d5d517DecodeHeshInternalPkgDomain2(l, v)
+	easyjson15d5d517DecodeHeshInternalPkgDomain3(l, v)
 }
-func easyjson15d5d517DecodeHeshInternalPkgDomain3(in *jlexer.Lexer, out *MedicRecordBasicInfo) {
+func easyjson15d5d517DecodeHeshInternalPkgDomain4(in *jlexer.Lexer, out *MedicRecordBasicInfo) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -390,7 +477,7 @@ func easyjson15d5d517DecodeHeshInternalPkgDomain3(in *jlexer.Lexer, out *MedicRe
 		in.Consumed()
 	}
 }
-func easyjson15d5d517EncodeHeshInternalPkgDomain3(out *jwriter.Writer, in MedicRecordBasicInfo) {
+func easyjson15d5d517EncodeHeshInternalPkgDomain4(out *jwriter.Writer, in MedicRecordBasicInfo) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -420,23 +507,23 @@ func easyjson15d5d517EncodeHeshInternalPkgDomain3(out *jwriter.Writer, in MedicR
 // MarshalJSON supports json.Marshaler interface
 func (v MedicRecordBasicInfo) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson15d5d517EncodeHeshInternalPkgDomain3(&w, v)
+	easyjson15d5d517EncodeHeshInternalPkgDomain4(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MedicRecordBasicInfo) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson15d5d517EncodeHeshInternalPkgDomain3(w, v)
+	easyjson15d5d517EncodeHeshInternalPkgDomain4(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MedicRecordBasicInfo) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson15d5d517DecodeHeshInternalPkgDomain3(&r, v)
+	easyjson15d5d517DecodeHeshInternalPkgDomain4(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MedicRecordBasicInfo) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson15d5d517DecodeHeshInternalPkgDomain3(l, v)
+	easyjson15d5d517DecodeHeshInternalPkgDomain4(l, v)
 }
