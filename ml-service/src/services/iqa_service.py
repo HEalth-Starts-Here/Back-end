@@ -23,6 +23,7 @@ class IQAService(IQAServicer):
     def __init__(self, params: PredictParams) -> None:
         self.params = params
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        logger.info(f"Running model on {self.device} device")
 
         if params.download_params and not os.path.exists(self.params.model_path):
             download_file(self.params.download_params)
@@ -50,7 +51,7 @@ class IQAService(IQAServicer):
 
         pred_scores = []
         img = Image.open(io.BytesIO(request.image)).convert("RGB")
-        for _ in range(self.params.num_parts):
+        for _ in range(self.params.model_params.num_parts):
             img_tensor = self._transforms(img).to(self.device)
             img_tensor = img_tensor.unsqueeze(0)
             weights = self._model_hyper(img_tensor)
@@ -61,6 +62,6 @@ class IQAService(IQAServicer):
 
             pred = model_target(weights["target_in_vec"])
             pred_scores.append(float(pred.item()))
-        score = np.mean(sorted(pred_scores)[-self.params.num_top_parts:])
+        score = np.mean(sorted(pred_scores)[-self.params.model_params.num_top_parts:])
         logger.info(f"Image score: {score}")
-        return IQAResponse(quality=score > self.params.quality_threshold)
+        return IQAResponse(quality=score > self.params.model_params.quality_threshold)

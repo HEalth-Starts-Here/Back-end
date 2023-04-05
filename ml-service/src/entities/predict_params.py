@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from src.entities.models_params import IQAModelParams, TextSummParams
+
 
 @dataclass
 class DownloadParams:
@@ -11,7 +13,5 @@ class DownloadParams:
 @dataclass
 class PredictParams:
     model_path: str
-    num_parts: int
-    num_top_parts: int
-    quality_threshold: float
+    model_params: IQAModelParams | TextSummParams
     download_params: Optional[DownloadParams]

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+message TextSummRequest {
+    string text = 1;
+}
+
+message TextSummResponse {
+    string summarized_text = 1;
+}
+
+service TextSumm {
+    rpc summarizeText(TextSummRequest) returns (TextSummResponse);
+}

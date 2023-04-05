@@ -1,0 +1,8 @@
+service: "TextSumm"
+port: "[::]:50051"
+predict_params: 
+  model_path: ""
+  model_params:
+    nlp_sum_type: "ru_core_news_sm"
+    limit_sentence: 1
+max_workers: 10
