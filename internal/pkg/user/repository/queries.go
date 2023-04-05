@@ -10,6 +10,29 @@ const (
 	FROM patients 
 	WHERE vkid = $1;
 	`
+	
+	queryRegisterMedic = `
+	INSERT INTO
+    medics (vkid, name)
+	VALUES
+    (
+		$1,
+        $2
+    )
+	RETURNING vkid, name;
+	`
+// 	INSERT INTO
+//     medics (vkid, name)
+// VALUES
+//     (
+//         111,
+//         'Иван Иванов'
+//     ),
+//     (
+//         222,
+//         'Петр Петров'
+//     );
+
 	// queryMedicInit = `
 	// INSERT INTO
     // medics (vkid, name)

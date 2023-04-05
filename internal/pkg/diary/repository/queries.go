@@ -89,25 +89,25 @@ const (
 	WHERE diaryid = $1;
 	`
 
-	queryCreateRecord = `
-	INSERT INTO
-    records (diaryId, creatingDate, title, description, area, dryness, edema, itching, pain, peeling, redness)
-	VALUES
-    (
-        $1,
-        $2,
-        $3,
-        $4,
-        $5,
-        $6,
-        $7,
-        $8,
-        $9,
-        $10,
-        $11
-    )
-	RETURNING id, diaryId, creatingDate, title, description, area, dryness, edema, itching, pain, peeling, redness;
-	`
+	// queryCreateRecord = `
+	// INSERT INTO
+    // records (diaryId, creatingDate, title, description, area, dryness, edema, itching, pain, peeling, redness)
+	// VALUES
+    // (
+    //     $1,
+    //     $2,
+    //     $3,
+    //     $4,
+    //     $5,
+    //     $6,
+    //     $7,
+    //     $8,
+    //     $9,
+    //     $10,
+    //     $11
+    // )
+	// RETURNING id, diaryId, creatingDate, title, description, area, dryness, edema, itching, pain, peeling, redness;
+	// `
 
 	queryUpdateDiary = `
 	UPDATE diaries

@@ -25,3 +25,11 @@ func (eu UserUsecase) UserInit(userId uint64) (bool, domain.UserInfo, error) {
 	}
 	return isEsisted, UserInfo, nil
 }
+
+func (eu UserUsecase) RegisterMedic(userInfoRequest domain.RegisterMedicRequest, medicId uint64) (domain.UserInfo, error) {
+	UserInfo, err := eu.userRepo.RegisterMedic(userInfoRequest, medicId)
+	if err != nil {
+		return domain.UserInfo{}, err
+	}
+	return UserInfo, nil
+}

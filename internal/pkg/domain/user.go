@@ -36,10 +36,16 @@ type UserInfo struct {
 // 	InitBasicInfo InitBasicInfo `json:"initbasicinfo"`
 // }
 
+type RegisterMedicRequest struct {
+	Name string		`json:"name"`
+}
+
 type UserRepository interface {
 	UserInit(userId uint64) (bool, UserInfo, error)
+	RegisterMedic(registerMedicRequest RegisterMedicRequest, userId uint64) (UserInfo, error)
 }
 
 type UserUsecase interface {
 	UserInit(userId uint64) (bool, UserInfo, error)
+	RegisterMedic(registerMedicRequest RegisterMedicRequest, userId uint64) (UserInfo, error)
 }

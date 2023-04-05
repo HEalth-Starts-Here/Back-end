@@ -40,5 +40,27 @@ func (er *dbuserrepository) UserInit(userId uint64) (bool, domain.UserInfo, erro
 	domain.UserInfo{
 		Id:           		cast.ToUint64(resp[0][0]),
 		Name:           	cast.ToString(resp[0][1]),
-		IsMedic:            cast.ToBool(resp[0][2]),},nil
+		IsMedic:            cast.ToBool(resp[0][2]),},
+		nil
+}
+
+func (er *dbuserrepository) RegisterMedic (userInfoRequest domain.RegisterMedicRequest, medicId uint64) (domain.UserInfo, error) {
+	query := queryRegisterMedic
+	// if userInitInfo.InitBasicInfo.IsMedic{
+	// 	query = queryMedicInit
+	// } else {
+	// 	query = queryPatientInit
+	// }
+	resp, err := er.dbm.Query(query,
+		medicId, userInfoRequest.Name)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.UserInfo{}, err
+	}
+	return domain.UserInfo{
+		Id:           		cast.ToUint64(resp[0][0]),
+		Name:           	cast.ToString(resp[0][1]),
+		IsMedic:            true}, 
+		nil
 }
