@@ -11,9 +11,9 @@ func sanitizeText (text *string) {
 	*text = sanitizer.Sanitize(*text)
 }
 
-func SanitizeUserInit(userInitInfo *domain.UserInitRequest) {
-	sanitizeText(&userInitInfo.InitBasicInfo.Name)
-}
+// func SanitizeUserInit(userInitInfo *domain.UserInitRequest) {
+// 	sanitizeText(&userInitInfo.InitBasicInfo.Name)
+// }
 
 func SanitizeDiaryCreating(diary *domain.DiaryCreateRequest) {
 	sanitizeText(&diary.DiaryBasicInfo.Title)

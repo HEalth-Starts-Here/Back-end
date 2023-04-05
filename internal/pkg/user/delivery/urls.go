@@ -1,6 +1,9 @@
 package userdelivery
 
 const (
-	userUrl      		  = "/user"
-	UserInitUrl   		  = userUrl + "/init"
+	AuthorizationUrl      		  	= "/authorization"
+	AuthorizationInitUrl   		  	= AuthorizationUrl + "/init"
+	AuthorizationRegisterUrl	  	= AuthorizationUrl + "/register"
+	AuthorizationRegisterMedicUrl	= AuthorizationRegisterUrl + "/medic"
+	AuthorizationRegisterPatientUrl		= AuthorizationRegisterUrl + "/patient"
 )

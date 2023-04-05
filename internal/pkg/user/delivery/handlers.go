@@ -14,5 +14,5 @@ func SetUserHandlers(router *mux.Router, uu domain.UserUsecase) {
 	handler := &UserHandler{
 		UserUsecase: uu,
 	}
-	router.HandleFunc(UserInitUrl, handler.UserInit).Methods("POST", "OPTIONS")
+	router.HandleFunc(AuthorizationInitUrl, handler.UserInit).Methods("GET", "OPTIONS")
 }

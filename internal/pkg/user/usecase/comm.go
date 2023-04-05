@@ -18,23 +18,10 @@ func InitUserUsc(ur domain.UserRepository) domain.UserUsecase {
 	}
 }
 
-func (eu UserUsecase) UserInit(userInitInfo domain.UserInitRequest, userId uint64) (domain.UserInitResponse, error) {
-	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
-	// if err != nil {
-	// 	return domain.DiaryCreateResponse{}, err
-	// }
-
-	// if alreadyExist {
-	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
-	// }
-
-	if !userInitInfo.IsValid() {
-		return domain.UserInitResponse{}, domain.Err.ErrObj.InvalidUsername
-	}
-
-	UserInitResponse, err := eu.userRepo.UserInit(userInitInfo, userId)
+func (eu UserUsecase) UserInit(userId uint64) (bool, domain.UserInfo, error) {
+	isEsisted, UserInfo, err := eu.userRepo.UserInit(userId)
 	if err != nil {
-		return domain.UserInitResponse{}, err
+		return false, domain.UserInfo{}, err
 	}
-	return UserInitResponse, nil
+	return isEsisted, UserInfo, nil
 }

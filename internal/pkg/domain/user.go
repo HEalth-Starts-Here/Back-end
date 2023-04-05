@@ -9,31 +9,37 @@ const (
 // }
 
 // TODO: add returning errors
-func (ur UserInitRequest) IsValid() (bool) {
-	if len(ur.InitBasicInfo.Name) == 0 {
-		return false
-	}
-	return true
-}
+// func (ur UserInitRequest) IsValid() (bool) {
+// 	if len(ur.InitBasicInfo.Name) == 0 {
+// 		return false
+// 	}
+// 	return true
+// }
 
-type InitBasicInfo struct {
+// type InitBasicInfo struct {
+// 	Name string		`json:"name"`
+// 	IsMedic bool	`json:"ismedic"`
+// }
+
+type UserInfo struct {
+	Id uint64		`json:"id"`
 	Name string		`json:"name"`
 	IsMedic bool	`json:"ismedic"`
 }
 
-type UserInitRequest struct {
-	InitBasicInfo InitBasicInfo `json:"initbasicinfo"`
-}
+// type UserInitRequest struct {
+// 	InitBasicInfo InitBasicInfo `json:"initbasicinfo"`
+// }
 
-type UserInitResponse struct {
-	Id            uint64        `json:"id"`
-	InitBasicInfo InitBasicInfo `json:"initbasicinfo"`
-}
+// type UserInitResponse struct {
+// 	Id            uint64        `json:"id"`
+// 	InitBasicInfo InitBasicInfo `json:"initbasicinfo"`
+// }
 
 type UserRepository interface {
-	UserInit(initBasicInfo UserInitRequest, userId uint64) (UserInitResponse, error)
+	UserInit(userId uint64) (bool, UserInfo, error)
 }
 
 type UserUsecase interface {
-	UserInit(initBasicInfo UserInitRequest, userId uint64) (UserInitResponse, error)
+	UserInit(userId uint64) (bool, UserInfo, error)
 }

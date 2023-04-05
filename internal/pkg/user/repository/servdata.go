@@ -19,29 +19,26 @@ func InitUserRep(manager *database.DBManager) domain.UserRepository {
 }
 
 
-func (er *dbuserrepository) UserInit(userInitInfo domain.UserInitRequest, userId uint64) (domain.UserInitResponse, error) {
-	var query string
-	if userInitInfo.InitBasicInfo.IsMedic{
-		query = queryMedicInit
-	} else {
-		query = queryPatientInit
-	}
+func (er *dbuserrepository) UserInit(userId uint64) (bool, domain.UserInfo, error) {
+	query := queryGetUserInfo
+	// if userInitInfo.InitBasicInfo.IsMedic{
+	// 	query = queryMedicInit
+	// } else {
+	// 	query = queryPatientInit
+	// }
 	resp, err := er.dbm.Query(query,
-		userId,
-		userInitInfo.InitBasicInfo.Name)
+		userId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
-		println(userId)
-		println(userInitInfo.InitBasicInfo.Name)
-		return domain.UserInitResponse{}, err
+		return false, domain.UserInfo{}, err
 	}
-
-	return domain.UserInitResponse{
-		Id:           cast.ToUint64(resp[0][0]),
-		InitBasicInfo:     domain.InitBasicInfo{
-			Name: cast.ToString(resp[0][1]),
-			IsMedic: userInitInfo.InitBasicInfo.IsMedic,
-		},
-	}, nil
+	if len(resp) == 0 {
+		return false, domain.UserInfo{}, nil
+	}
+	return true, 
+	domain.UserInfo{
+		Id:           		cast.ToUint64(resp[0][0]),
+		Name:           	cast.ToString(resp[0][1]),
+		IsMedic:            cast.ToBool(resp[0][2]),},nil
 }

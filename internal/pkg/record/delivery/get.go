@@ -173,10 +173,7 @@ func (handler *RecordHandler) CreateMedicRecord(w http.ResponseWriter, r *http.R
 	RecordCreateRequest.BasicInfo.Treatment = fmt.Sprintf("%v", (r.Form["treatment"])[0])
 	RecordCreateRequest.BasicInfo.Recommendations = fmt.Sprintf("%v", (r.Form["recommendations"])[0])
 	RecordCreateRequest.BasicInfo.Details = fmt.Sprintf("%v", (r.Form["details"])[0])
-	// // RecordCreateRequest.BasicInfo.Title = ""
-	// RecordCreateRequest.BasicInfo.Treatment = ""
-	// RecordCreateRequest.BasicInfo.Recommendations = ""
-	// RecordCreateRequest.BasicInfo.Details = ""
+
 
 	sanitizer.SanitizeMedicRecordCreateRequest(RecordCreateRequest)
 
@@ -193,6 +190,8 @@ func (handler *RecordHandler) CreateMedicRecord(w http.ResponseWriter, r *http.R
 		imageNames = append(imageNames, RecordCreateRequest.Images[i].ImageName)
 	}
 	saveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
+	
+	//TODO ser response image valuse in repository
 	es.ImageList = make([]domain.RecordImageInfo,0)
 	for i := range (imageNames){
 		es.ImageList = append(es.ImageList, domain.RecordImageInfo{ImageName: imageNames[i], Tags: nil})
