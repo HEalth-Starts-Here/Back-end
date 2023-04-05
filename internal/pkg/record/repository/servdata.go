@@ -154,27 +154,55 @@ func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string
 	return imageIds, tags, nil
 }
 
-// func (cr *dbdiaryrepository) GetImageNames() (map[string]struct{}, error) {
-// 	var resp []database.DBbyterow
-// 	var err error
-// 	query := ""
 
-// 	query = queryGetImageList
-// 	resp, err = cr.dbm.Query(query)
+func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, domain.MedicRecordBasicInfo, error) {
+	var resp []database.DBbyterow
+	var err error
+	query := queryGetMedicRecordInfo
+	resp, err = dr.dbm.Query(query, recordId)
 
-// 	if err != nil {
-// 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
-// 		log.Error(err)
-// 		return nil, domain.Err.ErrObj.InternalServer
-// 	}
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return 0, 0, "", domain.MedicRecordBasicInfo{}, domain.Err.ErrObj.InternalServer
+	}
 
-// 	imageNames := make(map[string]struct{}, 0)
-// 	for i := range resp {
-// 		imageNames[cast.ToString(resp[i][0])] = struct{}{}
-// 	}
+	if len(resp) == 0 {
+		log.Warn(cast.GetCurrentFuncName())
+		log.Error(domain.Err.ErrObj.SmallDb)
+		return 0, 0, "", domain.MedicRecordBasicInfo{}, domain.Err.ErrObj.SmallDb
+	}
 
-// 	return imageNames, nil
-// }
+	return cast.ToUint64(resp[0][0]), cast.ToUint64(resp[0][1]), cast.TimeToStr(cast.ToTime(resp[0][2]), true), domain.MedicRecordBasicInfo{
+		Title: cast.ToString(resp[0][3]),
+		Treatment: cast.ToString(resp[0][4]),
+		Recommendations: cast.ToString(resp[0][5]),
+		Details: cast.ToString(resp[0][6]),
+		},  nil
+}
+
+
+func (cr *dbrecordrepository) GetRecordImageNames(isMedic bool, recordId uint64) ([]string, error) {
+	var resp []database.DBbyterow
+	var err error
+	query := ""
+
+	query = queryGetRecordImageList
+	resp, err = cr.dbm.Query(query, isMedic, recordId)
+
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return nil, domain.Err.ErrObj.InternalServer
+	}
+
+	imageNames := make([]string, 0)
+	for i := range resp {
+		imageNames = append(imageNames, cast.ToString(resp[i][0]))
+	}
+
+	return imageNames, nil
+}
 
 
 

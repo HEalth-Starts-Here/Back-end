@@ -38,4 +38,18 @@ const (
 	queryCreateImageTagListSecondPart = `
 	RETURNING imageId, name;
 	`
+
+	queryGetRecordImageList = `
+	SELECT name
+	FROM images
+	WHERE ismedic = $1 AND recordid = $2;
+	`
+
+	queryGetMedicRecordInfo = `
+	SELECT diaryid, id, creatingdate, title, treatment, recommendations, details
+	FROM medicrecords
+	WHERE id = $1;
+	`
+
+
 )

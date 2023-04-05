@@ -158,19 +158,4 @@ const (
 // 	WHERE id = $1;
 // 	`
 
-// queryGetImageList = `
-// SELECT id, recordid, name, area
-// FROM images
-// WHERE recordid = $1;
-// `
-
-// queryCreateRecordImageListFirstPart = `
-// INSERT INTO
-// images (recordid, name, area)
-// VALUES
-// `
-// queryCreateRecordImageListSecondPart = `
-// RETURNING id, recordid, name, area;
-// `
-
 )

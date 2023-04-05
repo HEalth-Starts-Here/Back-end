@@ -83,8 +83,8 @@ type MedicRecordCreateRequest struct {
 }
 
 type MedicRecordCreateResponse struct {
-	Id				uint64					`json:"id"` 
 	DiaryId			uint64					`json:"diaryid"` 
+	Id				uint64					`json:"id"` 
 	CreatingDate	string					`json:"creatingdate"` 
 	BasicInfo		MedicRecordBasicInfo	`json:"basicinfo"`
 	ImageList		[]RecordImageInfo		`json:"imagelist"`
@@ -95,9 +95,11 @@ type RecordRepository interface {
 	GetImageNames() (map[string]struct{}, error)
 	CreateRecordImageLists(isMedic bool,recordId uint64, imageInfo []string) ([]uint64, error) 
 	CreateImageTags(imageIds []uint64, tags [][]string) ([]uint64, [][]string, error) 
-
+	GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, MedicRecordBasicInfo, error) 
+	GetRecordImageNames(isMedic bool, recordId uint64) ([]string, error) 
 }
 
 type RecordUsecase interface {
 	CreateMedicRecord(diaryId uint64, medicId uint64, record MedicRecordCreateRequest) (MedicRecordCreateResponse, error)
+	GetMedicRecord(userId, recordId uint64) (MedicRecordCreateResponse, error)
 }

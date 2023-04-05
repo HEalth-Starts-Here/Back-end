@@ -14,4 +14,5 @@ func SetRecordHandlers(router *mux.Router, ru domain.RecordUsecase) {
 		RecordUsecase: ru,
 	}
 	router.HandleFunc(recordMedicCreateUrl, handler.CreateMedicRecord).Methods("POST", "OPTIONS")
+	router.HandleFunc(recordMedicGet, handler.GetMedicRecord).Methods("GET", "OPTIONS")
 }
