@@ -33,3 +33,15 @@ func (eu UserUsecase) RegisterMedic(userInfoRequest domain.RegisterMedicRequest,
 	}
 	return UserInfo, nil
 }
+
+func (eu UserUsecase) RegisterPatient(patientInfoRequest domain.RegisterPatientRequest, patientId uint64) (domain.RegisterPatientResponse, error) {
+	UserInfo, err := eu.userRepo.RegisterPatient(patientInfoRequest, patientId)
+	if err != nil {
+		return domain.RegisterPatientResponse{},  err
+	}
+	patientId, patientInfoRequest.DiaryId, err = eu.userRepo.LinkPatientToDiary(patientId, patientInfoRequest.DiaryId)
+	return domain.RegisterPatientResponse{
+		UserInfo: UserInfo,
+		DiaryId: patientInfoRequest.DiaryId,
+	}, nil
+}

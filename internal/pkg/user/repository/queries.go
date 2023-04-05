@@ -21,6 +21,25 @@ const (
     )
 	RETURNING vkid, name;
 	`
+
+	queryRegisterPatient = `
+	INSERT INTO
+    patients (vkid, name)
+	VALUES
+    (
+		$1,
+        $2
+    )
+	RETURNING vkid, name;
+	`
+
+	queryLinkPatientToDiary = `
+	UPDATE diaries
+	SET patientid = $1
+	WHERE id = $2
+	RETURNING patientid, id;
+	`
+
 // 	INSERT INTO
 //     medics (vkid, name)
 // VALUES

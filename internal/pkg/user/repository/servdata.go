@@ -1,6 +1,7 @@
 package userrepository
 
 import (
+	// "fmt"
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
 
@@ -64,3 +65,46 @@ func (er *dbuserrepository) RegisterMedic (userInfoRequest domain.RegisterMedicR
 		IsMedic:            true}, 
 		nil
 }
+
+
+func (er *dbuserrepository) RegisterPatient (patientInfoRequest domain.RegisterPatientRequest, patientId uint64) (domain.UserInfo, error) {
+	query := queryRegisterPatient
+	// if userInitInfo.InitBasicInfo.IsMedic{
+	// 	query = queryMedicInit
+	// } else {
+	// 	query = queryPatientInit
+	// }
+	resp, err := er.dbm.Query(query,patientId, patientInfoRequest.Name)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.UserInfo{}, err
+	}
+	return domain.UserInfo{
+		Id:           		cast.ToUint64(resp[0][0]),
+		Name:           	cast.ToString(resp[0][1]),
+		IsMedic:            false}, 
+		nil
+	}
+
+func (er *dbuserrepository) LinkPatientToDiary (patientId, diaryId uint64) (uint64, uint64, error) {
+	query := queryLinkPatientToDiary
+	resp, err := er.dbm.Query(query,
+		patientId, diaryId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		// fmt.Printf("resp[0][0]: %v\n", resp[0][0])
+		// fmt.Printf("resp[0][1]: %v\n", resp[0][1])
+		return 0, 0, err
+	}
+	// return 0, 0, nil
+	println(patientId)
+	println(diaryId)
+	println(len(resp))
+	println(len(resp))
+	patientId = cast.ToUint64(resp[0][0]) 
+	diaryId = cast.ToUint64(resp[0][1])
+	return patientId, diaryId, nil
+}
+

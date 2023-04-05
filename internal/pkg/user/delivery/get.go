@@ -137,3 +137,63 @@ func (handler *UserHandler) RegisterMedic(w http.ResponseWriter, r *http.Request
 	w.Write(out)
 
 }
+
+func (handler *UserHandler) RegisterPatient(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	// sessionId, err := sessions.CheckSession(r)
+	// if err == domain.Err.ErrObj.UserNotLoggedIn {
+	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
+	// 	return
+	// }
+	queryParameter := r.URL.Query().Get("vk_user_id")
+	userId, err := strconv.ParseUint(queryParameter, 10, 32)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	RegisterPatientRequest := new(domain.RegisterPatientRequest)
+
+	err = easyjson.Unmarshal(b, RegisterPatientRequest)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// if cast.IntToStr(sessionId) != EventCreatingRequest.UserId {
+	// 	http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// }
+
+	// sanitizer.SanitizeUserInit(UserInitRequest)
+
+	//TODO Check is this user existed
+
+	RegisterPatientResponse, err := handler.UserUsecase.RegisterPatient(*RegisterPatientRequest, userId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	out, err := easyjson.Marshal(RegisterPatientResponse)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(out)
+
+}
