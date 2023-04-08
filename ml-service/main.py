@@ -6,8 +6,10 @@ import grpc
 from concurrent import futures
 
 
+from protos.diarisation_pb2_grpc import add_DiarisationServicer_to_server
 from protos.iqa_pb2_grpc import add_IQAServicer_to_server
 from protos.text_summarization_pb2_grpc import add_TextSummServicer_to_server
+from src.services.diarisation_service import DiarisationService
 from src.services.iqa_service import IQAService
 from src.entities.service_params import read_service_params
 from src.entities.logger import setup_default_logger
@@ -30,6 +32,10 @@ def serve(config_path: str):
     elif params.service == "TextSumm":
         add_TextSummServicer_to_server(
             TextSummService(params.predict_params.model_params), server
+        )
+    elif params.service == "Diarisation":
+        add_DiarisationServicer_to_server(
+            DiarisationService(params.predict_params.model_params), server
         )
     else:
         raise ValueError(f"Unknown service: {params.service}")

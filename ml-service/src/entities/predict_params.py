@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from src.entities.models_params import IQAModelParams, TextSummParams
+from src.entities.models_params import DiarisationParams, IQAModelParams, TextSummParams
 
 
 @dataclass
@@ -13,5 +13,5 @@ class DownloadParams:
 @dataclass
 class PredictParams:
     model_path: str
-    model_params: IQAModelParams | TextSummParams
+    model_params: IQAModelParams | TextSummParams | DiarisationParams
     download_params: Optional[DownloadParams]

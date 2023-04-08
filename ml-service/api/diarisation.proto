@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+message DiarisationRequest {
+    bytes audio = 1;
+}
+
+message DiarisationResponse {
+    string text = 1;
+}
+
+service Diarisation {
+    rpc transcribeAudio(DiarisationRequest) returns (DiarisationResponse);
+}
