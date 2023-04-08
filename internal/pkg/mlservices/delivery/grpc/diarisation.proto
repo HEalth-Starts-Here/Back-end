@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "./internal/pkg/mlservices/delivery/grpc/";
+
+
+message DiarisationRequest {
+    bytes audio = 1;
+}
+
+message DiarisationResponse {
+    string text = 1;
+}
+
+service Diarisation {
+    rpc transcribeAudio(DiarisationRequest) returns (DiarisationResponse);
+}

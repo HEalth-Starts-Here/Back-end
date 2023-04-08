@@ -20,16 +20,17 @@ const (
 
 	queryCreateMedicRecord = `
 	INSERT INTO 
-	medicrecords (diaryid, creatingdate, title, treatment, recommendations, details)
+	medicrecords (diaryid, creatingdate, title, treatment, recommendations, details, diarisation)
 	VALUES (
 		$1,
 		$2,
 		$3,
 		$4,
 		$5,
-		$6
+		$6,
+		$7
 	)
-	RETURNING id, diaryid, creatingdate, title, treatment, recommendations, details;
+	RETURNING id, diaryid, creatingdate, title, treatment, recommendations, details, diarisation;
 	`
 
 	queryCreateRecordImageListFirstPart = `
@@ -59,7 +60,7 @@ const (
 	`
 
 	queryGetMedicRecordInfo = `
-	SELECT diaryid, id, creatingdate, title, treatment, recommendations, details
+	SELECT diaryid, id, creatingdate, title, treatment, recommendations, details, diarisation
 	FROM medicrecords
 	WHERE id = $1;
 	`

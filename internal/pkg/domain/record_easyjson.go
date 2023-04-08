@@ -476,6 +476,8 @@ func easyjson15d5d517DecodeHeshInternalPkgDomain4(in *jlexer.Lexer, out *MedicRe
 				}
 				in.Delim(']')
 			}
+		case "diarisation":
+			out.Diarisation = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -525,6 +527,11 @@ func easyjson15d5d517EncodeHeshInternalPkgDomain4(out *jwriter.Writer, in MedicR
 			}
 			out.RawByte(']')
 		}
+	}
+	{
+		const prefix string = ",\"diarisation\":"
+		out.RawString(prefix)
+		out.String(string(in.Diarisation))
 	}
 	out.RawByte('}')
 }
@@ -596,6 +603,29 @@ func easyjson15d5d517DecodeHeshInternalPkgDomain5(in *jlexer.Lexer, out *MedicRe
 				}
 				in.Delim(']')
 			}
+		case "audio":
+			if in.IsNull() {
+				in.Skip()
+				out.Auido = nil
+			} else {
+				in.Delim('[')
+				if out.Auido == nil {
+					if !in.IsDelim(']') {
+						out.Auido = make([]string, 0, 4)
+					} else {
+						out.Auido = []string{}
+					}
+				} else {
+					out.Auido = (out.Auido)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v14 string
+					v14 = string(in.String())
+					out.Auido = append(out.Auido, v14)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -622,11 +652,27 @@ func easyjson15d5d517EncodeHeshInternalPkgDomain5(out *jwriter.Writer, in MedicR
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v14, v15 := range in.Images {
-				if v14 > 0 {
+			for v15, v16 := range in.Images {
+				if v15 > 0 {
 					out.RawByte(',')
 				}
-				(v15).MarshalEasyJSON(out)
+				(v16).MarshalEasyJSON(out)
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"audio\":"
+		out.RawString(prefix)
+		if in.Auido == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v17, v18 := range in.Auido {
+				if v17 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v18))
 			}
 			out.RawByte(']')
 		}

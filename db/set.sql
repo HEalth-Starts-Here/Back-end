@@ -37,7 +37,8 @@ CREATE TABLE medicRecords (
     title                               VARCHAR(50),
     treatment                           VARCHAR(1000),
     recommendations                     VARCHAR(1000),
-    details                             VARCHAR(3000)
+    details                             VARCHAR(3000),
+    diarisation                         VARCHAR(10000)
 );
 
 CREATE TABLE patientRecords (
@@ -63,3 +64,9 @@ CREATE TABLE tags (
     imageId                             BIGINT REFERENCES images (id) ON DELETE CASCADE,
     name                                VARCHAR(50)
 );
+
+-- CREATE TABLE audioRecords (
+--     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
+--     medicRecordId                       BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
+--     name                                VARCHAR(50)
+-- );

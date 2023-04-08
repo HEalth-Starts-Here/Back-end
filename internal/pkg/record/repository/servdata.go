@@ -130,7 +130,7 @@ func (er *dbrecordrepository) CreateRecordImageLists(isMedic bool,recordId uint6
 	return response, nil
 }
 
-func (rr *dbrecordrepository) CreateMedicRecord(diaryId uint64, record domain.MedicRecordCreateRequest) (domain.MedicRecordCreateResponse, error) {
+func (rr *dbrecordrepository) CreateMedicRecord(diaryId uint64, record domain.MedicRecordCreateRequest, diarisation string) (domain.MedicRecordCreateResponse, error) {
 	query := queryCreateMedicRecord
 	resp, err := rr.dbm.Query(query,
 		diaryId,
@@ -138,13 +138,13 @@ func (rr *dbrecordrepository) CreateMedicRecord(diaryId uint64, record domain.Me
 		record.BasicInfo.Title,
 		record.BasicInfo.Treatment,
 		record.BasicInfo.Recommendations,
-		record.BasicInfo.Details)
+		record.BasicInfo.Details,
+		diarisation)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
 		return domain.MedicRecordCreateResponse{}, err
 	}
-
 	response := domain.MedicRecordCreateResponse{
 		Id:           cast.ToUint64(resp[0][0]),
 		DiaryId:      cast.ToUint64(resp[0][1]),
@@ -155,8 +155,11 @@ func (rr *dbrecordrepository) CreateMedicRecord(diaryId uint64, record domain.Me
 			Recommendations: cast.ToString(resp[0][5]),
 			Details: cast.ToString(resp[0][6]),
 		},
+		Diarisation: cast.ToString(resp[0][7]),
 		ImageList: nil,
 	}
+	println(response.Diarisation)
+
 	
 	if err != nil {
 		log.Error(err)
@@ -206,7 +209,7 @@ func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string
 }
 
 
-func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, domain.MedicRecordBasicInfo, error) {
+func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, domain.MedicRecordBasicInfo, string, error) {
 	var resp []database.DBbyterow
 	var err error
 	query := queryGetMedicRecordInfo
@@ -215,13 +218,13 @@ func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64,) 
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
-		return 0, 0, "", domain.MedicRecordBasicInfo{}, domain.Err.ErrObj.InternalServer
+		return 0, 0, "", domain.MedicRecordBasicInfo{}, "", domain.Err.ErrObj.InternalServer
 	}
 
 	if len(resp) == 0 {
 		log.Warn(cast.GetCurrentFuncName())
 		log.Error(domain.Err.ErrObj.SmallDb)
-		return 0, 0, "", domain.MedicRecordBasicInfo{}, domain.Err.ErrObj.SmallDb
+		return 0, 0, "", domain.MedicRecordBasicInfo{}, "", domain.Err.ErrObj.SmallDb
 	}
 
 	return cast.ToUint64(resp[0][0]), cast.ToUint64(resp[0][1]), cast.TimeToStr(cast.ToTime(resp[0][2]), true), domain.MedicRecordBasicInfo{
@@ -229,7 +232,7 @@ func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64,) 
 		Treatment: cast.ToString(resp[0][4]),
 		Recommendations: cast.ToString(resp[0][5]),
 		Details: cast.ToString(resp[0][6]),
-		},  nil
+		}, cast.ToString(resp[0][7]),  nil
 }
 
 

@@ -16,4 +16,5 @@ func SetMLServicesHandlers(router *mux.Router, mlsu domain.MLServicesUsecase) {
 	}
 	router.HandleFunc(DetermineAreaUrl, handler.DetermineArea).Methods("POST", "OPTIONS")
 	router.HandleFunc(EstimateImageUrl, handler.ImageQualityAssesment).Methods("POST", "OPTIONS")
+	// router.HandleFunc(AudioSummarization, handler.AudioSummarization).Methods("POST", "OPTIONS")
 }

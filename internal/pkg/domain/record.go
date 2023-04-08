@@ -88,8 +88,9 @@ type RecordImageInfo struct {
 }
 
 type MedicRecordCreateRequest struct {
-	BasicInfo	MedicRecordBasicInfo `json:"basicinfo"` 
-	Images		[]RecordImageInfo 	 `json:"images"` 
+	BasicInfo		MedicRecordBasicInfo `json:"basicinfo"` 
+	Images			[]RecordImageInfo 	 `json:"images"` 
+	Auido			[]string		 	 `json:"audio"` 
 }
 
 type MedicRecordCreateResponse struct {
@@ -98,6 +99,7 @@ type MedicRecordCreateResponse struct {
 	CreatingDate	string					`json:"creatingdate"` 
 	BasicInfo		MedicRecordBasicInfo	`json:"basicinfo"`
 	ImageList		[]RecordImageInfo		`json:"imagelist"`
+	Diarisation		string					`json:"diarisation"`
 }
 
 type MedicRecordUpdateTextResponse struct {
@@ -120,11 +122,11 @@ type RecordUpdateImageResponse struct {
 }
 
 type RecordRepository interface {
-	CreateMedicRecord(diaryId uint64, record MedicRecordCreateRequest) (MedicRecordCreateResponse, error)
+	CreateMedicRecord(diaryId uint64, record MedicRecordCreateRequest, diarisation string) (MedicRecordCreateResponse, error)
 	GetImageNames() (map[string]struct{}, error)
 	CreateRecordImageLists(isMedic bool,recordId uint64, imageInfo []string) ([]uint64, error) 
 	CreateImageTags(imageIds []uint64, tags [][]string) ([]uint64, [][]string, error) 
-	GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, MedicRecordBasicInfo, error) 
+	GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, MedicRecordBasicInfo, string, error) 
 	GetRecordImageNames(isMedic bool, recordId uint64) ([]string, error) 
 	UpdateMedicRecordText(recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error) 
 	DeleteRecordImage(isMedic bool, recordId uint64) (RecordUpdateImageResponse, error)
@@ -135,7 +137,7 @@ type RecordRepository interface {
 }
 
 type RecordUsecase interface {
-	CreateMedicRecord(diaryId uint64, medicId uint64, record MedicRecordCreateRequest) (MedicRecordCreateResponse, error)
+	CreateMedicRecord(diaryId uint64, medicId uint64, record MedicRecordCreateRequest, diarisation string) (MedicRecordCreateResponse, error)
 	GetMedicRecord(userId, recordId uint64) (MedicRecordCreateResponse, error)
 	UpdateMedicRecordText(medicId uint64, recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error) 
 	UpdateMedicRecordImage(medicId uint64, recordId uint64, updateTextMedicRecordData MedicRecordUpdateImageRequest) (RecordUpdateImageResponse, error)

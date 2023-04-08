@@ -58,5 +58,8 @@ func SanitizeMedicRecordCreateRequest(record *domain.MedicRecordCreateRequest) {
 	for i := range (record.Images){
 		SanitizeImageInfo(&record.Images[i])
 	}
+	for i := range (record.Auido){
+		sanitizeText(&record.Auido[i])
+	}
 }
 
