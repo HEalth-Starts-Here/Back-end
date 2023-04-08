@@ -42,6 +42,7 @@ func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, record
 	imageNames := filesaver.GetUniqueFileNames(len(recordData.Images), alreadyUsed)
 	for i := 0; i < len(imageNames); i++ {
 		recordData.Images[i].ImageName = imageNames[i] + filepath.Ext(recordData.Images[i].ImageName)
+		imageNames[i] = recordData.Images[i].ImageName
 
 	}
 	RecordCreateResponse, err := ru.recordRepo.CreateMedicRecord(diaryId, recordData)
@@ -194,3 +195,40 @@ func (ru RecordUsecase) UpdateMedicRecordImage(medicId uint64, recordId uint64, 
 	// }
 	return updateResponse, nil
 }
+
+// func (ru RecordUsecase) DeleteMedicRecord(medicId uint64, recordId uint64) (domain.RecordUpdateImageResponse, error) {
+// 	// TODO: add check if this medic is owner of this record
+
+// 	deleteResponse, err := ru.recordRepo.DeleteRecordImage(true, recordId)
+// 	if err != nil {
+// 		return domain.RecordUpdateImageResponse{}, err
+// 	}
+// 	deletedImages := make([]string, 0)
+// 	for i := range updateResponse.Images{
+// 		deletedImages = append(deletedImages, updateResponse.Images[i].ImageName)
+// 	}
+// 	err = filesaver.DeleteFiles("", config.DevConfigStore.LoadedFilesPath, deletedImages)
+// 	if err != nil {
+// 		return domain.RecordUpdateImageResponse{}, err
+// 	}
+// 	updateResponse.Images = make([]domain.RecordImageInfo, 0)
+// 	_, err = ru.recordRepo.CreateRecordImageLists(true, recordId, imageNames)
+// 	if err != nil {
+// 		return domain.RecordUpdateImageResponse{}, err
+// 	}
+// 	// response := domain.RecordUpdateImageResponse{}
+// 	for i := range updateImageMedicRecordData.Images {
+// 		updateResponse.Images = append(updateResponse.Images, domain.RecordImageInfo{
+// 			ImageName: imageNames[i],
+// 			Tags: []string{},
+// 		})
+// 	}
+// 	//TODO update tags
+
+// 	// imageIds, tags, err = ru.recordRepo.CreateImageTags(imageIds, tags)
+// 	// for i := range imageIds {
+
+// 	// 	tags = append(tags, recordData.Images[i].Tags)
+// 	// }
+// 	return updateResponse, nil
+// }

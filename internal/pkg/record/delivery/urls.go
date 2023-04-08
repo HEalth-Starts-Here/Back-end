@@ -8,4 +8,5 @@ const (
 	recordMedicUpdateUrl	 	 = recordMedicUrl + "/update"
 	recordMedicUpdateTextUrl	 = recordMedicUpdateUrl +"/text/{id:[0-9]+}" 
 	recordMedicUpdateImageUrl	 = recordMedicUpdateUrl +"/image/{id:[0-9]+}" 
+	recordMedicDeleteImageUrl	 = recordMedicUrl + "/delete/{id:[0-9]+}"
 )
