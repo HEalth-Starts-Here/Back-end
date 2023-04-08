@@ -381,37 +381,37 @@ func (handler *RecordHandler) UpdateImageMedicRecord(w http.ResponseWriter, r *h
 	w.Write(out)
 }
 
-// func (handler *RecordHandler) DeleteMedicRecord(w http.ResponseWriter, r *http.Request) {
-// 	defer r.Body.Close()
-// 	// sessionId, err := sessions.CheckSession(r)
-// 	// if err == domain.Err.ErrObj.UserNotLoggedIn {
-// 	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
-// 	// 	return
-// 	// }
-// 	queryParameter := r.URL.Query().Get("vk_user_id")
-// 	medicId, err := strconv.ParseUint(queryParameter, 10, 64)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
+func (handler *RecordHandler) DeleteMedicRecord(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	// sessionId, err := sessions.CheckSession(r)
+	// if err == domain.Err.ErrObj.UserNotLoggedIn {
+	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
+	// 	return
+	// }
+	queryParameter := r.URL.Query().Get("vk_user_id")
+	medicId, err := strconv.ParseUint(queryParameter, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-// 	params := mux.Vars(r)
-// 	recordId, err := strconv.ParseUint(params["id"], 10, 64)
-// 	if err != nil {
-// 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
-// 		return
-// 	}
+	params := mux.Vars(r)
+	recordId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		return
+	}
 
-// 	err = handler.RecordUsecase.DeleteMedicRecord(medicId, recordId)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
+	err = handler.RecordUsecase.DeleteMedicRecord(medicId, recordId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-// 	w.WriteHeader(http.StatusOK)
-// }
+	w.WriteHeader(http.StatusOK)
+}
 
 // func (handler *DiaryHandler) UpdateRecord(w http.ResponseWriter, r *http.Request) {
 // 	defer r.Body.Close()

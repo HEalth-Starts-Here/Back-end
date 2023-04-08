@@ -135,5 +135,6 @@ type RecordUsecase interface {
 	GetMedicRecord(userId, recordId uint64) (MedicRecordCreateResponse, error)
 	UpdateMedicRecordText(medicId uint64, recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error) 
 	UpdateMedicRecordImage(medicId uint64, recordId uint64, updateTextMedicRecordData MedicRecordUpdateImageRequest) (RecordUpdateImageResponse, error)
+	DeleteMedicRecord(medicId uint64, recordId uint64) (error)
 
 }
