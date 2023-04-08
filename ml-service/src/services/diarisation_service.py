@@ -16,7 +16,7 @@ import base64
 
 # from sklearn.cluster import AgglomerativeClustering
 
-from pydub import AudioSegment
+# from pydub import AudioSegment
 
 from protos.diarisation_pb2 import DiarisationResponse
 
@@ -39,9 +39,10 @@ class DiarisationService(DiarisationServicer):
 
     def transcribeAudio(self, request, context):
         if self.params.use_api:
-            self._transcribe_with_api(request.audio)
+            text = self._transcribe_with_api(request.audio)
         else:
-            self._transcribe(request.audio)
+            text = self._transcribe(request.audio)
+        return DiarisationResponse(text=text)
 
     def _transcribe(self, audio):
         pass
@@ -95,7 +96,7 @@ class DiarisationService(DiarisationServicer):
         #         )
         #     f.write(segment["text"][1:] + " ")
 
-        # return DiarisationResponse(text=f.getvalue())
+        # f.getvalue()
 
     def _transcribe_with_api(self, audio):
         # Открываем файл test.wav в бинарном режиме и считываем его содержимое
@@ -121,5 +122,5 @@ class DiarisationService(DiarisationServicer):
         ).json()
 
         data = response["data"]
-        logger.info(f"API response size: {len(data)}")
-        return DiarisationResponse(text=data)
+        logger.info(f"API response size: {len(data[0])}")
+        return data[0]
