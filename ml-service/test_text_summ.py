@@ -5,7 +5,7 @@ from protos.text_summarization_pb2_grpc import TextSummStub
 
 
 if __name__ == "__main__":
-    channel = grpc.insecure_channel("localhost:50051")
+    channel = grpc.insecure_channel("127.0.0.1:50051")
     client = TextSummStub(channel)
 
     with open("tests/data/text.txt", "r") as file:

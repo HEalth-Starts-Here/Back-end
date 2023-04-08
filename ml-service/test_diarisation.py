@@ -6,7 +6,7 @@ from protos.diarisation_pb2_grpc import DiarisationStub
 
 
 if __name__ == "__main__":
-    channel = grpc.insecure_channel("localhost:50051")
+    channel = grpc.insecure_channel("127.0.0.1:50051")
     client = DiarisationStub(channel)
 
     path = "/mnt/e/Downloads/test_1.mp3"

@@ -8,7 +8,7 @@ from protos.iqa_pb2_grpc import IQAStub
 
 
 if __name__ == "__main__":
-    channel = grpc.insecure_channel("localhost:50051")
+    channel = grpc.insecure_channel("127.0.0.1:50051")
     client = IQAStub(channel)
 
     img = Image.open("tests/data/skin-lesions2.jpg")

@@ -13,5 +13,5 @@ class DownloadParams:
 @dataclass
 class PredictParams:
     model_path: str
-    model_params: IQAModelParams | TextSummParams | DiarisationParams
+    model_params: DiarisationParams
     download_params: Optional[DownloadParams]
