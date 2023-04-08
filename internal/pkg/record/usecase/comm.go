@@ -21,17 +21,51 @@ func InitRecordUsc(rr domain.RecordRepository) domain.RecordUsecase {
 	}
 }
 
-func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, recordData domain.MedicRecordCreateRequest) (domain.MedicRecordCreateResponse, error) {
-	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
-	// if err != nil {
-	// 	return domain.DiaryCreateResponse{}, err
-	// }
+func (ru RecordUsecase) CheckMedicAccess(medicId uint64, diaryId uint64) (bool, error) {
+	ownerId, err := ru.recordRepo.GetMedicIdFromDiary(diaryId)
+	if err != nil {
+		return false, err
+	}
+	if medicId != ownerId {
+		return false, nil
+	}
+	return true, nil
+}
 
-	// if alreadyExist {
-	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
-	// }
+func (ru RecordUsecase) CheckDiaryExist(diaryId uint64) (bool, error) {
+	diaryExist, err := ru.recordRepo.DiaryExist(diaryId)
+	if err != nil {
+		return false, err
+	}
+	return diaryExist, nil
+}
+
+// func (ru RecordUsecase) CheckMedicExist(medicId uint64) (bool, error) {
+// 	medicExist, err := ru.recordRepo.MedicExist(medicId)
+// 	if err != nil {
+// 		return false, err
+// 	}
+// 	return medicExist, nil
+// }
+
+func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, recordData domain.MedicRecordCreateRequest) (domain.MedicRecordCreateResponse, error) {
 	
-	// TODO: Check if this user has access to this diary 
+	diaryExist, err := ru.CheckDiaryExist(diaryId)
+	if err != nil {
+		return domain.MedicRecordCreateResponse{}, err
+	}
+	if !diaryExist {
+		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.DiaryDoestExist
+	}
+	
+	haveAccess, err := ru.CheckMedicAccess(medicId, diaryId)
+	if err != nil {
+		return domain.MedicRecordCreateResponse{}, err
+	}
+	if !haveAccess {
+		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.UserHaveNoAccess
+	}
+
 	if !recordData.IsValid() {
 		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
@@ -199,15 +233,24 @@ func (ru RecordUsecase) UpdateMedicRecordImage(medicId uint64, recordId uint64, 
 func (ru RecordUsecase) DeleteMedicRecord(medicId uint64, recordId uint64) (error) {
 	// TODO: add check if this medic is owner of this record
 
-	deleteResponse, err := ru.recordRepo.DeleteRecordImage(true, recordId)
+	imageList, err := ru.recordRepo.GetRecordImageNames(true, recordId)
 	if err != nil {
 		return err
 	}
-	deletedImages := make([]string, 0)
-	for i := range deleteResponse.Images{
-		deletedImages = append(deletedImages, deleteResponse.Images[i].ImageName)
+	
+	err = ru.recordRepo.DeleteRecord(true, recordId)
+	if err != nil {
+		return err
 	}
-	err = filesaver.DeleteFiles("", config.DevConfigStore.LoadedFilesPath, deletedImages)
+	// deleteResponse, err := ru.recordRepo.DeleteRecordImage(true, recordId)
+	// if err != nil {
+	// 	return err
+	// }
+	// deletedImages := make([]string, 0)
+	// for i := range deleteResponse.Images{
+	// 	deletedImages = append(deletedImages, deleteResponse.Images[i].ImageName)
+	// }
+	err = filesaver.DeleteFiles("", config.DevConfigStore.LoadedFilesPath, imageList)
 	if err != nil {
 		return err
 	}

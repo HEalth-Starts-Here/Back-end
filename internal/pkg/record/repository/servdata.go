@@ -21,6 +21,57 @@ func InitRecordRep(manager *database.DBManager) domain.RecordRepository {
 	}
 }
 
+func (cr *dbrecordrepository) DiaryExist(diaryId uint64) (bool, error) {
+	var resp []database.DBbyterow
+	var err error
+	query := queryDiaryExist
+	resp, err = cr.dbm.Query(query, diaryId)
+
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return false, domain.Err.ErrObj.InternalServer
+	}
+	if len(resp) == 0 {
+		return false, nil
+	}
+	return true, nil
+}
+
+// func (cr *dbrecordrepository) MedicExist(diaryId uint64) (bool, error) {
+// 	var resp []database.DBbyterow
+// 	var err error
+// 	// query := queryDiaryExist
+// 	resp, err = cr.dbm.Query(query, diaryId)
+
+// 	if err != nil {
+// 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+// 		log.Error(err)
+// 		return false, domain.Err.ErrObj.InternalServer
+// 	}
+// 	if len(resp) == 0 {
+// 		return false, nil
+// 	}
+// 	return true, nil
+// }
+
+// func (cr *dbrecordrepository) MedicExist(diaryId uint64) (bool, error) {
+// 	var resp []database.DBbyterow
+// 	var err error
+// 	query := queryDiaryExist
+// 	resp, err = cr.dbm.Query(query, diaryId)
+
+// 	if err != nil {
+// 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+// 		log.Error(err)
+// 		return false, domain.Err.ErrObj.InternalServer
+// 	}
+// 	if len(resp) == 0 {
+// 		return false, nil
+// 	}
+// 	return true, nil
+// }
+
 func (cr *dbrecordrepository) GetImageNames() (map[string]struct{}, error) {
 	var resp []database.DBbyterow
 	var err error
@@ -252,8 +303,26 @@ func (er *dbrecordrepository) UpdateMedicRecordText(recordId uint64, medicRecord
 // 	return response, nil
 // }
 
+func (dr *dbrecordrepository) DeleteRecord(isMedic bool, recordId uint64,) (error) {
+	var resp []database.DBbyterow
+	var err error
+	query := queryDeleteMedicRecord
+	resp, err = dr.dbm.Query(query, recordId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.Err.ErrObj.InternalServer
+	}
+	if len(resp) == 0 {
+		log.Warn(cast.GetCurrentFuncName())
+		log.Error(domain.Err.ErrObj.SmallDb)
+		return domain.Err.ErrObj.SmallDb
+	}
+	return nil
+}
+
 func (er *dbrecordrepository) DeleteRecordImage(isMedic bool, recordId uint64) (domain.RecordUpdateImageResponse, error) {
-	query := queryUpdateImageMedicRecord
+	query := queryDeleteImageMedicRecord
 	resp, err := er.dbm.Query(query,
 		isMedic,
 		recordId)
@@ -283,4 +352,24 @@ func (er *dbrecordrepository) DeleteRecordImage(isMedic bool, recordId uint64) (
 		})
 	}
 	return recordUpdateImageResponse, nil
+}
+
+func (dr *dbrecordrepository) GetMedicIdFromDiary(diaryId uint64,) (uint64, error) {
+	var resp []database.DBbyterow
+	var err error
+	query := queryGetMedicIdFromDiary
+	resp, err = dr.dbm.Query(query, diaryId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return 0, domain.Err.ErrObj.InternalServer
+	}
+
+	if len(resp) == 0 {
+		log.Warn(cast.GetCurrentFuncName())
+		log.Error(domain.Err.ErrObj.SmallDb)
+		return 0, domain.Err.ErrObj.SmallDb
+	}
+
+	return cast.ToUint64(resp[0][0]), nil
 }

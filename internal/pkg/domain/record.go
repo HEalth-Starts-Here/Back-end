@@ -128,6 +128,9 @@ type RecordRepository interface {
 	GetRecordImageNames(isMedic bool, recordId uint64) ([]string, error) 
 	UpdateMedicRecordText(recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error) 
 	DeleteRecordImage(isMedic bool, recordId uint64) (RecordUpdateImageResponse, error)
+	GetMedicIdFromDiary(diaryId uint64) (uint64, error) 
+	DiaryExist(diaryId uint64) (bool, error) 
+	DeleteRecord(isMedic bool, recordId uint64) (error) 
 }
 
 type RecordUsecase interface {
@@ -136,5 +139,6 @@ type RecordUsecase interface {
 	UpdateMedicRecordText(medicId uint64, recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error) 
 	UpdateMedicRecordImage(medicId uint64, recordId uint64, updateTextMedicRecordData MedicRecordUpdateImageRequest) (RecordUpdateImageResponse, error)
 	DeleteMedicRecord(medicId uint64, recordId uint64) (error)
+	CheckMedicAccess(medicId uint64, diaryId uint64) (bool, error)
 
 }

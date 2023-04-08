@@ -50,7 +50,8 @@ type errObj struct {
 	InvalidUsername  error
 	// PlaylistExist error
 
-	// UserAccess error
+	UserHaveNoAccess error
+	DiaryDoestExist error
 }
 
 type err struct {
@@ -103,6 +104,7 @@ var Err = err{
 		UserNotExist:  errors.New("User not exist"),
 		InvalidUsername:  errors.New("Invalid username"),
 // 		PlaylistExist: errors.New("Playlist with this title already exist"),
-// 		UserAccess: errors.New("Permission denied"),
+		UserHaveNoAccess: errors.New("Permission denied"),
+		DiaryDoestExist: errors.New("Diary does not exist"),
 	},
 }

@@ -1,10 +1,17 @@
 package recordrepository
 
 const (
+	queryDiaryExist = `
+	SELECT 
+	FROM diaries
+	WHERE id = $1;
+	`
+
 	queryGetImageList = `
 	SELECT name
 	FROM images;
 	`
+
 	queryCreateMedicRecord = `
 	INSERT INTO 
 	medicrecords (diaryid, creatingdate, title, treatment, recommendations, details)
@@ -58,7 +65,14 @@ const (
 	RETURNING id, diaryid, creatingdate, title, treatment, recommendations, details;
 	`
 
-	queryUpdateImageMedicRecord = `
+	queryDeleteMedicRecord = `
+	DELETE 
+	FROM medicrecords
+	WHERE id = $1
+	RETURNING id;
+	`
+
+	queryDeleteImageMedicRecord = `
 	DELETE FROM images
 	WHERE ismedic = $1 AND recordid = $2
 	RETURNING name;
@@ -67,6 +81,12 @@ const (
 	queryGetBasicUpdateImageMedicRecord = `
 	SELECT diaryid, id, creatingdate
 	FROM medicrecords
+	WHERE id = $1;
+	`
+
+	queryGetMedicIdFromDiary = `
+	SELECT medicid
+	FROM diaries
 	WHERE id = $1;
 	`
 
