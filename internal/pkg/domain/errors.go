@@ -52,6 +52,7 @@ type errObj struct {
 
 	UserHaveNoAccess error
 	DiaryDoestExist error
+	MedicDoestExist error
 }
 
 type err struct {
@@ -106,5 +107,6 @@ var Err = err{
 // 		PlaylistExist: errors.New("Playlist with this title already exist"),
 		UserHaveNoAccess: errors.New("Permission denied"),
 		DiaryDoestExist: errors.New("Diary does not exist"),
+		MedicDoestExist: errors.New("Medic does not exist"),
 	},
 }

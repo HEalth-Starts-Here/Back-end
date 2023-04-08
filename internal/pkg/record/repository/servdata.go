@@ -38,22 +38,22 @@ func (cr *dbrecordrepository) DiaryExist(diaryId uint64) (bool, error) {
 	return true, nil
 }
 
-// func (cr *dbrecordrepository) MedicExist(diaryId uint64) (bool, error) {
-// 	var resp []database.DBbyterow
-// 	var err error
-// 	// query := queryDiaryExist
-// 	resp, err = cr.dbm.Query(query, diaryId)
+func (cr *dbrecordrepository) MedicExist(diaryId uint64) (bool, error) {
+	var resp []database.DBbyterow
+	var err error
+	query := queryMedicExist
+	resp, err = cr.dbm.Query(query, diaryId)
 
-// 	if err != nil {
-// 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
-// 		log.Error(err)
-// 		return false, domain.Err.ErrObj.InternalServer
-// 	}
-// 	if len(resp) == 0 {
-// 		return false, nil
-// 	}
-// 	return true, nil
-// }
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return false, domain.Err.ErrObj.InternalServer
+	}
+	if len(resp) == 0 {
+		return false, nil
+	}
+	return true, nil
+}
 
 // func (cr *dbrecordrepository) MedicExist(diaryId uint64) (bool, error) {
 // 	var resp []database.DBbyterow

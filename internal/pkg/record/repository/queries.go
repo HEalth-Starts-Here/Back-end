@@ -7,6 +7,12 @@ const (
 	WHERE id = $1;
 	`
 
+	queryMedicExist = `
+	SELECT 
+	FROM medics
+	WHERE vkid = $1;
+	`
+
 	queryGetImageList = `
 	SELECT name
 	FROM images;

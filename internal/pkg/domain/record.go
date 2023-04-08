@@ -130,6 +130,7 @@ type RecordRepository interface {
 	DeleteRecordImage(isMedic bool, recordId uint64) (RecordUpdateImageResponse, error)
 	GetMedicIdFromDiary(diaryId uint64) (uint64, error) 
 	DiaryExist(diaryId uint64) (bool, error) 
+	MedicExist(medicId uint64) (bool, error) 
 	DeleteRecord(isMedic bool, recordId uint64) (error) 
 }
 

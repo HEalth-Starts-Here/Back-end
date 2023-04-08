@@ -40,13 +40,13 @@ func (ru RecordUsecase) CheckDiaryExist(diaryId uint64) (bool, error) {
 	return diaryExist, nil
 }
 
-// func (ru RecordUsecase) CheckMedicExist(medicId uint64) (bool, error) {
-// 	medicExist, err := ru.recordRepo.MedicExist(medicId)
-// 	if err != nil {
-// 		return false, err
-// 	}
-// 	return medicExist, nil
-// }
+func (ru RecordUsecase) CheckMedicExist(medicId uint64) (bool, error) {
+	medicExist, err := ru.recordRepo.MedicExist(medicId)
+	if err != nil {
+		return false, err
+	}
+	return medicExist, nil
+}
 
 func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, recordData domain.MedicRecordCreateRequest) (domain.MedicRecordCreateResponse, error) {
 	
@@ -56,6 +56,14 @@ func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, record
 	}
 	if !diaryExist {
 		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.DiaryDoestExist
+	}
+		
+	medicExist, err := ru.CheckMedicExist(diaryId)
+	if err != nil {
+		return domain.MedicRecordCreateResponse{}, err
+	}
+	if !medicExist {
+		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.MedicDoestExist
 	}
 	
 	haveAccess, err := ru.CheckMedicAccess(medicId, diaryId)
