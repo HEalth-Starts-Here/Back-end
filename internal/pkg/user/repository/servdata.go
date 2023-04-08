@@ -52,8 +52,6 @@ func (er *dbuserrepository) RegisterMedic (userInfoRequest domain.RegisterMedicR
 	// } else {
 	// 	query = queryPatientInit
 	// }
-	println(medicId)
-	println(userInfoRequest.Name)
 	resp, err := er.dbm.Query(query,
 		medicId, userInfoRequest.Name)
 	if err != nil {
@@ -101,10 +99,6 @@ func (er *dbuserrepository) LinkPatientToDiary (patientId, diaryId uint64) (uint
 		return 0, 0, err
 	}
 	// return 0, 0, nil
-	println(patientId)
-	println(diaryId)
-	println(len(resp))
-	println(len(resp))
 	patientId = cast.ToUint64(resp[0][0]) 
 	diaryId = cast.ToUint64(resp[0][1])
 	return patientId, diaryId, nil
