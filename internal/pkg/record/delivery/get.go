@@ -188,6 +188,9 @@ func saveMultipartDataFiles(fileNames []string, fileHeaders []*multipart.FileHea
 	return nil, http.StatusCreated
 }
 func GetAudioSummarization(fileHeader []*multipart.FileHeader) (*mlsgrpc.DiarisationResponse, error) {
+	if len(fileHeader) == 0 {
+		return nil, nil
+	}
 	file, err := fileHeader[0].Open()
 	defer file.Close()
 	if err != nil {
@@ -286,10 +289,12 @@ func (handler *RecordHandler) CreateMedicRecord(w http.ResponseWriter, r *http.R
 
 	// }
 	// RecordCreateRequest.Auido
-
+	text := ""
 	sanitizer.SanitizeMedicRecordCreateRequest(RecordCreateRequest)
-
-	es, err := handler.RecordUsecase.CreateMedicRecord(diaryId, userId, *RecordCreateRequest, audioResponse.Text)
+	if audioResponse != nil {
+		text = audioResponse.Text
+	}
+	es, err := handler.RecordUsecase.CreateMedicRecord(diaryId, userId, *RecordCreateRequest, text)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

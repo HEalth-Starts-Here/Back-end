@@ -158,6 +158,7 @@ func (rr *dbrecordrepository) CreateMedicRecord(diaryId uint64, record domain.Me
 		Diarisation: cast.ToString(resp[0][7]),
 		ImageList: nil,
 	}
+
 	println(response.Diarisation)
 
 	
@@ -226,7 +227,7 @@ func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64,) 
 		log.Error(domain.Err.ErrObj.SmallDb)
 		return 0, 0, "", domain.MedicRecordBasicInfo{}, "", domain.Err.ErrObj.SmallDb
 	}
-
+	println(cast.ToString(resp[0][7]))
 	return cast.ToUint64(resp[0][0]), cast.ToUint64(resp[0][1]), cast.TimeToStr(cast.ToTime(resp[0][2]), true), domain.MedicRecordBasicInfo{
 		Title: cast.ToString(resp[0][3]),
 		Treatment: cast.ToString(resp[0][4]),
