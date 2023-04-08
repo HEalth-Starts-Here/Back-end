@@ -57,8 +57,8 @@ func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, record
 	if !diaryExist {
 		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.DiaryDoestExist
 	}
-		
-	medicExist, err := ru.CheckMedicExist(diaryId)
+	
+	medicExist, err := ru.CheckMedicExist(medicId)
 	if err != nil {
 		return domain.MedicRecordCreateResponse{}, err
 	}
