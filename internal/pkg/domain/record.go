@@ -41,6 +41,16 @@ func (record MedicRecordBasicInfo) IsValid() (bool) {
 	return true
 }
 
+// TODO: add returning errors
+func (request MedicRecordUpdateImageRequest) IsValid() (bool) {
+	for i := range request.Images {
+		if !(request.Images[i].IsValid()) {
+			return false
+		}
+	}
+	return true
+}
+
 func (imageInfo RecordImageInfo) IsValid() (bool) {
 	if  len(imageInfo.ImageName) > maxImageNameLenght{
 		return false
@@ -97,6 +107,18 @@ type MedicRecordUpdateTextResponse struct {
 	BasicInfo		MedicRecordBasicInfo	`json:"basicinfo"`
 }
 
+
+type MedicRecordUpdateImageRequest struct {
+	Images		[]RecordImageInfo 	 `json:"images"` 
+}
+
+type RecordUpdateImageResponse struct {
+	Id				uint64					`json:"id"` 
+	DiaryId			uint64					`json:"diaryId"` 
+	CreatingDate	string					`json:"creatingdate"` 
+	Images		[]RecordImageInfo 	 		`json:"images"` 
+}
+
 type RecordRepository interface {
 	CreateMedicRecord(diaryId uint64, record MedicRecordCreateRequest) (MedicRecordCreateResponse, error)
 	GetImageNames() (map[string]struct{}, error)
@@ -105,10 +127,13 @@ type RecordRepository interface {
 	GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, MedicRecordBasicInfo, error) 
 	GetRecordImageNames(isMedic bool, recordId uint64) ([]string, error) 
 	UpdateMedicRecordText(recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error) 
+	DeleteRecordImage(isMedic bool, recordId uint64) (RecordUpdateImageResponse, error)
 }
 
 type RecordUsecase interface {
 	CreateMedicRecord(diaryId uint64, medicId uint64, record MedicRecordCreateRequest) (MedicRecordCreateResponse, error)
 	GetMedicRecord(userId, recordId uint64) (MedicRecordCreateResponse, error)
 	UpdateMedicRecordText(medicId uint64, recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error) 
+	UpdateMedicRecordImage(medicId uint64, recordId uint64, updateTextMedicRecordData MedicRecordUpdateImageRequest) (RecordUpdateImageResponse, error)
+
 }

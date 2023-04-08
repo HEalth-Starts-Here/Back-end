@@ -2,6 +2,7 @@ package recordusecase
 
 import (
 	"hesh/internal/pkg/domain"
+	"hesh/internal/pkg/utils/config"
 	"hesh/internal/pkg/utils/filesaver"
 	"path/filepath"
 )
@@ -118,7 +119,7 @@ func (ru RecordUsecase) GetMedicRecord (userId, recordId uint64) (domain.MedicRe
 }
 
 
-func (du RecordUsecase) UpdateMedicRecordText(medicId uint64, recordId uint64, updateTextMedicRecordData domain.MedicRecordBasicInfo) (domain.MedicRecordUpdateTextResponse, error) {
+func (ru RecordUsecase) UpdateMedicRecordText(medicId uint64, recordId uint64, updateTextMedicRecordData domain.MedicRecordBasicInfo) (domain.MedicRecordUpdateTextResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -131,7 +132,7 @@ func (du RecordUsecase) UpdateMedicRecordText(medicId uint64, recordId uint64, u
 	if !updateTextMedicRecordData.IsValid() {
 		return domain.MedicRecordUpdateTextResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
-	DiaryUpdateResponse, err := du.recordRepo.UpdateMedicRecordText(recordId, updateTextMedicRecordData)
+	MedicRecordTextUpdateResponse, err := ru.recordRepo.UpdateMedicRecordText(recordId, updateTextMedicRecordData)
 	if err != nil {
 		return domain.MedicRecordUpdateTextResponse{}, err
 	}
@@ -140,5 +141,56 @@ func (du RecordUsecase) UpdateMedicRecordText(medicId uint64, recordId uint64, u
 	// if err != nil {
 	// 	return domain.EventCreatingResponse{}, err
 	// }
-	return DiaryUpdateResponse, nil
+	return MedicRecordTextUpdateResponse, nil
+}
+
+func (ru RecordUsecase) UpdateMedicRecordImage(medicId uint64, recordId uint64, updateImageMedicRecordData domain.MedicRecordUpdateImageRequest) (domain.RecordUpdateImageResponse, error) {
+	// TODO: add check if this medic is owner of this record
+	
+	if !updateImageMedicRecordData.IsValid() {
+		return domain.RecordUpdateImageResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
+	}
+
+	alreadyUsed, err := ru.recordRepo.GetImageNames()
+	if err != nil {
+		return domain.RecordUpdateImageResponse{}, err
+	}
+	imageNames := filesaver.GetUniqueFileNames(len(updateImageMedicRecordData.Images), alreadyUsed)
+	for i := 0; i < len(imageNames); i++ {
+		updateImageMedicRecordData.Images[i].ImageName = imageNames[i] + filepath.Ext(updateImageMedicRecordData.Images[i].ImageName)
+		imageNames[i] = imageNames[i] + filepath.Ext(updateImageMedicRecordData.Images[i].ImageName)
+
+	}
+	updateResponse, err := ru.recordRepo.DeleteRecordImage(true, recordId)
+	if err != nil {
+		return domain.RecordUpdateImageResponse{}, err
+	}
+	deletedImages := make([]string, 0)
+	for i := range updateResponse.Images{
+		deletedImages = append(deletedImages, updateResponse.Images[i].ImageName)
+	}
+	err = filesaver.DeleteFiles("", config.DevConfigStore.LoadedFilesPath, deletedImages)
+	if err != nil {
+		return domain.RecordUpdateImageResponse{}, err
+	}
+	updateResponse.Images = make([]domain.RecordImageInfo, 0)
+	_, err = ru.recordRepo.CreateRecordImageLists(true, recordId, imageNames)
+	if err != nil {
+		return domain.RecordUpdateImageResponse{}, err
+	}
+	// response := domain.RecordUpdateImageResponse{}
+	for i := range updateImageMedicRecordData.Images {
+		updateResponse.Images = append(updateResponse.Images, domain.RecordImageInfo{
+			ImageName: imageNames[i],
+			Tags: []string{},
+		})
+	}
+	//TODO update tags
+
+	// imageIds, tags, err = ru.recordRepo.CreateImageTags(imageIds, tags)
+	// for i := range imageIds {
+
+	// 	tags = append(tags, recordData.Images[i].Tags)
+	// }
+	return updateResponse, nil
 }

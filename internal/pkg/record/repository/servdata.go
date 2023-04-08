@@ -252,3 +252,35 @@ func (er *dbrecordrepository) UpdateMedicRecordText(recordId uint64, medicRecord
 // 	return response, nil
 // }
 
+func (er *dbrecordrepository) DeleteRecordImage(isMedic bool, recordId uint64) (domain.RecordUpdateImageResponse, error) {
+	query := queryUpdateImageMedicRecord
+	resp, err := er.dbm.Query(query,
+		isMedic,
+		recordId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.RecordUpdateImageResponse{}, err
+	}
+	getRecordQuery := queryGetBasicUpdateImageMedicRecord
+	getResp, getErr := er.dbm.Query(getRecordQuery,
+		recordId)
+	if getErr != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + getRecordQuery)
+		log.Error(getErr)
+		return domain.RecordUpdateImageResponse{}, getErr
+	}
+	recordUpdateImageResponse := domain.RecordUpdateImageResponse{
+		DiaryId: cast.ToUint64(getResp[0][0]),
+		Id: cast.ToUint64(getResp[0][1]),
+		CreatingDate: cast.TimeToStr(cast.ToTime(getResp[0][2]), true),
+	}
+	// deletedImages := make([]string, 0)
+	for i := range resp {
+		recordUpdateImageResponse.Images = append(recordUpdateImageResponse.Images, domain.RecordImageInfo{	
+			ImageName: cast.ToString(resp[i][0]),
+			Tags:  nil,
+		})
+	}
+	return recordUpdateImageResponse, nil
+}

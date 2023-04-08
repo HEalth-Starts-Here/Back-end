@@ -58,4 +58,16 @@ const (
 	RETURNING id, diaryid, creatingdate, title, treatment, recommendations, details;
 	`
 
+	queryUpdateImageMedicRecord = `
+	DELETE FROM images
+	WHERE ismedic = $1 AND recordid = $2
+	RETURNING name;
+	`
+
+	queryGetBasicUpdateImageMedicRecord = `
+	SELECT diaryid, id, creatingdate
+	FROM medicrecords
+	WHERE id = $1;
+	`
+
 )

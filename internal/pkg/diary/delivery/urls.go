@@ -9,6 +9,4 @@ const (
 	GetCertainDiaryUrl    = GetDiaryUrl + "/{id:[0-9]+}"
 	CreateRecordUrl       = CreateDiaryUrl + "/{id:[0-9]+}"
 	UpdateDiaryUrl	  	  = diaryUrl + "/update/{id:[0-9]+}"
-	PutRecordUrl		  = diaryUrl + "/recordUpdate"
-	DetermineAreaUrl      = "/determinearea"
 )

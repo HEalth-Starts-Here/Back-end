@@ -43,8 +43,6 @@ func GetUniqueFileNames (quantity int, alreadyUsed map[string]struct{}) ([]strin
 }
 
 func UploadFile(reader io.Reader, root, path, name, ext string) (string, error) {
-	log.Info("randString" + name)
-
 	filename := name + ext
 	log.Info("Created file with name " + filename)
 	file, err := createFile(root, path, filename)
@@ -60,3 +58,29 @@ func UploadFile(reader io.Reader, root, path, name, ext string) (string, error) 
 	}
 	return filepath.Base(filename), nil
 }
+
+func deleteFile(root, dir, name string) (error) {
+	_, err := os.ReadDir(root + dir)
+	if err != nil {
+		err = os.MkdirAll(root+dir, 0777)
+		if err != nil {
+			return err
+		}
+	}
+	err = os.Remove(root + dir + name)
+	return err
+}
+
+func DeleteFiles(root, path string, names []string) (error) {
+
+	for i := range names {
+		log.Info("Delete file with name " + names[i])
+		err := deleteFile(root, path, names[i])
+		if err != nil {
+			return fmt.Errorf("file deleting error: %s", err)
+		}
+
+	}
+	return nil
+}
+

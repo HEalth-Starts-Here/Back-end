@@ -16,4 +16,5 @@ func SetRecordHandlers(router *mux.Router, ru domain.RecordUsecase) {
 	router.HandleFunc(recordMedicCreateUrl, handler.CreateMedicRecord).Methods("POST", "OPTIONS")
 	router.HandleFunc(recordMedicGetUrl, handler.GetMedicRecord).Methods("GET", "OPTIONS")
 	router.HandleFunc(recordMedicUpdateTextUrl, handler.UpdateTextMedicRecord).Methods("PUT", "OPTIONS")
+	router.HandleFunc(recordMedicUpdateImageUrl, handler.UpdateImageMedicRecord).Methods("PUT", "OPTIONS")
 }

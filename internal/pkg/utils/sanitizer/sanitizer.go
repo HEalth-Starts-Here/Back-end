@@ -37,6 +37,15 @@ func SanitizeMedicRecordBasicInfo (record *domain.MedicRecordBasicInfo){
 	sanitizeText(&record.Details)
 }
 
+func SanitizeMedicRecordImages (request (*domain.MedicRecordUpdateImageRequest)){
+	for i := range request.Images {
+		sanitizeText(&((request.Images[i]).ImageName))
+		for j := range request.Images[i].Tags {
+			sanitizeText(&((request.Images[i]).Tags[j]))
+		}
+	}
+}
+
 func SanitizeImageInfo (imageInfo *domain.RecordImageInfo){
 	sanitizeText(&imageInfo.ImageName)
 	for i := 0; i< (len(imageInfo.Tags)); i++ {

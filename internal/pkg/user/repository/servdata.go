@@ -52,6 +52,8 @@ func (er *dbuserrepository) RegisterMedic (userInfoRequest domain.RegisterMedicR
 	// } else {
 	// 	query = queryPatientInit
 	// }
+	println(medicId)
+	println(userInfoRequest.Name)
 	resp, err := er.dbm.Query(query,
 		medicId, userInfoRequest.Name)
 	if err != nil {
