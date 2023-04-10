@@ -1,0 +1,8 @@
+# pyannote.audio
+# openai-whisper
+pyyaml
+marshmallow-dataclass
+grpcio-tools==1.53.0
+click
+typeguard
+pydub

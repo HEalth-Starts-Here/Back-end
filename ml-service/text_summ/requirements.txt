@@ -1,0 +1,7 @@
+pyyaml
+marshmallow-dataclass
+grpcio-tools==1.53.0
+click
+spacy==3.5.1
+pytextrank==3.2.4
+typeguard

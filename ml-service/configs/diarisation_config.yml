@@ -1,9 +1,0 @@
-service: "Diarisation"
-port: "[::]:50051"
-predict_params: 
-  model_path: ""
-  model_params:
-    model_size: "base"
-    num_speakers: 2
-    use_api: True
-max_workers: 10

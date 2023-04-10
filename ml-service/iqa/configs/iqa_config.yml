@@ -1,0 +1,11 @@
+port: "[::]:50051"
+max_workers: 10
+predict_params: 
+  model_path: "models/iqa_model.pkl"
+  model_params:
+    num_parts: 15
+    num_top_parts: 3
+    quality_threshold: 40.0
+  download_params:
+    file_url: "https://drive.google.com/file/d/1OOUmnbvpGea0LIGpIWEbOyxfWx6UCiiE/view?usp=sharing"
+    path_to_save: "models/iqa_model.pkl"
