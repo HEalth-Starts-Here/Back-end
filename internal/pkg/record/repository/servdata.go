@@ -225,7 +225,6 @@ func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string
 	return imageIds, tags, nil
 }
 
-
 func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, domain.MedicRecordBasicInfo, error) {
 	var resp []database.DBbyterow
 	var err error
@@ -249,6 +248,39 @@ func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64,) 
 		Recommendations: cast.ToString(resp[0][5]),
 		Details: cast.ToString(resp[0][6]),
 		},  nil
+}
+
+func (dr *dbrecordrepository) GetMedicRecordDiarisations(medicRecordId uint64) (domain.GetDiarisationsResponse, error) {
+	var resp []database.DBbyterow
+	query := queryGetMedicRecordDiarisationList
+	resp, err := dr.dbm.Query(query, medicRecordId)
+
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.GetDiarisationsResponse{}, domain.Err.ErrObj.InternalServer
+	}
+
+	if len(resp) == 0 {
+		log.Warn(cast.GetCurrentFuncName())
+		log.Error(domain.Err.ErrObj.SmallDb)
+		return domain.GetDiarisationsResponse{}, domain.Err.ErrObj.SmallDb
+	}
+	response := domain.GetDiarisationsResponse{}
+	response.MedicRecordId = cast.ToUint64(resp[0][1])
+	response.DiarisationList = make([]domain.DiarisationInListResponse, 0)
+	for i := range resp {
+		response.DiarisationList = append(response.DiarisationList, domain.DiarisationInListResponse{
+			Id: cast.ToUint64(resp[i][0]),
+			// [i] [1] used before 
+			CreatingDate: cast.TimeToStr(cast.ToTime(resp[i][2]), true),
+			DiarisationInfo: domain.DiarisationInfo{
+				Diarisation: cast.ToString(resp[i][3]),
+				Filename: cast.ToString(resp[i][4]),
+			},
+		})
+	}
+	return response, nil
 }
 
 

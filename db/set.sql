@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS medicRecords         CASCADE;
 DROP TABLE IF EXISTS patientRecords       CASCADE;
 DROP TABLE IF EXISTS images               CASCADE;
 DROP TABLE IF EXISTS tags                 CASCADE;
-DROP TABLE IF EXISTS audio                 CASCADE;
+DROP TABLE IF EXISTS audio                CASCADE;
 
 
 CREATE TABLE medics (

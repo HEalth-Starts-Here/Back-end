@@ -122,6 +122,18 @@ type RecordUpdateImageResponse struct {
 	Images		[]RecordImageInfo 	 		`json:"images"` 
 }
 
+type DiarisationInListResponse struct {
+	Id				uint64 `json:"id"`
+	CreatingDate	string `json:"creatingdate"`
+	DiarisationInfo DiarisationInfo
+}
+
+type GetDiarisationsResponse struct {
+	MedicRecordId		uint64 `json:"medicrecordid"`
+	DiarisationList	[]DiarisationInListResponse `json:"diarisationlist"`
+}
+
+
 type RecordRepository interface {
 	CreateMedicRecord(diaryId uint64, record MedicRecordCreateRequest) (MedicRecordCreateResponse, error)
 	GetImageNames() (map[string]struct{}, error)
@@ -137,6 +149,8 @@ type RecordRepository interface {
 	MedicExist(medicId uint64) (bool, error) 
 	MedicRecordExist(medicId uint64) (bool, error) 
 	DeleteRecord(isMedic bool, recordId uint64) (error) 
+	GetMedicRecordDiarisations(medicRecordId uint64) (GetDiarisationsResponse, error)
+
 }
 
 type RecordUsecase interface {
@@ -152,5 +166,6 @@ type RecordUsecase interface {
 	CheckMedicExist(medicId uint64) (bool, error)
 	CheckMedicAndDiaryExistAndMedicHaveAccess(medicId, diaryId uint64) (error)
 	CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(medicId, diaryId uint64) (error)
+	GetMedicRecordDiarisations (userId, medicRecordId uint64) (GetDiarisationsResponse, error)
 
 }

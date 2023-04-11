@@ -47,7 +47,7 @@ VALUES
     );
 
 INSERT INTO
-    medicRecords (diaryId, creatingDate, title, treatment, recommendations, details, diarisation)
+    medicRecords (diaryId, creatingDate, title, treatment, recommendations, details)
 VALUES
     (
         1,

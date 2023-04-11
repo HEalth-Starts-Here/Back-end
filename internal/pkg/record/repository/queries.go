@@ -71,6 +71,12 @@ const (
 	WHERE id = $1;
 	`
 
+	queryGetMedicRecordDiarisationList = `
+	SELECT id, medicrecordid, creatingdate, diarisation, filename 
+	FROM audio
+	WHERE medicrecordid = $1;
+	`
+
 	queryUpdateTextMedicRecord = `
 	UPDATE medicrecords
 	SET title = $1, treatment = $2, recommendations = $3, details = $4

@@ -239,6 +239,24 @@ func (ru RecordUsecase) GetMedicRecord (userId, recordId uint64) (domain.MedicRe
 	return response, nil
 }
 
+func (ru RecordUsecase) GetMedicRecordDiarisations (userId, medicRecordId uint64) (domain.GetDiarisationsResponse, error) {
+	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
+	// if err != nil {
+	// 	return domain.DiaryCreateResponse{}, err
+	// }
+
+	// if alreadyExist {
+	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
+	// }
+	
+	// TODO: Check if this user has access to this record
+	response, err := ru.recordRepo.GetMedicRecordDiarisations(medicRecordId)
+	if err != nil {
+		return domain.GetDiarisationsResponse{}, err
+	}
+	return response, nil
+}
+
 
 func (ru RecordUsecase) UpdateMedicRecordText(medicId uint64, recordId uint64, updateTextMedicRecordData domain.MedicRecordBasicInfo) (domain.MedicRecordUpdateTextResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
