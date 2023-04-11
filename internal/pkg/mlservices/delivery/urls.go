@@ -3,5 +3,5 @@ package mlservicesdelivery
 const (
 	DetermineAreaUrl       = "/determinearea"
 	EstimateImageUrl	   = "/imageQualityAssesment"
-	// AudioSummarization	   = "/audiosummarization"
+	DiarisationURL		   = "/diarisation/{id:[0-9]+}"
 )

@@ -91,6 +91,7 @@ type MedicRecordCreateRequest struct {
 	BasicInfo		MedicRecordBasicInfo `json:"basicinfo"` 
 	Images			[]RecordImageInfo 	 `json:"images"` 
 	Auido			[]string		 	 `json:"audio"` 
+	// Diarisation		string			 	 `json:"diarisation"` 
 }
 
 type MedicRecordCreateResponse struct {
@@ -99,7 +100,7 @@ type MedicRecordCreateResponse struct {
 	CreatingDate	string					`json:"creatingdate"` 
 	BasicInfo		MedicRecordBasicInfo	`json:"basicinfo"`
 	ImageList		[]RecordImageInfo		`json:"imagelist"`
-	Diarisation		string					`json:"diarisation"`
+	// Diarisation		string					`json:"diarisation"`
 }
 
 type MedicRecordUpdateTextResponse struct {
@@ -122,26 +123,34 @@ type RecordUpdateImageResponse struct {
 }
 
 type RecordRepository interface {
-	CreateMedicRecord(diaryId uint64, record MedicRecordCreateRequest, diarisation string) (MedicRecordCreateResponse, error)
+	CreateMedicRecord(diaryId uint64, record MedicRecordCreateRequest) (MedicRecordCreateResponse, error)
 	GetImageNames() (map[string]struct{}, error)
 	CreateRecordImageLists(isMedic bool,recordId uint64, imageInfo []string) ([]uint64, error) 
 	CreateImageTags(imageIds []uint64, tags [][]string) ([]uint64, [][]string, error) 
-	GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, MedicRecordBasicInfo, string, error) 
+	GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, MedicRecordBasicInfo, error) 
 	GetRecordImageNames(isMedic bool, recordId uint64) ([]string, error) 
 	UpdateMedicRecordText(recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error) 
 	DeleteRecordImage(isMedic bool, recordId uint64) (RecordUpdateImageResponse, error)
 	GetMedicIdFromDiary(diaryId uint64) (uint64, error) 
+	GetMedicIdFromDiaryOfRecord(recordId uint64) (uint64, error) 
 	DiaryExist(diaryId uint64) (bool, error) 
 	MedicExist(medicId uint64) (bool, error) 
+	MedicRecordExist(medicId uint64) (bool, error) 
 	DeleteRecord(isMedic bool, recordId uint64) (error) 
 }
 
 type RecordUsecase interface {
-	CreateMedicRecord(diaryId uint64, medicId uint64, record MedicRecordCreateRequest, diarisation string) (MedicRecordCreateResponse, error)
+	CreateMedicRecord(diaryId uint64, medicId uint64, record MedicRecordCreateRequest) (MedicRecordCreateResponse, error)
 	GetMedicRecord(userId, recordId uint64) (MedicRecordCreateResponse, error)
 	UpdateMedicRecordText(medicId uint64, recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error) 
 	UpdateMedicRecordImage(medicId uint64, recordId uint64, updateTextMedicRecordData MedicRecordUpdateImageRequest) (RecordUpdateImageResponse, error)
 	DeleteMedicRecord(medicId uint64, recordId uint64) (error)
-	CheckMedicAccess(medicId uint64, diaryId uint64) (bool, error)
+	CheckMedicDiaryAccess(medicId uint64, diaryId uint64) (bool, error)
+	CheckMedicRecordAccess(medicId uint64, diaryId uint64) (bool, error)
+	CheckDiaryExist(diaryId uint64) (bool, error)
+	CheckRecordExist(recordId uint64) (bool, error)
+	CheckMedicExist(medicId uint64) (bool, error)
+	CheckMedicAndDiaryExistAndMedicHaveAccess(medicId, diaryId uint64) (error)
+	CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(medicId, diaryId uint64) (error)
 
 }

@@ -7,12 +7,19 @@ const (
 	WHERE id = $1;
 	`
 
+	queryMedicRecordExist = `
+	SELECT 
+	FROM medicrecords
+	WHERE id = $1;
+	`
+
 	queryMedicExist = `
 	SELECT 
 	FROM medics
 	WHERE vkid = $1;
 	`
 
+	//TODO rename to filename
 	queryGetImageList = `
 	SELECT name
 	FROM images;
@@ -20,17 +27,16 @@ const (
 
 	queryCreateMedicRecord = `
 	INSERT INTO 
-	medicrecords (diaryid, creatingdate, title, treatment, recommendations, details, diarisation)
+	medicrecords (diaryid, creatingdate, title, treatment, recommendations, details)
 	VALUES (
 		$1,
 		$2,
 		$3,
 		$4,
 		$5,
-		$6,
-		$7
+		$6
 	)
-	RETURNING id, diaryid, creatingdate, title, treatment, recommendations, details, diarisation;
+	RETURNING id, diaryid, creatingdate, title, treatment, recommendations, details;
 	`
 
 	queryCreateRecordImageListFirstPart = `
@@ -95,6 +101,14 @@ const (
 	SELECT medicid
 	FROM diaries
 	WHERE id = $1;
+	`
+
+	queryGetMedicIdFromDiaryOfRecord = `
+	SELECT medicid
+	FROM diaries
+	JOIN medicrecords
+	ON diaries.id = medicrecords.diaryid
+	WHERE medicrecords.id = $1;
 	`
 
 )

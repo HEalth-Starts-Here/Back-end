@@ -476,8 +476,6 @@ func easyjson15d5d517DecodeHeshInternalPkgDomain4(in *jlexer.Lexer, out *MedicRe
 				}
 				in.Delim(']')
 			}
-		case "diarisation":
-			out.Diarisation = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -527,11 +525,6 @@ func easyjson15d5d517EncodeHeshInternalPkgDomain4(out *jwriter.Writer, in MedicR
 			}
 			out.RawByte(']')
 		}
-	}
-	{
-		const prefix string = ",\"diarisation\":"
-		out.RawString(prefix)
-		out.String(string(in.Diarisation))
 	}
 	out.RawByte('}')
 }

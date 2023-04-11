@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS medicRecords         CASCADE;
 DROP TABLE IF EXISTS patientRecords       CASCADE;
 DROP TABLE IF EXISTS images               CASCADE;
 DROP TABLE IF EXISTS tags                 CASCADE;
+DROP TABLE IF EXISTS audio                 CASCADE;
 
 
 CREATE TABLE medics (
@@ -37,8 +38,7 @@ CREATE TABLE medicRecords (
     title                               VARCHAR(50),
     treatment                           VARCHAR(1000),
     recommendations                     VARCHAR(1000),
-    details                             VARCHAR(3000),
-    diarisation                         VARCHAR(10000)
+    details                             VARCHAR(3000)
 );
 
 CREATE TABLE patientRecords (
@@ -65,8 +65,10 @@ CREATE TABLE tags (
     name                                VARCHAR(50)
 );
 
--- CREATE TABLE audioRecords (
---     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
---     medicRecordId                       BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
---     name                                VARCHAR(50)
--- );
+CREATE TABLE audio (
+    id                                  BIGSERIAL NOT NULL PRIMARY KEY,
+    medicRecordId                       BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
+    creatingDate                        TIMESTAMP NOT NULL,
+    diarisation                         VARCHAR(10000),
+    filename                            VARCHAR(200)
+);

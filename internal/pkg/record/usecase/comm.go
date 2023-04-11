@@ -21,8 +21,19 @@ func InitRecordUsc(rr domain.RecordRepository) domain.RecordUsecase {
 	}
 }
 
-func (ru RecordUsecase) CheckMedicAccess(medicId uint64, diaryId uint64) (bool, error) {
+func (ru RecordUsecase) CheckMedicDiaryAccess(medicId uint64, diaryId uint64) (bool, error) {
 	ownerId, err := ru.recordRepo.GetMedicIdFromDiary(diaryId)
+	if err != nil {
+		return false, err
+	}
+	if medicId != ownerId {
+		return false, nil
+	}
+	return true, nil
+}
+
+func (ru RecordUsecase) CheckMedicRecordAccess(medicId uint64, medicRecordId uint64) (bool, error) {
+	ownerId, err := ru.recordRepo.GetMedicIdFromDiaryOfRecord(medicRecordId)
 	if err != nil {
 		return false, err
 	}
@@ -40,6 +51,14 @@ func (ru RecordUsecase) CheckDiaryExist(diaryId uint64) (bool, error) {
 	return diaryExist, nil
 }
 
+func (ru RecordUsecase) CheckRecordExist(recordId uint64) (bool, error) {
+	medicRecordExist, err := ru.recordRepo.MedicRecordExist(recordId)
+	if err != nil {
+		return false, err
+	}
+	return medicRecordExist, nil
+}
+
 func (ru RecordUsecase) CheckMedicExist(medicId uint64) (bool, error) {
 	medicExist, err := ru.recordRepo.MedicExist(medicId)
 	if err != nil {
@@ -48,31 +67,90 @@ func (ru RecordUsecase) CheckMedicExist(medicId uint64) (bool, error) {
 	return medicExist, nil
 }
 
-func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, recordData domain.MedicRecordCreateRequest, diarisation string) (domain.MedicRecordCreateResponse, error) {
-	
-	diaryExist, err := ru.CheckDiaryExist(diaryId)
-	if err != nil {
-		return domain.MedicRecordCreateResponse{}, err
-	}
-	if !diaryExist {
-		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.DiaryDoestExist
-	}
+func (ru RecordUsecase) CheckMedicAndDiaryExistAndMedicHaveAccess(medicId, diaryId uint64) (error) {
 	
 	medicExist, err := ru.CheckMedicExist(medicId)
 	if err != nil {
-		return domain.MedicRecordCreateResponse{}, err
+		return err
 	}
 	if !medicExist {
-		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.MedicDoestExist
+		return domain.Err.ErrObj.MedicDoestExist
 	}
 	
-	haveAccess, err := ru.CheckMedicAccess(medicId, diaryId)
+	diaryExist, err := ru.CheckDiaryExist(diaryId)
+	if err != nil {
+		return err
+	}
+	if !diaryExist {
+		return domain.Err.ErrObj.DiaryDoestExist
+	}
+
+	haveAccess, err := ru.CheckMedicDiaryAccess(medicId, diaryId)
+	if err != nil {
+		return err
+	}
+	if !haveAccess {
+		return domain.Err.ErrObj.UserHaveNoAccess
+	}
+	return nil
+}
+
+func (ru RecordUsecase) CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(medicId, recordId uint64) (error) {
+	medicExist, err := ru.CheckMedicExist(medicId)
+	if err != nil {
+		return err
+	}
+	if !medicExist {
+		return domain.Err.ErrObj.MedicDoestExist
+	}
+	
+	recordExist, err := ru.CheckRecordExist(recordId)
+	if err != nil {
+		return err
+	}
+	if !recordExist {
+		return domain.Err.ErrObj.MedicRecordDoestExist
+	}
+
+	haveAccess, err := ru.CheckMedicRecordAccess(medicId, recordId)
+	if err != nil {
+		return err
+	}
+	if !haveAccess {
+		return domain.Err.ErrObj.UserHaveNoAccess
+	}
+	return nil
+}
+
+func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, recordData domain.MedicRecordCreateRequest) (domain.MedicRecordCreateResponse, error) {
+	err := ru.CheckMedicAndDiaryExistAndMedicHaveAccess(medicId, diaryId)
 	if err != nil {
 		return domain.MedicRecordCreateResponse{}, err
 	}
-	if !haveAccess {
-		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.UserHaveNoAccess
-	}
+	// ru.CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess()
+	// diaryExist, err := ru.CheckDiaryExist(diaryId)
+	// if err != nil {
+	// 	return domain.MedicRecordCreateResponse{}, err
+	// }
+	// if !diaryExist {
+	// 	return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.DiaryDoestExist
+	// }
+	
+	// medicExist, err := ru.CheckMedicExist(medicId)
+	// if err != nil {
+	// 	return domain.MedicRecordCreateResponse{}, err
+	// }
+	// if !medicExist {
+	// 	return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.MedicDoestExist
+	// }
+	
+	// haveAccess, err := ru.CheckMedicAccess(medicId, diaryId)
+	// if err != nil {
+	// 	return domain.MedicRecordCreateResponse{}, err
+	// }
+	// if !haveAccess {
+	// 	return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.UserHaveNoAccess
+	// }
 
 	if !recordData.IsValid() {
 		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
@@ -87,7 +165,7 @@ func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, record
 		imageNames[i] = recordData.Images[i].ImageName
 
 	}
-	RecordCreateResponse, err := ru.recordRepo.CreateMedicRecord(diaryId, recordData, diarisation)
+	RecordCreateResponse, err := ru.recordRepo.CreateMedicRecord(diaryId, recordData)
 	if err != nil {
 		return domain.MedicRecordCreateResponse{}, err
 	}
@@ -132,7 +210,7 @@ func (ru RecordUsecase) GetMedicRecord (userId, recordId uint64) (domain.MedicRe
 	// TODO: Check if this user has access to this record
 
 
-	diaryId, recordId, creatingDate, BasicRecordInfo, diarisation, err := ru.recordRepo.GetRecordTextInfo(true, recordId)
+	diaryId, recordId, creatingDate, BasicRecordInfo, err := ru.recordRepo.GetRecordTextInfo(true, recordId)
 	if err != nil {
 		return domain.MedicRecordCreateResponse{}, err
 	}
@@ -142,10 +220,9 @@ func (ru RecordUsecase) GetMedicRecord (userId, recordId uint64) (domain.MedicRe
 		Id: recordId,
 		CreatingDate: creatingDate,
 		BasicInfo: BasicRecordInfo,
-		Diarisation: diarisation,
+		// Diarisation: diarisation,
 		ImageList: nil,
 	}
-
 	imageNames, err := ru.recordRepo.GetRecordImageNames(true, recordId)
 	if err != nil {
 		return domain.MedicRecordCreateResponse{}, err
