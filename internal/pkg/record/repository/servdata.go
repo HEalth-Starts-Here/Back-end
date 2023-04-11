@@ -518,3 +518,30 @@ func (dr *dbrecordrepository) GetPatientRecordTextInfo(recordId uint64) (uint64,
 		Details:         cast.ToString(resp[0][6]),
 	}, nil
 }
+
+func (er *dbrecordrepository) UpdatePatientRecordText(recordId uint64, patientRecordBasicInfo domain.PatientRecordBasicInfo) (domain.PatientRecordUpdateTextResponse, error) {
+	query := queryUpdateTextPatientRecord
+	resp, err := er.dbm.Query(query,
+		patientRecordBasicInfo.Title,
+		patientRecordBasicInfo.Complaints,
+		patientRecordBasicInfo.Treatment,
+		patientRecordBasicInfo.Details,
+		recordId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.PatientRecordUpdateTextResponse{}, err
+	}
+
+	return domain.PatientRecordUpdateTextResponse{
+		Id:           cast.ToUint64(resp[0][0]),
+		DiaryId:      cast.ToUint64(resp[0][1]),
+		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][2]), true),
+		BasicInfo: domain.PatientRecordBasicInfo{
+			Title:           cast.ToString(resp[0][3]),
+			Complaints:		 cast.ToString(resp[0][4]),
+			Treatment:       cast.ToString(resp[0][5]),
+			Details:         cast.ToString(resp[0][6]),
+		},
+	}, nil
+}

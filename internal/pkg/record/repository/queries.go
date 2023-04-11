@@ -155,4 +155,11 @@ const (
 	FROM patientrecords
 	WHERE id = $1;
 	`
+
+	queryUpdateTextPatientRecord = `
+	UPDATE patientrecords
+	SET title = $1, complaints = $2, treatment = $3, details = $4
+	WHERE id = $5
+	RETURNING id, diaryid, creatingdate, title, complaints, treatment, details;
+	`
 )

@@ -191,6 +191,12 @@ type PatientRecordCreateResponse struct {
 	// Diarisation		string					`json:"diarisation"`
 }
 
+type PatientRecordUpdateTextResponse struct {
+	DiaryId			uint64					`json:"diaryid"` 
+	Id				uint64					`json:"id"` 
+	CreatingDate	string					`json:"creatingdate"` 
+	BasicInfo		PatientRecordBasicInfo	`json:"basicinfo"`
+}
 
 type RecordRepository interface {
 	// MEDIC
@@ -213,7 +219,7 @@ type RecordRepository interface {
 	// PATIENT
 	CreatePatientRecord(diaryId uint64, record PatientRecordCreateRequest) (PatientRecordCreateResponse, error)
 	GetPatientRecordTextInfo(recordId uint64,) (uint64, uint64, string, PatientRecordBasicInfo, error) 
-
+	UpdatePatientRecordText(recordId uint64, patientRecordBasicInfo PatientRecordBasicInfo) (PatientRecordUpdateTextResponse, error) 	
 }
 
 type RecordUsecase interface {
@@ -235,5 +241,5 @@ type RecordUsecase interface {
 	// PATIENT
 	CreatePatientRecord(patientId, diaryId uint64, record PatientRecordCreateRequest) (PatientRecordCreateResponse, error)
 	GetPatientRecord(userId, recordId uint64) (PatientRecordCreateResponse, error)
-	
+	UpdatePatientRecordText(patientId uint64, recordId uint64, patientRecordBasicInfo PatientRecordBasicInfo) (PatientRecordUpdateTextResponse, error) 
 }
