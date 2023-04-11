@@ -106,60 +106,62 @@ VALUES
     );
 
 INSERT INTO
-    images (ismedic, recordId, name)
+    -- images (ismedic, recordId, name)
+    medicImages (recordId, name)
 VALUES
     (
-        true,
+        -- true,
 		1,
         '1.png'
     ),
     (
-        true,
+        -- true,
 		1,
         '2.png'
     ),
     (
-        true,
+        -- true,
 		1,
         '3.png'
     ),
     (
-        false,
+        -- false,
 		2,
         '4.png'
     ),
     (
-        false,
+        -- false,
 		2,
         '5.png'
     );
 
 
 INSERT INTO
-    patientImages (ismedic, recordId, name)
+    -- patientImages (ismedic, recordId, name)
+    patientImages ( recordId, name)
 VALUES
     (
-        true,
+        -- false,
 		1,
         '1.png'
     ),
     (
-        true,
+        -- false,
 		1,
         '2.png'
     ),
     (
-        true,
+        -- false,
 		1,
         '3.png'
     ),
     (
-        false,
+        -- false,
 		2,
         '4.png'
     ),
     (
-        false,
+        -- false,
 		2,
         '5.png'
     );

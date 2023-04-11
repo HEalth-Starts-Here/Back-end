@@ -17,5 +17,6 @@ const (
 	// PATIENT
 	recordPatientUrl				= recordUrl + "/patient"
 	recordPatientCreateUrl			= recordPatientUrl + "/create/{id:[0-9]+}"
+	recordPatientGetUrl				= recordPatientUrl + "/get/{id:[0-9]+}"
 
 )

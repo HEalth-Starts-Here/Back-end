@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
-	"strconv"
+	// "strconv"
 	"strings"
 	"time"
 
@@ -125,10 +125,10 @@ func (er *dbrecordrepository) CreateRecordImageLists(isMedic bool, recordId uint
 		queryBuilder.Write([]byte(queryCreatePatientRecordImageListFirstPart))
 	}
 	for i := range imageInfo {
-		isMedicString := strconv.FormatBool(isMedic)
+		// isMedicString := strconv.FormatBool(isMedic)
 		queryBuilder.Write([]byte("("))
-		queryBuilder.Write([]byte(isMedicString))
-		queryBuilder.Write([]byte(","))
+		// queryBuilder.Write([]byte(isMedicString))
+		// queryBuilder.Write([]byte(","))
 		queryBuilder.Write([]byte(cast.IntToStr(recordId)))
 		queryBuilder.Write([]byte(","))
 		queryBuilder.Write([]byte("'" + imageInfo[i] + "'"))
@@ -230,7 +230,7 @@ func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string
 	return imageIds, tags, nil
 }
 
-func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64) (uint64, uint64, string, domain.MedicRecordBasicInfo, error) {
+func (dr *dbrecordrepository) GetRecordTextInfo(recordId uint64) (uint64, uint64, string, domain.MedicRecordBasicInfo, error) {
 	var resp []database.DBbyterow
 	var err error
 	query := queryGetMedicRecordInfo
@@ -293,8 +293,12 @@ func (cr *dbrecordrepository) GetRecordImageNames(isMedic bool, recordId uint64)
 	var err error
 	query := ""
 
-	query = queryGetRecordImageList
-	resp, err = cr.dbm.Query(query, isMedic, recordId)
+	if isMedic {
+		query = queryGetMedicRecordImageList
+	} else {
+		query = queryGetPatientRecordImageList
+	}
+	resp, err = cr.dbm.Query(query, recordId)
 
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
@@ -487,4 +491,30 @@ func (rr *dbrecordrepository) CreatePatientRecord(diaryId uint64, record domain.
 		return domain.PatientRecordCreateResponse{}, err
 	}
 	return response, nil
+}
+
+func (dr *dbrecordrepository) GetPatientRecordTextInfo(recordId uint64) (uint64, uint64, string, domain.PatientRecordBasicInfo, error) {
+	var resp []database.DBbyterow
+	var err error
+	query := queryGetPatientRecordInfo
+	resp, err = dr.dbm.Query(query, recordId)
+
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return 0, 0, "", domain.PatientRecordBasicInfo{}, domain.Err.ErrObj.InternalServer
+	}
+
+	if len(resp) == 0 {
+		log.Warn(cast.GetCurrentFuncName())
+		log.Error(domain.Err.ErrObj.SmallDb)
+		return 0, 0, "", domain.PatientRecordBasicInfo{}, domain.Err.ErrObj.SmallDb
+	}
+
+	return cast.ToUint64(resp[0][0]), cast.ToUint64(resp[0][1]), cast.TimeToStr(cast.ToTime(resp[0][2]), true), domain.PatientRecordBasicInfo{
+		Title:           cast.ToString(resp[0][3]),
+		Complaints:		 cast.ToString(resp[0][4]),
+		Treatment:       cast.ToString(resp[0][5]),
+		Details:         cast.ToString(resp[0][6]),
+	}, nil
 }

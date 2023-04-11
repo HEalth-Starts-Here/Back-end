@@ -22,7 +22,7 @@ const (
 	//TODO rename to filename
 	queryGetImageList = `
 	SELECT name
-	FROM images
+	FROM medicimages
 	UNION ALL
 	SELECT name
 	FROM patientimages;
@@ -44,14 +44,17 @@ const (
 
 	queryCreateMedicRecordImageListFirstPart = `
 	INSERT INTO
-    images (ismedic, recordId, name)
+    medicimages (recordId, name)
 	VALUES
 	`
+    // images (ismedic, recordId, name)
+
 	queryCreatePatientRecordImageListFirstPart = `
 	INSERT INTO
-    patientimages (ismedic, recordId, name)
+    patientimages (recordId, name)
 	VALUES
 	`
+    // patientimages (ismedic, recordId, name)
 
 	queryCreateRecordImageListSecondPart = `
 	RETURNING id;
@@ -67,14 +70,22 @@ const (
 	RETURNING imageId, name;
 	`
 
-	queryGetRecordImageList = `
+	queryGetMedicRecordImageList = `
 	SELECT name
-	FROM images
-	WHERE ismedic = $1 AND recordid = $2;
+	FROM medicimages
+	WHERE recordid = $1;
 	`
+	// WHERE ismedic = $1 AND recordid = $2;
+
+	queryGetPatientRecordImageList = `
+	SELECT name
+	FROM medicimages
+	WHERE recordid = $1;
+	`
+	// WHERE ismedic = $1 AND recordid = $2;
 
 	queryGetMedicRecordInfo = `
-	SELECT diaryid, id, creatingdate, title, treatment, recommendations, details, diarisation
+	SELECT diaryid, id, creatingdate, title, treatment, recommendations, details
 	FROM medicrecords
 	WHERE id = $1;
 	`
@@ -100,7 +111,7 @@ const (
 	`
 
 	queryDeleteImageMedicRecord = `
-	DELETE FROM images
+	DELETE FROM medicimages
 	WHERE ismedic = $1 AND recordid = $2
 	RETURNING name;
 	`
@@ -137,5 +148,11 @@ const (
 		$6
 	)
 	RETURNING id, diaryid, creatingdate, title, complaints, treatment, details;
+	`
+	
+	queryGetPatientRecordInfo = `
+	SELECT diaryid, id, creatingdate, title, complaints, treatment, details
+	FROM patientrecords
+	WHERE id = $1;
 	`
 )

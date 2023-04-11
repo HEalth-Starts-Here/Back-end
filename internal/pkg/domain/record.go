@@ -198,7 +198,7 @@ type RecordRepository interface {
 	GetImageNames() (map[string]struct{}, error)
 	CreateRecordImageLists(isMedic bool,recordId uint64, imageInfo []string) ([]uint64, error) 
 	CreateImageTags(imageIds []uint64, tags [][]string) ([]uint64, [][]string, error) 
-	GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, MedicRecordBasicInfo, error) 
+	GetRecordTextInfo(recordId uint64,) (uint64, uint64, string, MedicRecordBasicInfo, error) 
 	GetRecordImageNames(isMedic bool, recordId uint64) ([]string, error) 
 	UpdateMedicRecordText(recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error) 
 	DeleteRecordImage(isMedic bool, recordId uint64) (RecordUpdateImageResponse, error)
@@ -212,6 +212,7 @@ type RecordRepository interface {
 
 	// PATIENT
 	CreatePatientRecord(diaryId uint64, record PatientRecordCreateRequest) (PatientRecordCreateResponse, error)
+	GetPatientRecordTextInfo(recordId uint64,) (uint64, uint64, string, PatientRecordBasicInfo, error) 
 
 }
 
@@ -233,4 +234,6 @@ type RecordUsecase interface {
 
 	// PATIENT
 	CreatePatientRecord(patientId, diaryId uint64, record PatientRecordCreateRequest) (PatientRecordCreateResponse, error)
+	GetPatientRecord(userId, recordId uint64) (PatientRecordCreateResponse, error)
+	
 }
