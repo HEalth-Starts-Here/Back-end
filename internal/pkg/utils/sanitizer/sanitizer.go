@@ -58,8 +58,23 @@ func SanitizeMedicRecordCreateRequest(record *domain.MedicRecordCreateRequest) {
 	for i := range (record.Images){
 		SanitizeImageInfo(&record.Images[i])
 	}
-	for i := range (record.Auido){
-		sanitizeText(&record.Auido[i])
+	// for i := range (record.Auido){
+	// 	sanitizeText(&record.Auido[i])
+	// }
+}
+
+func SanitizePatientRecordBasicInfo (record *domain.PatientRecordBasicInfo){
+	sanitizeText(&record.Title)
+	sanitizeText(&record.Treatment)
+	sanitizeText(&record.Complaints)
+	sanitizeText(&record.Details)
+}
+
+func SanitizePatientRecordCreateRequest(record *domain.PatientRecordCreateRequest) {
+	SanitizePatientRecordBasicInfo(&record.BasicInfo)
+	for i := range (record.Images){
+		SanitizeImageInfo(&record.Images[i])
 	}
 }
+
 

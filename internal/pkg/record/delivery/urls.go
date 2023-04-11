@@ -2,6 +2,8 @@ package recorddelivery
 
 const (
 	recordUrl						= "/record"
+	
+	// MEDIC
 	recordMedicUrl					= recordUrl + "/medic"
 	recordMedicCreateUrl			= recordMedicUrl + "/create/{id:[0-9]+}"
 	// recordMedicAddDiarisationUr		= recordMedicUrl + "/diarisation/{id:[0-9]+}"
@@ -11,4 +13,9 @@ const (
 	recordMedicUpdateTextUrl		= recordMedicUpdateUrl +"/text/{id:[0-9]+}" 
 	recordMedicUpdateImageUrl		= recordMedicUpdateUrl +"/image/{id:[0-9]+}" 
 	recordMedicDeleteImageUrl		= recordMedicUrl + "/delete/{id:[0-9]+}"
+
+	// PATIENT
+	recordPatientUrl				= recordUrl + "/patient"
+	recordPatientCreateUrl			= recordPatientUrl + "/create/{id:[0-9]+}"
+
 )

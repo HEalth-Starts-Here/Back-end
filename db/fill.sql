@@ -136,6 +136,36 @@ VALUES
 
 
 INSERT INTO
+    patientImages (ismedic, recordId, name)
+VALUES
+    (
+        true,
+		1,
+        '1.png'
+    ),
+    (
+        true,
+		1,
+        '2.png'
+    ),
+    (
+        true,
+		1,
+        '3.png'
+    ),
+    (
+        false,
+		2,
+        '4.png'
+    ),
+    (
+        false,
+		2,
+        '5.png'
+    );
+
+
+INSERT INTO
     audio (medicRecordId, creatingDate, diarisation, filename)
 VALUES
     (

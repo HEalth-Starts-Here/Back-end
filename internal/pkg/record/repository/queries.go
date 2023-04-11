@@ -22,7 +22,10 @@ const (
 	//TODO rename to filename
 	queryGetImageList = `
 	SELECT name
-	FROM images;
+	FROM images
+	UNION ALL
+	SELECT name
+	FROM patientimages;
 	`
 
 	queryCreateMedicRecord = `
@@ -39,9 +42,14 @@ const (
 	RETURNING id, diaryid, creatingdate, title, treatment, recommendations, details;
 	`
 
-	queryCreateRecordImageListFirstPart = `
+	queryCreateMedicRecordImageListFirstPart = `
 	INSERT INTO
     images (ismedic, recordId, name)
+	VALUES
+	`
+	queryCreatePatientRecordImageListFirstPart = `
+	INSERT INTO
+    patientimages (ismedic, recordId, name)
 	VALUES
 	`
 
@@ -116,5 +124,18 @@ const (
 	ON diaries.id = medicrecords.diaryid
 	WHERE medicrecords.id = $1;
 	`
-
+	
+	queryCreatePatientRecord = `
+	INSERT INTO 
+	patientrecords (diaryid, creatingdate, title, complaints, treatment, details)
+	VALUES (
+		$1,
+		$2,
+		$3,
+		$4,
+		$5,
+		$6
+	)
+	RETURNING id, diaryid, creatingdate, title, complaints, treatment, details;
+	`
 )

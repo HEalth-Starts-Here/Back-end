@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS diaries              CASCADE;
 DROP TABLE IF EXISTS medicRecords         CASCADE;
 DROP TABLE IF EXISTS patientRecords       CASCADE;
 DROP TABLE IF EXISTS images               CASCADE;
+DROP TABLE IF EXISTS patientImages        CASCADE;
 DROP TABLE IF EXISTS tags                 CASCADE;
 DROP TABLE IF EXISTS audio                CASCADE;
 
@@ -56,6 +57,13 @@ CREATE TABLE images (
     -- TODO add foreign key refer to patientRecords
     isMedic                             BOOLEAN,
     recordId                            BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
+    name                                VARCHAR(200)
+);
+
+CREATE TABLE patientImages (
+    id                                  BIGSERIAL NOT NULL PRIMARY KEY,
+    isMedic                             BOOLEAN,
+    recordId                            BIGINT REFERENCES patientRecords (id) ON DELETE CASCADE,
     name                                VARCHAR(200)
 );
 

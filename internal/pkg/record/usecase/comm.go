@@ -32,6 +32,17 @@ func (ru RecordUsecase) CheckMedicDiaryAccess(medicId uint64, diaryId uint64) (b
 	return true, nil
 }
 
+// func (ru RecordUsecase) CheckUserDiaryAccess(userId uint64, diaryId uint64) (bool, error) {
+// 	medicId, patientId, err := ru.recordRepo.GetMedicIdFromDiary(diaryId)
+// 	if err != nil {
+// 		return false, err
+// 	}
+// 	if medicId != ownerId {
+// 		return false, nil
+// 	}
+// 	return true, nil
+// }
+
 func (ru RecordUsecase) CheckMedicRecordAccess(medicId uint64, medicRecordId uint64) (bool, error) {
 	ownerId, err := ru.recordRepo.GetMedicIdFromDiaryOfRecord(medicRecordId)
 	if err != nil {
@@ -127,30 +138,6 @@ func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, record
 	if err != nil {
 		return domain.MedicRecordCreateResponse{}, err
 	}
-	// ru.CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess()
-	// diaryExist, err := ru.CheckDiaryExist(diaryId)
-	// if err != nil {
-	// 	return domain.MedicRecordCreateResponse{}, err
-	// }
-	// if !diaryExist {
-	// 	return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.DiaryDoestExist
-	// }
-	
-	// medicExist, err := ru.CheckMedicExist(medicId)
-	// if err != nil {
-	// 	return domain.MedicRecordCreateResponse{}, err
-	// }
-	// if !medicExist {
-	// 	return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.MedicDoestExist
-	// }
-	
-	// haveAccess, err := ru.CheckMedicAccess(medicId, diaryId)
-	// if err != nil {
-	// 	return domain.MedicRecordCreateResponse{}, err
-	// }
-	// if !haveAccess {
-	// 	return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.UserHaveNoAccess
-	// }
 
 	if !recordData.IsValid() {
 		return domain.MedicRecordCreateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
@@ -198,6 +185,7 @@ func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, record
 }
 
 func (ru RecordUsecase) GetMedicRecord (userId, recordId uint64) (domain.MedicRecordCreateResponse, error) {
+	
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -240,15 +228,10 @@ func (ru RecordUsecase) GetMedicRecord (userId, recordId uint64) (domain.MedicRe
 }
 
 func (ru RecordUsecase) GetMedicRecordDiarisations (userId, medicRecordId uint64) (domain.GetDiarisationsResponse, error) {
-	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
-	// if err != nil {
-	// 	return domain.DiaryCreateResponse{}, err
-	// }
-
-	// if alreadyExist {
-	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
-	// }
-	
+	err := ru.CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(userId, medicRecordId)
+	if err != nil {
+		return domain.GetDiarisationsResponse{}, err
+	}
 	// TODO: Check if this user has access to this record
 	response, err := ru.recordRepo.GetMedicRecordDiarisations(medicRecordId)
 	if err != nil {
@@ -367,4 +350,56 @@ func (ru RecordUsecase) DeleteMedicRecord(medicId uint64, recordId uint64) (erro
 	// 	tags = append(tags, recordData.Images[i].Tags)
 	// }
 	return nil
+}
+
+func (ru RecordUsecase) CreatePatientRecord(patientId, diaryId uint64, recordData domain.PatientRecordCreateRequest) (domain.PatientRecordCreateResponse, error) {
+	// TODO: Add check if patient, diary exist and pateint have exist
+	// err := ru.CheckPatientAndDiaryExistAndPatientHaveAccess(patientId, diaryId)
+	// if err != nil {
+	// 	return domain.MedicRecordCreateResponse{}, err
+	// }
+
+	if !recordData.IsValid() {
+		return domain.PatientRecordCreateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
+	}
+	alreadyUsed, err := ru.recordRepo.GetImageNames()
+	if err != nil {
+		return domain.PatientRecordCreateResponse{}, err
+	}
+	imageNames := filesaver.GetUniqueFileNames(len(recordData.Images), alreadyUsed)
+	for i := 0; i < len(imageNames); i++ {
+		recordData.Images[i].ImageName = imageNames[i] + filepath.Ext(recordData.Images[i].ImageName)
+		imageNames[i] = recordData.Images[i].ImageName
+
+	}
+	RecordCreateResponse, err := ru.recordRepo.CreatePatientRecord(diaryId, recordData)
+	if err != nil {
+		return domain.PatientRecordCreateResponse{}, err
+	}
+
+	// imagenames := []string{}
+	// for i := range recordData.Images {
+	// 	imagenames = append(imagenames, recordData.Images[i].ImageName)
+	// }
+	// println(imageNames)
+	// TODO check case with 0 images
+	_, err = ru.recordRepo.CreateRecordImageLists(false, RecordCreateResponse.Id, imageNames)
+	if err != nil {
+		return domain.PatientRecordCreateResponse{}, err
+	}
+	for i := range RecordCreateResponse.ImageList {
+		RecordCreateResponse.ImageList[i].ImageName = imageNames[i]
+	}
+
+	tags := [][]string{}
+	for i := range recordData.Images {
+		tags = append(tags, recordData.Images[i].Tags)
+	}
+
+	// imageIds, tags, err = ru.recordRepo.CreateImageTags(imageIds, tags)
+	// for i := range imageIds {
+
+	// 	tags = append(tags, recordData.Images[i].Tags)
+	// }
+	return RecordCreateResponse, nil
 }

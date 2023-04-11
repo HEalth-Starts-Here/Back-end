@@ -72,6 +72,7 @@ func readMultipartDataImages(r *http.Request) ([]domain.RecordImageInfo, int,  e
 	return imageInfo, http.StatusCreated, nil
 }
 
+// MEDIC
 func (handler *RecordHandler) CreateMedicRecord(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
@@ -405,34 +406,81 @@ func (handler *RecordHandler) DeleteMedicRecord(w http.ResponseWriter, r *http.R
 	w.WriteHeader(http.StatusOK)
 }
 
-// func (handler *RecordHandler) CreateDiarisation (w http.ResponseWriter, r *http.Request) {
-// 	defer r.Body.Close()
-// 	// sessionId, err := sessions.CheckSession(r)
-// 	// if err == domain.Err.ErrObj.UserNotLoggedIn {
-// 	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
-// 	// 	return
-// 	// }
-// 	queryParameter := r.URL.Query().Get("vk_user_id")
-// 	medicId, err := strconv.ParseUint(queryParameter, 10, 64)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
 
-// 	params := mux.Vars(r)
-// 	recordId, err := strconv.ParseUint(params["id"], 10, 64)
-// 	if err != nil {
-// 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-// 	mlse
-// 	err = handler.RecordUsecase.DeleteMedicRecord(medicId, recordId)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
 
-// 	w.WriteHeader(http.StatusOK)
-// }
+// PATIENT
+func (handler *RecordHandler) CreatePatientRecord(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	// sessionId, err := sessions.CheckSession(r)
+	// if err == domain.Err.ErrObj.UserNotLoggedIn {
+	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
+	// 	return
+	// }
+	queryParameter := r.URL.Query().Get("vk_user_id")
+	userId, err := strconv.ParseUint(queryParameter, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	params := mux.Vars(r)
+	diaryId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		return
+	}
+
+	PatientRecordCreateRequest := new(domain.PatientRecordCreateRequest)
+	PatientRecordCreateRequest.SetDefault()
+	readedImages, httpCode, err := readMultipartDataImages(r)
+	PatientRecordCreateRequest.Images = readedImages
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), httpCode)
+		w.WriteHeader(httpCode)
+		return
+	}
+	// basicInfo := domain.RecordBasicInfo{}
+	// TODO change to easyjson
+	// err = json.Unmarshal(([]byte)((r.Form["basicInfo"])[0]), RecordCreateRequest.BasicInfo)
+	
+	PatientRecordCreateRequest.BasicInfo.Title = fmt.Sprintf("%v", (r.Form["title"])[0])
+	PatientRecordCreateRequest.BasicInfo.Treatment = fmt.Sprintf("%v", (r.Form["treatment"])[0])
+	PatientRecordCreateRequest.BasicInfo.Complaints = fmt.Sprintf("%v", (r.Form["complaints"])[0])
+	PatientRecordCreateRequest.BasicInfo.Details = fmt.Sprintf("%v", (r.Form["details"])[0])
+
+
+	sanitizer.SanitizePatientRecordCreateRequest(PatientRecordCreateRequest)
+	es, err := handler.RecordUsecase.CreatePatientRecord(userId, diaryId, *PatientRecordCreateRequest)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	// We check if file with this name alredy exist in usecase
+	imageNames := []string{}
+	for i := range PatientRecordCreateRequest.Images {
+		imageNames = append(imageNames, PatientRecordCreateRequest.Images[i].ImageName)
+	}
+	//TODO ser response image valuse in repository
+	filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
+	
+	es.ImageList = make([]domain.RecordImageInfo,0)
+	for i := range (imageNames){
+		es.ImageList = append(es.ImageList, domain.RecordImageInfo{ImageName: imageNames[i], Tags: nil})
+	}
+	out, err := easyjson.Marshal(es)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write(out)
+}

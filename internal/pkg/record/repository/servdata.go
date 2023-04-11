@@ -1,6 +1,7 @@
 package recordrepository
 
 import (
+	"fmt"
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
 	"strconv"
@@ -20,7 +21,6 @@ func InitRecordRep(manager *database.DBManager) domain.RecordRepository {
 		dbm: manager,
 	}
 }
-
 
 func (cr *dbrecordrepository) MedicExist(medicId uint64) (bool, error) {
 	var resp []database.DBbyterow
@@ -90,6 +90,7 @@ func (cr *dbrecordrepository) MedicRecordExist(diaryId uint64) (bool, error) {
 // 	return true, nil
 // }
 
+// MEDIC
 func (cr *dbrecordrepository) GetImageNames() (map[string]struct{}, error) {
 	var resp []database.DBbyterow
 	var err error
@@ -112,13 +113,17 @@ func (cr *dbrecordrepository) GetImageNames() (map[string]struct{}, error) {
 	return imageNames, nil
 }
 
-func (er *dbrecordrepository) CreateRecordImageLists(isMedic bool,recordId uint64, imageInfo []string) ([]uint64, error) {
+func (er *dbrecordrepository) CreateRecordImageLists(isMedic bool, recordId uint64, imageInfo []string) ([]uint64, error) {
 	if len(imageInfo) == 0 {
 		return []uint64{}, nil
 	}
 	queryBuilder := strings.Builder{}
 	// arrayForQuery := ""
-	queryBuilder.Write([]byte(queryCreateRecordImageListFirstPart))
+	if isMedic {
+		queryBuilder.Write([]byte(queryCreateMedicRecordImageListFirstPart))
+	} else {
+		queryBuilder.Write([]byte(queryCreatePatientRecordImageListFirstPart))
+	}
 	for i := range imageInfo {
 		isMedicString := strconv.FormatBool(isMedic)
 		queryBuilder.Write([]byte("("))
@@ -142,9 +147,9 @@ func (er *dbrecordrepository) CreateRecordImageLists(isMedic bool,recordId uint6
 	}
 	response := []uint64{}
 	for i := range resp {
-		response = append(response,	cast.ToUint64(resp[i][0]))
+		response = append(response, cast.ToUint64(resp[i][0]))
 	}
-	
+
 	return response, nil
 }
 
@@ -169,15 +174,15 @@ func (rr *dbrecordrepository) CreateMedicRecord(diaryId uint64, record domain.Me
 		DiaryId:      cast.ToUint64(resp[0][1]),
 		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][2]), true),
 		BasicInfo: domain.MedicRecordBasicInfo{
-			Title: cast.ToString(resp[0][3]),
-			Treatment: cast.ToString(resp[0][4]),
+			Title:           cast.ToString(resp[0][3]),
+			Treatment:       cast.ToString(resp[0][4]),
 			Recommendations: cast.ToString(resp[0][5]),
-			Details: cast.ToString(resp[0][6]),
+			Details:         cast.ToString(resp[0][6]),
 		},
 		// Diarisation: cast.ToString(resp[0][7]),
 		ImageList: nil,
 	}
-	
+
 	if err != nil {
 		log.Error(err)
 		return domain.MedicRecordCreateResponse{}, err
@@ -185,7 +190,7 @@ func (rr *dbrecordrepository) CreateMedicRecord(diaryId uint64, record domain.Me
 	return response, nil
 }
 
-func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string)  ([]uint64, [][]string, error) {
+func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string) ([]uint64, [][]string, error) {
 	if len(imageIds) == 0 {
 		return []uint64{}, [][]string{}, nil
 	}
@@ -193,7 +198,7 @@ func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string
 	// arrayForQuery := ""
 	queryBuilder.Write([]byte(queryCreateImageTagListFirstPart))
 	for i := range imageIds {
-		for j := range(tags[i]) {
+		for j := range tags[i] {
 			queryBuilder.Write([]byte("("))
 			queryBuilder.Write([]byte(cast.IntToStr(imageIds[i])))
 			queryBuilder.Write([]byte(","))
@@ -202,7 +207,7 @@ func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string
 			// 	queryBuilder.Write([]byte(","))
 			// }
 			queryBuilder.Write([]byte(")"))
-			if i != len(imageIds) || j != len(tags[i]) - 1 {
+			if i != len(imageIds) || j != len(tags[i])-1 {
 				queryBuilder.Write([]byte(","))
 			}
 		}
@@ -213,7 +218,7 @@ func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
-		return []uint64{}, [][]string{},err
+		return []uint64{}, [][]string{}, err
 	}
 
 	// response := []uint64{}
@@ -225,7 +230,7 @@ func (rr *dbrecordrepository) CreateImageTags(imageIds []uint64, tags [][]string
 	return imageIds, tags, nil
 }
 
-func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64,) (uint64, uint64, string, domain.MedicRecordBasicInfo, error) {
+func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64) (uint64, uint64, string, domain.MedicRecordBasicInfo, error) {
 	var resp []database.DBbyterow
 	var err error
 	query := queryGetMedicRecordInfo
@@ -243,11 +248,11 @@ func (dr *dbrecordrepository) GetRecordTextInfo(isMedic bool, recordId uint64,) 
 		return 0, 0, "", domain.MedicRecordBasicInfo{}, domain.Err.ErrObj.SmallDb
 	}
 	return cast.ToUint64(resp[0][0]), cast.ToUint64(resp[0][1]), cast.TimeToStr(cast.ToTime(resp[0][2]), true), domain.MedicRecordBasicInfo{
-		Title: cast.ToString(resp[0][3]),
-		Treatment: cast.ToString(resp[0][4]),
+		Title:           cast.ToString(resp[0][3]),
+		Treatment:       cast.ToString(resp[0][4]),
 		Recommendations: cast.ToString(resp[0][5]),
-		Details: cast.ToString(resp[0][6]),
-		},  nil
+		Details:         cast.ToString(resp[0][6]),
+	}, nil
 }
 
 func (dr *dbrecordrepository) GetMedicRecordDiarisations(medicRecordId uint64) (domain.GetDiarisationsResponse, error) {
@@ -272,17 +277,16 @@ func (dr *dbrecordrepository) GetMedicRecordDiarisations(medicRecordId uint64) (
 	for i := range resp {
 		response.DiarisationList = append(response.DiarisationList, domain.DiarisationInListResponse{
 			Id: cast.ToUint64(resp[i][0]),
-			// [i] [1] used before 
+			// [i] [1] used before
 			CreatingDate: cast.TimeToStr(cast.ToTime(resp[i][2]), true),
 			DiarisationInfo: domain.DiarisationInfo{
 				Diarisation: cast.ToString(resp[i][3]),
-				Filename: cast.ToString(resp[i][4]),
+				Filename:    cast.ToString(resp[i][4]),
 			},
 		})
 	}
 	return response, nil
 }
-
 
 func (cr *dbrecordrepository) GetRecordImageNames(isMedic bool, recordId uint64) ([]string, error) {
 	var resp []database.DBbyterow
@@ -306,7 +310,6 @@ func (cr *dbrecordrepository) GetRecordImageNames(isMedic bool, recordId uint64)
 	return imageNames, nil
 }
 
-
 func (er *dbrecordrepository) UpdateMedicRecordText(recordId uint64, medicRecordBasicInfo domain.MedicRecordBasicInfo) (domain.MedicRecordUpdateTextResponse, error) {
 	query := queryUpdateTextMedicRecord
 	resp, err := er.dbm.Query(query,
@@ -326,10 +329,10 @@ func (er *dbrecordrepository) UpdateMedicRecordText(recordId uint64, medicRecord
 		DiaryId:      cast.ToUint64(resp[0][1]),
 		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][2]), true),
 		BasicInfo: domain.MedicRecordBasicInfo{
-			Title:       		cast.ToString(resp[0][3]),
-			Treatment:       	cast.ToString(resp[0][4]),
-			Recommendations:    cast.ToString(resp[0][5]),
-			Details:			cast.ToString(resp[0][6]),
+			Title:           cast.ToString(resp[0][3]),
+			Treatment:       cast.ToString(resp[0][4]),
+			Recommendations: cast.ToString(resp[0][5]),
+			Details:         cast.ToString(resp[0][6]),
 		},
 	}, nil
 }
@@ -354,7 +357,7 @@ func (er *dbrecordrepository) UpdateMedicRecordText(recordId uint64, medicRecord
 // 	return response, nil
 // }
 
-func (dr *dbrecordrepository) DeleteRecord(isMedic bool, recordId uint64,) (error) {
+func (dr *dbrecordrepository) DeleteRecord(isMedic bool, recordId uint64) error {
 	var resp []database.DBbyterow
 	var err error
 	query := queryDeleteMedicRecord
@@ -391,21 +394,21 @@ func (er *dbrecordrepository) DeleteRecordImage(isMedic bool, recordId uint64) (
 		return domain.RecordUpdateImageResponse{}, getErr
 	}
 	recordUpdateImageResponse := domain.RecordUpdateImageResponse{
-		DiaryId: cast.ToUint64(getResp[0][0]),
-		Id: cast.ToUint64(getResp[0][1]),
+		DiaryId:      cast.ToUint64(getResp[0][0]),
+		Id:           cast.ToUint64(getResp[0][1]),
 		CreatingDate: cast.TimeToStr(cast.ToTime(getResp[0][2]), true),
 	}
 	// deletedImages := make([]string, 0)
 	for i := range resp {
-		recordUpdateImageResponse.Images = append(recordUpdateImageResponse.Images, domain.RecordImageInfo{	
+		recordUpdateImageResponse.Images = append(recordUpdateImageResponse.Images, domain.RecordImageInfo{
 			ImageName: cast.ToString(resp[i][0]),
-			Tags:  nil,
+			Tags:      nil,
 		})
 	}
 	return recordUpdateImageResponse, nil
 }
 
-func (dr *dbrecordrepository) GetMedicIdFromDiary(diaryId uint64,) (uint64, error) {
+func (dr *dbrecordrepository) GetMedicIdFromDiary(diaryId uint64) (uint64, error) {
 	var resp []database.DBbyterow
 	var err error
 	query := queryGetMedicIdFromDiary
@@ -425,8 +428,7 @@ func (dr *dbrecordrepository) GetMedicIdFromDiary(diaryId uint64,) (uint64, erro
 	return cast.ToUint64(resp[0][0]), nil
 }
 
-
-func (dr *dbrecordrepository) GetMedicIdFromDiaryOfRecord(recordId uint64,) (uint64, error) {
+func (dr *dbrecordrepository) GetMedicIdFromDiaryOfRecord(recordId uint64) (uint64, error) {
 	var resp []database.DBbyterow
 	var err error
 	query := queryGetMedicIdFromDiaryOfRecord
@@ -444,4 +446,45 @@ func (dr *dbrecordrepository) GetMedicIdFromDiaryOfRecord(recordId uint64,) (uin
 	}
 
 	return cast.ToUint64(resp[0][0]), nil
+}
+
+// PATIENT
+func (rr *dbrecordrepository) CreatePatientRecord(diaryId uint64, record domain.PatientRecordCreateRequest) (domain.PatientRecordCreateResponse, error) {
+	query := queryCreatePatientRecord
+	resp, err := rr.dbm.Query(query,
+		diaryId,
+		time.Now().Format("2006.01.02 15:04:05"),
+		record.BasicInfo.Title,
+		record.BasicInfo.Complaints,
+		record.BasicInfo.Treatment,
+		record.BasicInfo.Details)
+	if err != nil {
+		fmt.Printf("diaryId: %v\n", diaryId)
+		fmt.Printf("time.Now().Format(\"2006.01.02 15:04:05\"): %v\n", time.Now().Format("2006.01.02 15:04:05"))
+		fmt.Printf("record.BasicInfo.Title: %v\n", record.BasicInfo.Title)
+		fmt.Printf("record.BasicInfo.Complaints: %v\n", record.BasicInfo.Complaints)
+		fmt.Printf("record.BasicInfo.Treatment: %v\n", record.BasicInfo.Treatment)
+		fmt.Printf("record.BasicInfo.Details: %v\n", record.BasicInfo.Details)
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.PatientRecordCreateResponse{}, err
+	}
+	response := domain.PatientRecordCreateResponse{
+		Id:           cast.ToUint64(resp[0][0]),
+		DiaryId:      cast.ToUint64(resp[0][1]),
+		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][2]), true),
+		BasicInfo: domain.PatientRecordBasicInfo{
+			Title:      cast.ToString(resp[0][3]),
+			Complaints: cast.ToString(resp[0][4]),
+			Treatment:  cast.ToString(resp[0][5]),
+			Details:    cast.ToString(resp[0][6]),
+		},
+		ImageList: nil,
+	}
+
+	if err != nil {
+		log.Error(err)
+		return domain.PatientRecordCreateResponse{}, err
+	}
+	return response, nil
 }
