@@ -8,12 +8,18 @@ python -m pip install -U pip
 pip install -r requirements.txt
 ~~~
 
-For text summarization :
+For text summarization:
 ~~~bash
 python -m spacy download ru_core_news_sm
 ~~~
 
+Text diarization also requires the command-line tool `ffmpeg` to be installed on your system:
+~~~bash
+sudo apt update && sudo apt install ffmpeg
+~~~
+
 Run service:
+---
 ~~~bash
 python main.py configs/iqa_config.yml
 ~~~

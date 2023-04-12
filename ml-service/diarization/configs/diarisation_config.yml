@@ -1,8 +1,8 @@
-service: "Diarisation"
 port: "[::]:50051"
 max_workers: 10
 max_receive_message_length: 100  # in MB
 model_params:
-  model_size: "base"
+  model_size: "medium"
   num_speakers: 2
-  use_api: True
+  device: "cpu"
+  use_api: False

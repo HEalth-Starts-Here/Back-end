@@ -9,7 +9,7 @@ if __name__ == "__main__":
     channel = grpc.insecure_channel("127.0.0.1:50051")
     client = DiarisationStub(channel)
 
-    path = "/mnt/c/Users/mrily/Downloads/X3gh52xDth8_48.mp3"
+    path = "/mnt/e/Downloads/X3gh52xDth8_48.mp3"
     with open(path, "rb") as f:
         audio = io.BytesIO(f.read())
 

@@ -1,24 +1,24 @@
 import logging
 import sys
-
-# import io
-# import numpy as np
-# import whisper
-# import datetime
-# import wave
-# import contextlib
-# import torch
+import io
+import numpy as np
+import whisper
+import datetime
+import wave
+import contextlib
+import torch
 import requests
 import base64
 import grpc
 
-# from pyannote.audio.pipelines.speaker_verification import PretrainedSpeakerEmbedding
-# from pyannote.audio import Audio
-# from pyannote.core import Segment
+from time import time
+from pyannote.audio.pipelines.speaker_verification import PretrainedSpeakerEmbedding
+from pyannote.audio import Audio
+from pyannote.core import Segment
 
-# from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import AgglomerativeClustering
 
-# from pydub import AudioSegment
+from pydub import AudioSegment
 
 from api.diarisation_pb2 import DiarisationResponse
 from api.diarisation_pb2_grpc import DiarisationServicer
@@ -31,14 +31,24 @@ logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 
+def get_time(secs):
+    return datetime.timedelta(seconds=round(secs))
+
+
 class DiarisationService(DiarisationServicer):
     def __init__(self, params: DiarisationParams) -> None:
         self.params = params
+        device = torch.device(self.params.device)
 
-        # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        # self.embedding_model = PretrainedSpeakerEmbedding(
-        #     "speechbrain/spkrec-ecapa-voxceleb", device=device
-        # )
+        self.embedding_model = PretrainedSpeakerEmbedding(
+            "speechbrain/spkrec-ecapa-voxceleb", device=device
+        )
+        if not self.params.use_api:
+            logger.info(f"Load {self.params.model_size} model")
+            self.model = whisper.load_model(
+                self.params.model_size, download_root="models/", device=device
+            )
+        logger.info("Service setup completed")
 
     def transcribeAudio(self, request, context):
         if self.params.use_api:
@@ -48,58 +58,54 @@ class DiarisationService(DiarisationServicer):
         return DiarisationResponse(text=text)
 
     def _transcribe(self, audio):
-        # data = io.BytesIO(audio)
+        data = io.BytesIO(audio)
 
-        # sound = AudioSegment.from_file(data)
-        # sound.export("temp/file.wav", format="wav")
-        # path = "temp/file.wav"
+        sound = AudioSegment.from_file(data)
+        sound.export("temp/file.wav", format="wav")
+        path = "temp/file.wav"
 
-        # model = whisper.load_model(self.params.model_size)
+        logger.info("Transcribing audio...")
+        start_time = time()
+        result = self.model.transcribe(path)
+        segments = result["segments"]
 
-        # logger.info("Transcribing audio...")
-        # result = model.transcribe(path)
-        # segments = result["segments"]
+        with contextlib.closing(wave.open(path, "r")) as f:
+            frames = f.getnframes()
+            rate = f.getframerate()
+            duration = frames / float(rate)
 
-        # with contextlib.closing(wave.open(path, "r")) as f:
-        #     frames = f.getnframes()
-        #     rate = f.getframerate()
-        #     duration = frames / float(rate)
+        audio = Audio()
 
-        # audio = Audio()
+        def segment_embedding(segment):
+            start = segment["start"]
+            # Whisper overshoots the end timestamp in the last segment
+            end = min(duration, segment["end"])
+            clip = Segment(start, end)
+            waveform, _ = audio.crop(path, clip)
+            return self.embedding_model(waveform[None])
 
-        # def segment_embedding(segment):
-        #     start = segment["start"]
-        #     # Whisper overshoots the end timestamp in the last segment
-        #     end = min(duration, segment["end"])
-        #     clip = Segment(start, end)
-        #     waveform, sample_rate = audio.crop(path, clip)
-        #     return self.embedding_model(waveform[None])
+        embeddings = np.zeros(shape=(len(segments), 192))
+        for i, segment in enumerate(segments):
+            embeddings[i] = segment_embedding(segment)
+        embeddings = np.nan_to_num(embeddings)
 
-        # embeddings = np.zeros(shape=(len(segments), 192))
-        # for i, segment in enumerate(segments):
-        #     embeddings[i] = segment_embedding(segment)
+        clustering = AgglomerativeClustering(self.params.num_speakers).fit(embeddings)
+        labels = clustering.labels_
+        for i in range(len(segments)):
+            segments[i]["speaker"] = "SPEAKER " + str(labels[i] + 1)
 
-        # embeddings = np.nan_to_num(embeddings)
+        f = io.StringIO()
+        for i, segment in enumerate(segments):
+            if i == 0 or segments[i - 1]["speaker"] != segment["speaker"]:
+                f.write(
+                    "\n" + segment["speaker"] + " " + str(get_time(segment["start"])) + "\n"
+                )
+            f.write(segment["text"][1:] + " ")
 
-        # clustering = AgglomerativeClustering(self.params.num_speakers).fit(embeddings)
-        # labels = clustering.labels_
-        # for i in range(len(segments)):
-        #     segments[i]["speaker"] = "SPEAKER " + str(labels[i] + 1)
+        end_time = time()
+        logger.info(f"Total transcribing time: {get_time(end_time - start_time)}")
 
-        # def time(secs):
-        #     return datetime.timedelta(seconds=round(secs))
-
-        # f = io.StringIO()
-
-        # for i, segment in enumerate(segments):
-        #     if i == 0 or segments[i - 1]["speaker"] != segment["speaker"]:
-        #         f.write(
-        #             "\n" + segment["speaker"] + " " + str(time(segment["start"])) + "\n"
-        #         )
-        #     f.write(segment["text"][1:] + " ")
-
-        # f.getvalue()
-        pass
+        return f.getvalue()
 
     def _transcribe_with_api(self, audio, context):
         # Кодируем содержимое файла в base64
@@ -107,6 +113,7 @@ class DiarisationService(DiarisationServicer):
 
         logger.info("Waiting response from API...")
         # Отправляем запрос API с использованием закодированной строки
+        start_time = time()
         response = requests.post(
             "https://dwarkesh-whisper-speaker-recognition.hf.space/run/predict",
             json={
@@ -118,7 +125,10 @@ class DiarisationService(DiarisationServicer):
                     self.params.num_speakers,
                 ]
             },
+            timeout=3600
         )
+        end_time = time()
+        logger.info(f"Total processing time: {get_time(end_time - start_time)}")
 
         logger.info(f"Response status code: {response.status_code}")
         if not response.ok:

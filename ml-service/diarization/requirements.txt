@@ -1,5 +1,9 @@
-# pyannote.audio
-# openai-whisper
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==1.13.1
+torchaudio==0.13.1
+
+pyannote.audio
+openai-whisper
 pyyaml
 marshmallow-dataclass
 grpcio-tools==1.53.0

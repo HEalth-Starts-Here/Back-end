@@ -1,6 +1,6 @@
-from dataclasses import dataclass
 import yaml
 
+from dataclasses import dataclass
 from marshmallow_dataclass import class_schema
 
 from entities.models_params import DiarisationParams
@@ -8,7 +8,6 @@ from entities.models_params import DiarisationParams
 
 @dataclass
 class ServiceParams:
-    service: str
     port: str
     model_params: DiarisationParams
     max_receive_message_length: int = 4

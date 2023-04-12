@@ -30,11 +30,11 @@ class IQAService(IQAServicer):
     def __init__(self, params: PredictParams) -> None:
         self.params = params.model_params
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        logger.info(f"Running model on {self.device} device")
 
         if params.download_params and not os.path.exists(params.model_path):
             download_file(params.download_params)
 
+        logger.info(f"Running model on {self.device} device")
         self._model_hyper = HyperNet(16, 112, 224, 112, 56, 28, 14, 7).to(self.device)
         self._model_hyper.train(False)
         self._model_hyper.load_state_dict(

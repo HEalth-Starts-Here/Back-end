@@ -8,7 +8,6 @@ from entities.models_params import TextSummParams
 
 @dataclass
 class ServiceParams:
-    service: str
     port: str
     model_params: TextSummParams
     max_workers: int = 10

@@ -6,4 +6,5 @@ from typing import Optional
 class DiarisationParams:
     model_size: str
     num_speakers: int
+    device: str
     use_api: Optional[bool]
