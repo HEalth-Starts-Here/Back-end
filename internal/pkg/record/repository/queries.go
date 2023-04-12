@@ -112,13 +112,25 @@ const (
 
 	queryDeleteImageMedicRecord = `
 	DELETE FROM medicimages
-	WHERE ismedic = $1 AND recordid = $2
+	WHERE recordid = $1
+	RETURNING name;
+	`
+
+	queryDeleteImagePatientRecord = `
+	DELETE FROM medicimages
+	WHERE recordid = $1
 	RETURNING name;
 	`
 
 	queryGetBasicUpdateImageMedicRecord = `
 	SELECT diaryid, id, creatingdate
 	FROM medicrecords
+	WHERE id = $1;
+	`
+
+	queryGetBasicUpdateImagePatientRecord = `
+	SELECT diaryid, id, creatingdate
+	FROM patientrecords
 	WHERE id = $1;
 	`
 

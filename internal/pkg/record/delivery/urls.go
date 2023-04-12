@@ -20,5 +20,5 @@ const (
 	recordPatientGetUrl				= recordPatientUrl + "/get/{id:[0-9]+}"
 	recordPatientUpdateUrl			= recordPatientUrl + "/update"
 	recordPatientUpdateTextUrl		= recordPatientUpdateUrl + "/text/{id:[0-9]+}"
-	recordPatientUpdateImageUrl		= recordPatientUpdateUrl + "/text/{id:[0-9]+}"
+	recordPatientUpdateImageUrl		= recordPatientUpdateUrl + "/image/{id:[0-9]+}"
 )

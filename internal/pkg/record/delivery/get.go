@@ -4,9 +4,9 @@ import (
 	// "fmt"
 	"fmt"
 	"hesh/internal/pkg/domain"
+	"hesh/internal/pkg/utils/filesaver"
 	"hesh/internal/pkg/utils/log"
 	"hesh/internal/pkg/utils/sanitizer"
-	"hesh/internal/pkg/utils/filesaver"
 
 	"io/ioutil"
 	"mime/multipart"
@@ -35,11 +35,11 @@ func validImageExtenstions(files []*multipart.FileHeader) bool {
 	return true
 }
 
-func readMultipartDataImages(r *http.Request) ([]domain.RecordImageInfo, int,  error) {
+func readMultipartDataImages(r *http.Request) ([]domain.RecordImageInfo, int, error) {
 
 	err := r.ParseMultipartForm(32 << 20) // maxMemory 32MB
 	if err != nil {
-		return nil, http.StatusBadRequest, err 
+		return nil, http.StatusBadRequest, err
 	}
 
 	formdata := r.MultipartForm
@@ -110,13 +110,13 @@ func (handler *RecordHandler) CreateMedicRecord(w http.ResponseWriter, r *http.R
 	// basicInfo := domain.RecordBasicInfo{}
 	// TODO change to easyjson
 	// err = json.Unmarshal(([]byte)((r.Form["basicInfo"])[0]), RecordCreateRequest.BasicInfo)
-	
+
 	RecordCreateRequest.BasicInfo.Title = fmt.Sprintf("%v", (r.Form["title"])[0])
 	RecordCreateRequest.BasicInfo.Treatment = fmt.Sprintf("%v", (r.Form["treatment"])[0])
 	RecordCreateRequest.BasicInfo.Recommendations = fmt.Sprintf("%v", (r.Form["recommendations"])[0])
 	RecordCreateRequest.BasicInfo.Details = fmt.Sprintf("%v", (r.Form["details"])[0])
 	// RecordCreateRequest.Diarisation = fmt.Sprintf("%v", (r.Form["diarisation"])[0])
-	
+
 	// diarisation := make([]string, 0)
 	// for i := range audioResponse{
 
@@ -138,9 +138,9 @@ func (handler *RecordHandler) CreateMedicRecord(w http.ResponseWriter, r *http.R
 	}
 	//TODO ser response image valuse in repository
 	filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
-	
-	es.ImageList = make([]domain.RecordImageInfo,0)
-	for i := range (imageNames){
+
+	es.ImageList = make([]domain.RecordImageInfo, 0)
+	for i := range imageNames {
 		es.ImageList = append(es.ImageList, domain.RecordImageInfo{ImageName: imageNames[i], Tags: nil})
 	}
 	out, err := easyjson.Marshal(es)
@@ -178,7 +178,6 @@ func (handler *RecordHandler) GetMedicRecord(w http.ResponseWriter, r *http.Requ
 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 		return
 	}
-
 
 	es, err := handler.RecordUsecase.GetMedicRecord(userId, recordId)
 	if err != nil {
@@ -224,7 +223,6 @@ func (handler *RecordHandler) GetMedicRecordDiarisations(w http.ResponseWriter, 
 		return
 	}
 
-
 	es, err := handler.RecordUsecase.GetMedicRecordDiarisations(userId, recordId)
 	if err != nil {
 		log.Error(err)
@@ -268,7 +266,7 @@ func (handler *RecordHandler) UpdateTextMedicRecord(w http.ResponseWriter, r *ht
 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 		return
 	}
-	
+
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -336,8 +334,8 @@ func (handler *RecordHandler) UpdateImageMedicRecord(w http.ResponseWriter, r *h
 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 		return
 	}
-	
-	request := new(domain.MedicRecordUpdateImageRequest)
+
+	request := new(domain.RecordUpdateImageRequest)
 	images, httpCode, err := readMultipartDataImages(r)
 	if err != nil {
 		log.Error(err)
@@ -346,9 +344,9 @@ func (handler *RecordHandler) UpdateImageMedicRecord(w http.ResponseWriter, r *h
 		return
 	}
 	request.Images = images
-	sanitizer.SanitizeMedicRecordImages(request)
+	sanitizer.SanitizeRecordImages(request)
 
-	medicRecordUpdateResponse, err := handler.RecordUsecase.UpdateMedicRecordImage(medicId, recordId, *request)
+	medicRecordUpdateResponse, err := handler.RecordUsecase.UpdateRecordImage(true, medicId, recordId, *request)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -406,8 +404,6 @@ func (handler *RecordHandler) DeleteMedicRecord(w http.ResponseWriter, r *http.R
 	w.WriteHeader(http.StatusOK)
 }
 
-
-
 // PATIENT
 func (handler *RecordHandler) CreatePatientRecord(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
@@ -446,12 +442,11 @@ func (handler *RecordHandler) CreatePatientRecord(w http.ResponseWriter, r *http
 	// basicInfo := domain.RecordBasicInfo{}
 	// TODO change to easyjson
 	// err = json.Unmarshal(([]byte)((r.Form["basicInfo"])[0]), RecordCreateRequest.BasicInfo)
-	
+
 	PatientRecordCreateRequest.BasicInfo.Title = fmt.Sprintf("%v", (r.Form["title"])[0])
 	PatientRecordCreateRequest.BasicInfo.Treatment = fmt.Sprintf("%v", (r.Form["treatment"])[0])
 	PatientRecordCreateRequest.BasicInfo.Complaints = fmt.Sprintf("%v", (r.Form["complaints"])[0])
 	PatientRecordCreateRequest.BasicInfo.Details = fmt.Sprintf("%v", (r.Form["details"])[0])
-
 
 	sanitizer.SanitizePatientRecordCreateRequest(PatientRecordCreateRequest)
 	es, err := handler.RecordUsecase.CreatePatientRecord(userId, diaryId, *PatientRecordCreateRequest)
@@ -468,9 +463,9 @@ func (handler *RecordHandler) CreatePatientRecord(w http.ResponseWriter, r *http
 	}
 	//TODO ser response image valuse in repository
 	filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
-	
-	es.ImageList = make([]domain.RecordImageInfo,0)
-	for i := range (imageNames){
+
+	es.ImageList = make([]domain.RecordImageInfo, 0)
+	for i := range imageNames {
 		es.ImageList = append(es.ImageList, domain.RecordImageInfo{ImageName: imageNames[i], Tags: nil})
 	}
 	out, err := easyjson.Marshal(es)
@@ -508,7 +503,6 @@ func (handler *RecordHandler) GetPatientRecord(w http.ResponseWriter, r *http.Re
 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 		return
 	}
-
 
 	es, err := handler.RecordUsecase.GetPatientRecord(userId, recordId)
 	if err != nil {
@@ -553,7 +547,7 @@ func (handler *RecordHandler) UpdateTextPatientRecord(w http.ResponseWriter, r *
 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 		return
 	}
-	
+
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -587,6 +581,67 @@ func (handler *RecordHandler) UpdateTextPatientRecord(w http.ResponseWriter, r *
 	}
 	// We check if file with this name alredy exist in usecase
 	out, err := easyjson.Marshal(es)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write(out)
+}
+
+func (handler *RecordHandler) UpdateImagePatientRecord(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	// sessionId, err := sessions.CheckSession(r)
+	// if err == domain.Err.ErrObj.UserNotLoggedIn {
+	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
+	// 	return
+	// }
+	queryParameter := r.URL.Query().Get("vk_user_id")
+	patientId, err := strconv.ParseUint(queryParameter, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	params := mux.Vars(r)
+	recordId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		return
+	}
+
+	request := new(domain.RecordUpdateImageRequest)
+	images, httpCode, err := readMultipartDataImages(r)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), httpCode)
+		w.WriteHeader(httpCode)
+		return
+	}
+	request.Images = images
+	sanitizer.SanitizeRecordImages(request)
+
+	patientRecordUpdateResponse, err := handler.RecordUsecase.UpdateRecordImage(false, patientId, recordId, *request)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	// We check if file with this name alredy exist in usecase
+	imageNames := []string{}
+	for i := range patientRecordUpdateResponse.Images {
+		imageNames = append(imageNames, patientRecordUpdateResponse.Images[i].ImageName)
+	}
+	filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
+
+	out, err := easyjson.Marshal(patientRecordUpdateResponse)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)

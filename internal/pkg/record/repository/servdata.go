@@ -380,16 +380,25 @@ func (dr *dbrecordrepository) DeleteRecord(isMedic bool, recordId uint64) error 
 }
 
 func (er *dbrecordrepository) DeleteRecordImage(isMedic bool, recordId uint64) (domain.RecordUpdateImageResponse, error) {
-	query := queryDeleteImageMedicRecord
+	var query string
+	if isMedic {
+		query = queryDeleteImageMedicRecord
+	} else {
+		query = queryDeleteImagePatientRecord
+	}
 	resp, err := er.dbm.Query(query,
-		isMedic,
 		recordId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
 		return domain.RecordUpdateImageResponse{}, err
 	}
-	getRecordQuery := queryGetBasicUpdateImageMedicRecord
+	var getRecordQuery string
+	if isMedic {
+		getRecordQuery = queryGetBasicUpdateImageMedicRecord
+	} else {
+		getRecordQuery = queryGetBasicUpdateImagePatientRecord
+	}
 	getResp, getErr := er.dbm.Query(getRecordQuery,
 		recordId)
 	if getErr != nil {

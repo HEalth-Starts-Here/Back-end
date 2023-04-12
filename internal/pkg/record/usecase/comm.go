@@ -78,8 +78,8 @@ func (ru RecordUsecase) CheckMedicExist(medicId uint64) (bool, error) {
 	return medicExist, nil
 }
 
-func (ru RecordUsecase) CheckMedicAndDiaryExistAndMedicHaveAccess(medicId, diaryId uint64) (error) {
-	
+func (ru RecordUsecase) CheckMedicAndDiaryExistAndMedicHaveAccess(medicId, diaryId uint64) error {
+
 	medicExist, err := ru.CheckMedicExist(medicId)
 	if err != nil {
 		return err
@@ -87,7 +87,7 @@ func (ru RecordUsecase) CheckMedicAndDiaryExistAndMedicHaveAccess(medicId, diary
 	if !medicExist {
 		return domain.Err.ErrObj.MedicDoestExist
 	}
-	
+
 	diaryExist, err := ru.CheckDiaryExist(diaryId)
 	if err != nil {
 		return err
@@ -106,7 +106,7 @@ func (ru RecordUsecase) CheckMedicAndDiaryExistAndMedicHaveAccess(medicId, diary
 	return nil
 }
 
-func (ru RecordUsecase) CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(medicId, recordId uint64) (error) {
+func (ru RecordUsecase) CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(medicId, recordId uint64) error {
 	medicExist, err := ru.CheckMedicExist(medicId)
 	if err != nil {
 		return err
@@ -114,7 +114,7 @@ func (ru RecordUsecase) CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(medic
 	if !medicExist {
 		return domain.Err.ErrObj.MedicDoestExist
 	}
-	
+
 	recordExist, err := ru.CheckRecordExist(recordId)
 	if err != nil {
 		return err
@@ -184,8 +184,8 @@ func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, record
 	return RecordCreateResponse, nil
 }
 
-func (ru RecordUsecase) GetMedicRecord (userId, recordId uint64) (domain.MedicRecordCreateResponse, error) {
-	
+func (ru RecordUsecase) GetMedicRecord(userId, recordId uint64) (domain.MedicRecordCreateResponse, error) {
+
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -194,20 +194,19 @@ func (ru RecordUsecase) GetMedicRecord (userId, recordId uint64) (domain.MedicRe
 	// if alreadyExist {
 	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
-	
-	// TODO: Check if this user has access to this record
 
+	// TODO: Check if this user has access to this record
 
 	diaryId, recordId, creatingDate, BasicRecordInfo, err := ru.recordRepo.GetRecordTextInfo(recordId)
 	if err != nil {
 		return domain.MedicRecordCreateResponse{}, err
 	}
-	
+
 	response := domain.MedicRecordCreateResponse{
-		DiaryId: diaryId,
-		Id: recordId,
+		DiaryId:      diaryId,
+		Id:           recordId,
 		CreatingDate: creatingDate,
-		BasicInfo: BasicRecordInfo,
+		BasicInfo:    BasicRecordInfo,
 		// Diarisation: diarisation,
 		ImageList: nil,
 	}
@@ -215,19 +214,18 @@ func (ru RecordUsecase) GetMedicRecord (userId, recordId uint64) (domain.MedicRe
 	if err != nil {
 		return domain.MedicRecordCreateResponse{}, err
 	}
-	
 
 	response.ImageList = make([]domain.RecordImageInfo, 0)
 	for i := range imageNames {
 		response.ImageList = append(response.ImageList, domain.RecordImageInfo{
 			ImageName: imageNames[i],
-			Tags: nil,
+			Tags:      nil,
 		})
 	}
 	return response, nil
 }
 
-func (ru RecordUsecase) GetMedicRecordDiarisations (userId, medicRecordId uint64) (domain.GetDiarisationsResponse, error) {
+func (ru RecordUsecase) GetMedicRecordDiarisations(userId, medicRecordId uint64) (domain.GetDiarisationsResponse, error) {
 	err := ru.CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(userId, medicRecordId)
 	if err != nil {
 		return domain.GetDiarisationsResponse{}, err
@@ -239,7 +237,6 @@ func (ru RecordUsecase) GetMedicRecordDiarisations (userId, medicRecordId uint64
 	}
 	return response, nil
 }
-
 
 func (ru RecordUsecase) UpdateMedicRecordText(medicId uint64, recordId uint64, updateTextMedicRecordData domain.MedicRecordBasicInfo) (domain.MedicRecordUpdateTextResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
@@ -266,9 +263,9 @@ func (ru RecordUsecase) UpdateMedicRecordText(medicId uint64, recordId uint64, u
 	return MedicRecordTextUpdateResponse, nil
 }
 
-func (ru RecordUsecase) UpdateMedicRecordImage(medicId uint64, recordId uint64, updateImageMedicRecordData domain.MedicRecordUpdateImageRequest) (domain.RecordUpdateImageResponse, error) {
+func (ru RecordUsecase) UpdateRecordImage(isMedic bool, medicId uint64, recordId uint64, updateImageMedicRecordData domain.RecordUpdateImageRequest) (domain.RecordUpdateImageResponse, error) {
 	// TODO: add check if this medic is owner of this record
-	
+
 	if !updateImageMedicRecordData.IsValid() {
 		return domain.RecordUpdateImageResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
@@ -283,12 +280,12 @@ func (ru RecordUsecase) UpdateMedicRecordImage(medicId uint64, recordId uint64, 
 		imageNames[i] = imageNames[i] + filepath.Ext(updateImageMedicRecordData.Images[i].ImageName)
 
 	}
-	updateResponse, err := ru.recordRepo.DeleteRecordImage(true, recordId)
+	updateResponse, err := ru.recordRepo.DeleteRecordImage(isMedic, recordId)
 	if err != nil {
 		return domain.RecordUpdateImageResponse{}, err
 	}
 	deletedImages := make([]string, 0)
-	for i := range updateResponse.Images{
+	for i := range updateResponse.Images {
 		deletedImages = append(deletedImages, updateResponse.Images[i].ImageName)
 	}
 	err = filesaver.DeleteFiles("", config.DevConfigStore.LoadedFilesPath, deletedImages)
@@ -296,7 +293,7 @@ func (ru RecordUsecase) UpdateMedicRecordImage(medicId uint64, recordId uint64, 
 		return domain.RecordUpdateImageResponse{}, err
 	}
 	updateResponse.Images = make([]domain.RecordImageInfo, 0)
-	_, err = ru.recordRepo.CreateRecordImageLists(true, recordId, imageNames)
+	_, err = ru.recordRepo.CreateRecordImageLists(isMedic, recordId, imageNames)
 	if err != nil {
 		return domain.RecordUpdateImageResponse{}, err
 	}
@@ -304,7 +301,7 @@ func (ru RecordUsecase) UpdateMedicRecordImage(medicId uint64, recordId uint64, 
 	for i := range updateImageMedicRecordData.Images {
 		updateResponse.Images = append(updateResponse.Images, domain.RecordImageInfo{
 			ImageName: imageNames[i],
-			Tags: []string{},
+			Tags:      []string{},
 		})
 	}
 	//TODO update tags
@@ -317,14 +314,14 @@ func (ru RecordUsecase) UpdateMedicRecordImage(medicId uint64, recordId uint64, 
 	return updateResponse, nil
 }
 
-func (ru RecordUsecase) DeleteMedicRecord(medicId uint64, recordId uint64) (error) {
+func (ru RecordUsecase) DeleteMedicRecord(medicId uint64, recordId uint64) error {
 	// TODO: add check if this medic is owner of this record
 
 	imageList, err := ru.recordRepo.GetRecordImageNames(true, recordId)
 	if err != nil {
 		return err
 	}
-	
+
 	err = ru.recordRepo.DeleteRecord(true, recordId)
 	if err != nil {
 		return err
@@ -341,7 +338,7 @@ func (ru RecordUsecase) DeleteMedicRecord(medicId uint64, recordId uint64) (erro
 	if err != nil {
 		return err
 	}
-	
+
 	//TODO delete tags
 
 	// imageIds, tags, err = ru.recordRepo.CreateImageTags(imageIds, tags)
@@ -404,8 +401,8 @@ func (ru RecordUsecase) CreatePatientRecord(patientId, diaryId uint64, recordDat
 	return RecordCreateResponse, nil
 }
 
-func (ru RecordUsecase) GetPatientRecord (userId, recordId uint64) (domain.PatientRecordCreateResponse, error) {
-	
+func (ru RecordUsecase) GetPatientRecord(userId, recordId uint64) (domain.PatientRecordCreateResponse, error) {
+
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -414,34 +411,32 @@ func (ru RecordUsecase) GetPatientRecord (userId, recordId uint64) (domain.Patie
 	// if alreadyExist {
 	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
-	
-	// TODO: Check if this user has access to this record
 
+	// TODO: Check if this user has access to this record
 
 	diaryId, recordId, creatingDate, BasicRecordInfo, err := ru.recordRepo.GetPatientRecordTextInfo(recordId)
 
 	if err != nil {
 		return domain.PatientRecordCreateResponse{}, err
 	}
-	
+
 	response := domain.PatientRecordCreateResponse{
-		DiaryId: diaryId,
-		Id: recordId,
+		DiaryId:      diaryId,
+		Id:           recordId,
 		CreatingDate: creatingDate,
-		BasicInfo: BasicRecordInfo,
-		ImageList: nil,
+		BasicInfo:    BasicRecordInfo,
+		ImageList:    nil,
 	}
 	imageNames, err := ru.recordRepo.GetRecordImageNames(false, recordId)
 	if err != nil {
 		return domain.PatientRecordCreateResponse{}, err
 	}
-	
 
 	response.ImageList = make([]domain.RecordImageInfo, 0)
 	for i := range imageNames {
 		response.ImageList = append(response.ImageList, domain.RecordImageInfo{
 			ImageName: imageNames[i],
-			Tags: nil,
+			Tags:      nil,
 		})
 	}
 	return response, nil

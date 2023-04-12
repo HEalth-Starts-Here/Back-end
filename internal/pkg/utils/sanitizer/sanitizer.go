@@ -6,7 +6,7 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 )
 
-func sanitizeText (text *string) {
+func sanitizeText(text *string) {
 	sanitizer := bluemonday.UGCPolicy()
 	*text = sanitizer.Sanitize(*text)
 }
@@ -30,14 +30,14 @@ func SanitizeDiaryUpdating(diary *domain.DiaryUpdateRequest) {
 	sanitizeText(&diary.DiaryBasicInfo.Diagnosis)
 }
 
-func SanitizeMedicRecordBasicInfo (record *domain.MedicRecordBasicInfo){
+func SanitizeMedicRecordBasicInfo(record *domain.MedicRecordBasicInfo) {
 	sanitizeText(&record.Title)
 	sanitizeText(&record.Treatment)
 	sanitizeText(&record.Recommendations)
 	sanitizeText(&record.Details)
 }
 
-func SanitizeMedicRecordImages (request (*domain.MedicRecordUpdateImageRequest)){
+func SanitizeRecordImages(request *domain.RecordUpdateImageRequest) {
 	for i := range request.Images {
 		sanitizeText(&((request.Images[i]).ImageName))
 		for j := range request.Images[i].Tags {
@@ -46,16 +46,16 @@ func SanitizeMedicRecordImages (request (*domain.MedicRecordUpdateImageRequest))
 	}
 }
 
-func SanitizeImageInfo (imageInfo *domain.RecordImageInfo){
+func SanitizeImageInfo(imageInfo *domain.RecordImageInfo) {
 	sanitizeText(&imageInfo.ImageName)
-	for i := 0; i< (len(imageInfo.Tags)); i++ {
+	for i := 0; i < (len(imageInfo.Tags)); i++ {
 		sanitizeText(&imageInfo.Tags[i])
 	}
 }
 
 func SanitizeMedicRecordCreateRequest(record *domain.MedicRecordCreateRequest) {
 	SanitizeMedicRecordBasicInfo(&record.BasicInfo)
-	for i := range (record.Images){
+	for i := range record.Images {
 		SanitizeImageInfo(&record.Images[i])
 	}
 	// for i := range (record.Auido){
@@ -63,7 +63,7 @@ func SanitizeMedicRecordCreateRequest(record *domain.MedicRecordCreateRequest) {
 	// }
 }
 
-func SanitizePatientRecordBasicInfo (record *domain.PatientRecordBasicInfo){
+func SanitizePatientRecordBasicInfo(record *domain.PatientRecordBasicInfo) {
 	sanitizeText(&record.Title)
 	sanitizeText(&record.Treatment)
 	sanitizeText(&record.Complaints)
@@ -72,9 +72,7 @@ func SanitizePatientRecordBasicInfo (record *domain.PatientRecordBasicInfo){
 
 func SanitizePatientRecordCreateRequest(record *domain.PatientRecordCreateRequest) {
 	SanitizePatientRecordBasicInfo(&record.BasicInfo)
-	for i := range (record.Images){
+	for i := range record.Images {
 		SanitizeImageInfo(&record.Images[i])
 	}
 }
-
-
