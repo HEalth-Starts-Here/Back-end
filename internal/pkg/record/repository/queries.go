@@ -79,7 +79,7 @@ const (
 
 	queryGetPatientRecordImageList = `
 	SELECT name
-	FROM medicimages
+	FROM patientimages
 	WHERE recordid = $1;
 	`
 	// WHERE ismedic = $1 AND recordid = $2;

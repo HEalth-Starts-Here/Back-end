@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS medicImages          CASCADE;
 DROP TABLE IF EXISTS patientImages        CASCADE;
 DROP TABLE IF EXISTS tags                 CASCADE;
 DROP TABLE IF EXISTS audio                CASCADE;
+DROP TABLE IF EXISTS comments             CASCADE;
 
 
 CREATE TABLE medics (
@@ -79,4 +80,12 @@ CREATE TABLE audio (
     creatingDate                        TIMESTAMP NOT NULL,
     diarisation                         VARCHAR(10000),
     filename                            VARCHAR(200)
+);
+
+CREATE TABLE comments (
+    id                                  BIGSERIAL NOT NULL PRIMARY KEY,
+    authoIsMedic                        BOOLEAN,
+    creatingDate                        TIMESTAMP NOT NULL,
+    diaryId                             BIGINT REFERENCES diaries (id) ON DELETE CASCADE,
+    text                                VARCHAR(1000)
 );

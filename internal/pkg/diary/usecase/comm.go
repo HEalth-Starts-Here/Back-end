@@ -1,4 +1,4 @@
-package plausecase
+package diaryusecase
 
 import (
 	"hesh/internal/pkg/domain"

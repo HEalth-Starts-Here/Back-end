@@ -201,6 +201,29 @@ VALUES
         '5.mp3'
     );
 
+INSERT INTO
+    comments (authoIsMedic, creatingDate, diaryId, text)
+VALUES
+    (
+        false,
+        '2022-04-10 15:47:24',
+		1,
+        'Text of comment 1 of diary 1'
+    ),
+    (
+        true,
+        '2022-04-10 15:47:24',
+		1,
+        'Text of comment 2 of diary 1'
+    ),
+    (
+        false,
+        '2022-04-10 15:47:24',
+		1,
+        'Text of comment 2 of diary 1'
+    );
+
+
 -- INSERT INTO
 --     tags (imageId, name)
 -- VALUES
