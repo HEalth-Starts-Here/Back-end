@@ -183,7 +183,7 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
 	}
 
-	records1 := make([]domain.RecordBasicInfo, 0)
+	medicRecords := make([]domain.RecordBasicInfo, 0)
 	for i := range resp2 {
 		RecordCreateResponse := domain.RecordBasicInfo{
 			Id:			  cast.ToUint64(resp2[i][0]),
@@ -191,7 +191,7 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 			Title:        cast.ToString(resp2[i][2]),
 			Details:      cast.ToString(resp2[i][3]),
 		}
-		records1 = append(records1, RecordCreateResponse)
+		medicRecords = append(medicRecords, RecordCreateResponse)
 	}
 
 	var resp3 []database.DBbyterow
@@ -205,23 +205,23 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		log.Error(err3)
 		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
 	}
-	records2 := make([]domain.RecordBasicInfo, 0)
+	patientRecords := make([]domain.RecordBasicInfo, 0)
 	for i := range resp3 {
 		RecordCreateResponse := domain.RecordBasicInfo{
-			Id:			  cast.ToUint64(resp2[i][0]),
-			CreatingDate: cast.TimeToStr(cast.ToTime(resp2[i][1]), true),
-			Title:        cast.ToString(resp2[i][2]),
-			Details:      cast.ToString(resp2[i][3]),
+			Id:			  cast.ToUint64(resp3[i][0]),
+			CreatingDate: cast.TimeToStr(cast.ToTime(resp3[i][1]), true),
+			Title:        cast.ToString(resp3[i][2]),
+			Details:      cast.ToString(resp3[i][3]),
 		}
-		records2 = append(records2, RecordCreateResponse)
+		patientRecords = append(patientRecords, RecordCreateResponse)
 	}
 
 	out := domain.DiaryResponse{
 		PatientName: diary.PatientName,
 		Diary:       diary.Diary,
 		Records: domain.Records{
-			MedicRecordList:   records1,
-			PatientRecordList: records2,
+			MedicRecordList:   medicRecords,
+			PatientRecordList: patientRecords,
 		},
 	}
 
