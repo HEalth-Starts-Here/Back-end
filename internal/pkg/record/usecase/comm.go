@@ -314,15 +314,15 @@ func (ru RecordUsecase) UpdateRecordImage(isMedic bool, medicId uint64, recordId
 	return updateResponse, nil
 }
 
-func (ru RecordUsecase) DeleteMedicRecord(medicId uint64, recordId uint64) error {
+func (ru RecordUsecase) DeleteRecord(isMedic bool, medicId uint64, recordId uint64) error {
 	// TODO: add check if this medic is owner of this record
 
-	imageList, err := ru.recordRepo.GetRecordImageNames(true, recordId)
+	imageList, err := ru.recordRepo.GetRecordImageNames(isMedic, recordId)
 	if err != nil {
 		return err
 	}
 
-	err = ru.recordRepo.DeleteRecord(true, recordId)
+	err = ru.recordRepo.DeleteRecord(isMedic, recordId)
 	if err != nil {
 		return err
 	}
@@ -466,3 +466,38 @@ func (ru RecordUsecase) UpdatePatientRecordText(patientId uint64, recordId uint6
 	// }
 	return PatientRecordTextUpdateResponse, nil
 }
+
+// func (ru RecordUsecase) DeletePatientRecord(patientId uint64, recordId uint64) error {
+// 	// TODO: add check if this medic is owner of this record
+
+// 	imageList, err := ru.recordRepo.GetRecordImageNames(false, recordId)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	err = ru.recordRepo.DeleteRecord(false, recordId)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	// deleteResponse, err := ru.recordRepo.DeleteRecordImage(true, recordId)
+// 	// if err != nil {
+// 	// 	return err
+// 	// }
+// 	// deletedImages := make([]string, 0)
+// 	// for i := range deleteResponse.Images{
+// 	// 	deletedImages = append(deletedImages, deleteResponse.Images[i].ImageName)
+// 	// }
+// 	err = filesaver.DeleteFiles("", config.DevConfigStore.LoadedFilesPath, imageList)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	//TODO delete tags
+
+// 	// imageIds, tags, err = ru.recordRepo.CreateImageTags(imageIds, tags)
+// 	// for i := range imageIds {
+
+// 	// 	tags = append(tags, recordData.Images[i].Tags)
+// 	// }
+// 	return nil
+// }

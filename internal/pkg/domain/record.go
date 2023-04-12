@@ -221,12 +221,12 @@ type RecordRepository interface {
 }
 
 type RecordUsecase interface {
+	DeleteRecord(isMedic bool, medicId uint64, recordId uint64) error
 	// MEDIC
 	CreateMedicRecord(diaryId uint64, medicId uint64, record MedicRecordCreateRequest) (MedicRecordCreateResponse, error)
 	GetMedicRecord(userId, recordId uint64) (MedicRecordCreateResponse, error)
 	UpdateMedicRecordText(medicId uint64, recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error)
 	UpdateRecordImage(isMedic bool, medicId uint64, recordId uint64, updateTextMedicRecordData RecordUpdateImageRequest) (RecordUpdateImageResponse, error)
-	DeleteMedicRecord(medicId uint64, recordId uint64) error
 	CheckMedicDiaryAccess(medicId uint64, diaryId uint64) (bool, error)
 	CheckMedicRecordAccess(medicId uint64, diaryId uint64) (bool, error)
 	CheckDiaryExist(diaryId uint64) (bool, error)

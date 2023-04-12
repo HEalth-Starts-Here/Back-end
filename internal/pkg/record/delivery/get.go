@@ -394,7 +394,7 @@ func (handler *RecordHandler) DeleteMedicRecord(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	err = handler.RecordUsecase.DeleteMedicRecord(medicId, recordId)
+	err = handler.RecordUsecase.DeleteRecord(true, medicId, recordId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
@@ -651,4 +651,36 @@ func (handler *RecordHandler) UpdateImagePatientRecord(w http.ResponseWriter, r 
 
 	w.WriteHeader(http.StatusCreated)
 	w.Write(out)
+}
+
+func (handler *RecordHandler) DeletePatientRecord(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	// sessionId, err := sessions.CheckSession(r)
+	// if err == domain.Err.ErrObj.UserNotLoggedIn {
+	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
+	// 	return
+	// }
+	queryParameter := r.URL.Query().Get("vk_user_id")
+	patientId, err := strconv.ParseUint(queryParameter, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	params := mux.Vars(r)
+	patientRecordId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = handler.RecordUsecase.DeleteRecord(false, patientId, patientRecordId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

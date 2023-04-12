@@ -110,6 +110,13 @@ const (
 	RETURNING id;
 	`
 
+	queryDeletePatientRecord = `
+	DELETE 
+	FROM patientrecords
+	WHERE id = $1
+	RETURNING id;
+	`
+
 	queryDeleteImageMedicRecord = `
 	DELETE FROM medicimages
 	WHERE recordid = $1

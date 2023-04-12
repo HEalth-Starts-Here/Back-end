@@ -21,4 +21,5 @@ const (
 	recordPatientUpdateUrl			= recordPatientUrl + "/update"
 	recordPatientUpdateTextUrl		= recordPatientUpdateUrl + "/text/{id:[0-9]+}"
 	recordPatientUpdateImageUrl		= recordPatientUpdateUrl + "/image/{id:[0-9]+}"
+	recordPatientDeleteImageUrl		= recordPatientUrl + "/delete/{id:[0-9]+}"
 )

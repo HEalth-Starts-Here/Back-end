@@ -364,7 +364,12 @@ func (er *dbrecordrepository) UpdateMedicRecordText(recordId uint64, medicRecord
 func (dr *dbrecordrepository) DeleteRecord(isMedic bool, recordId uint64) error {
 	var resp []database.DBbyterow
 	var err error
-	query := queryDeleteMedicRecord
+	var query string
+	if isMedic {
+		query = queryDeleteMedicRecord
+	} else {	
+		query = queryDeletePatientRecord
+	}
 	resp, err = dr.dbm.Query(query, recordId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
