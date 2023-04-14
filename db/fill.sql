@@ -202,7 +202,7 @@ VALUES
     );
 
 INSERT INTO
-    comments (authoIsMedic, creatingDate, diaryId, text)
+    comments (authorIsMedic, creatingDate, diaryId, text)
 VALUES
     (
         false,

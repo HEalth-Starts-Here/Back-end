@@ -84,7 +84,7 @@ CREATE TABLE audio (
 
 CREATE TABLE comments (
     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
-    authoIsMedic                        BOOLEAN,
+    authorIsMedic                        BOOLEAN,
     creatingDate                        TIMESTAMP NOT NULL,
     diaryId                             BIGINT REFERENCES diaries (id) ON DELETE CASCADE,
     text                                VARCHAR(1000)

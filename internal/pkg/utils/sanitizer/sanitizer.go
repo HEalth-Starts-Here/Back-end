@@ -76,3 +76,7 @@ func SanitizePatientRecordCreateRequest(record *domain.PatientRecordCreateReques
 		SanitizeImageInfo(&record.Images[i])
 	}
 }
+
+func SanitizeBasicCommentInfo(record *domain.BasicCommentInfo) {
+	sanitizeText(&record.Text)
+}
