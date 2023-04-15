@@ -38,6 +38,8 @@ func easyjsonE9abebc9DecodeHeshInternalPkgDomain(in *jlexer.Lexer, out *CommentC
 		switch key {
 		case "id":
 			out.Id = uint64(in.Uint64())
+		case "diaryid":
+			out.DiaryId = uint64(in.Uint64())
 		case "basiccommentinfo":
 			(out.BasicCommentInfo).UnmarshalEasyJSON(in)
 		case "authorismedic":
@@ -64,6 +66,11 @@ func easyjsonE9abebc9EncodeHeshInternalPkgDomain(out *jwriter.Writer, in Comment
 		const prefix string = ",\"id\":"
 		out.RawString(prefix[1:])
 		out.Uint64(uint64(in.Id))
+	}
+	{
+		const prefix string = ",\"diaryid\":"
+		out.RawString(prefix)
+		out.Uint64(uint64(in.DiaryId))
 	}
 	{
 		const prefix string = ",\"basiccommentinfo\":"

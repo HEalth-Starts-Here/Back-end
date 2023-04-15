@@ -2,14 +2,6 @@ package commentusecase
 
 import (
 	"hesh/internal/pkg/domain"
-
-	// "hesh/internal/pkg/utils/cast"
-	// "hesh/internal/pkg/utils/log"
-
-	// usrusecase "eventool/internal/pkg/user/usecase"
-	// usrdelivery "eventool/internal/pkg/user/delivery/rest"
-	// usrusecase "eventool/internal/pkg/user/usecase"
-	// "usrdelivery"
 	"strings"
 )
 
@@ -52,10 +44,5 @@ func (cu CommentUsecase) CreateComment(diaryId uint64, userId uint64, commentCre
 	if err != nil {
 		return domain.CommentCreateResponse{}, err
 	}
-
-	// DiaryCreateResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
-	// if err != nil {
-	// 	return domain.EventCreatingResponse{}, err
-	// }
 	return DiaryCreateResponse, nil
 }

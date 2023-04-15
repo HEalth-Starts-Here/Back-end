@@ -341,6 +341,12 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 		Diarisation: response.Text,
 		Filename: audioNames[0],
 	})
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	// es := domain.DiarisationResponse{
 	// 	Diarisation: response.Text,
 	// }
