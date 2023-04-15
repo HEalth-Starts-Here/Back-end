@@ -2,6 +2,8 @@ package commentusecase
 
 import (
 	"hesh/internal/pkg/domain"
+	// setter "hesh/internal/pkg/utils/setter"
+	// diaryrepository "hesh/internal/pkg/diary/repository"
 	"strings"
 )
 
@@ -32,7 +34,9 @@ func (cu CommentUsecase) CreateComment(diaryId uint64, userId uint64, commentCre
 	if !commentCreateRequest.IsValid() {
 		return domain.CommentCreateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
-	isExist, isMedic, err := cu.CheckUserRole(userId)
+	// svs := setter.Services{}
+	// isExist, isMedic, err := diaryrepository.InitDiaryRep(svs.Diary.Db).GetUserRole(userId)
+	isExist, isMedic, err := cu.CheckUserRole(userId) 
 	if err != nil {
 		return domain.CommentCreateResponse{}, err
 	}
@@ -45,4 +49,13 @@ func (cu CommentUsecase) CreateComment(diaryId uint64, userId uint64, commentCre
 		return domain.CommentCreateResponse{}, err
 	}
 	return DiaryCreateResponse, nil
+}
+
+func (cu CommentUsecase) GetComment (userId uint64, diaryId uint64) (domain.GetCommentResponse, error) {
+	// TODO check is user have access to this diary
+	GetCommentResponse, err := cu.commentRepo.GetComment(diaryId)
+	if err != nil {
+		return domain.GetCommentResponse{}, err
+	}
+	return GetCommentResponse, nil
 }

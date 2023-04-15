@@ -10,6 +10,7 @@ const (
 	FROM patients
 	WHERE patients.vkid = $1;
 	`
+
 	queryCreateComment = `
 	INSERT INTO
     comments (authorismedic, creatingDate, diaryId, text)
@@ -21,5 +22,11 @@ const (
         $4
     )
 	RETURNING id, authorismedic, isreaded, creatingDate, diaryId, text;
+	`
+
+	queryGetComment = `
+	SELECT id, authorismedic, isreaded, creatingdate, text, diaryid
+	FROM comments
+	WHERE diaryid = $1;
 	`
 )

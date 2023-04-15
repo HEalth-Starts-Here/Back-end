@@ -69,3 +69,37 @@ func (handler *CommentHandler) CreateComment (w http.ResponseWriter, r *http.Req
 	w.WriteHeader(http.StatusOK)
 	w.Write(out)
 }
+
+func (handler *CommentHandler) GetComment (w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	// categoryString := r.URL.Query().Get("category")
+	// categories := strings.Split(categoryString, " ")
+	queryParameter := r.URL.Query().Get("vk_user_id")
+	userId, err := strconv.ParseUint(queryParameter, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	params := mux.Vars(r)
+	commentId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	commentList, err := handler.CommentUsecase.GetComment(userId, commentId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	out, err := easyjson.Marshal(commentList)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(out)
+}

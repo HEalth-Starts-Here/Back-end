@@ -15,5 +15,6 @@ func SetCommentHandlers(router *mux.Router, cu domain.CommentUsecase) {
 		CommentUsecase: cu,
 	}
 	router.HandleFunc(CreateCommentUrl, handler.CreateComment).Methods("POST", "OPTIONS")
+	router.HandleFunc(GetCommentUrl, handler.GetComment).Methods("GET", "OPTIONS")
 
 }
