@@ -5,4 +5,5 @@ const (
 	commentUrl      		= "/comment"
 	GetCommentUrl   		= commentUrl + "/get" + idUrl
 	CreateCommentUrl   		= commentUrl + "/create" + idUrl
+	DeleteCommentUrl   		= commentUrl + "/delete" + idUrl
 )

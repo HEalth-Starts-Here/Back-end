@@ -80,9 +80,10 @@ func (er *dbdiaryrepository) LinkDiary(diaryId uint64, medicId uint64) (domain.D
 }
 
 func (er *dbdiaryrepository) DeleteDiary(diaryId uint64) error {
-	_, err := er.dbm.Query(queryDeleteDiary, diaryId)
+	query := queryDeleteDiary
+	_, err := er.dbm.Query(query, diaryId)
 	if err != nil {
-		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + queryCreateDiary)
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
 	}
 	return err

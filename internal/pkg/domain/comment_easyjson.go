@@ -235,18 +235,10 @@ func easyjsonE9abebc9DecodeHeshInternalPkgDomain2(in *jlexer.Lexer, out *Comment
 			continue
 		}
 		switch key {
-		case "id":
-			out.Id = uint64(in.Uint64())
+		case "commentinlistinfo":
+			(out.CommentInListInfo).UnmarshalEasyJSON(in)
 		case "diaryid":
 			out.DiaryId = uint64(in.Uint64())
-		case "basiccommentinfo":
-			(out.BasicCommentInfo).UnmarshalEasyJSON(in)
-		case "authorismedic":
-			out.AuthorIsMedic = bool(in.Bool())
-		case "isreaded":
-			out.IsReaded = bool(in.Bool())
-		case "creatingdate":
-			out.CreatingDate = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -262,34 +254,14 @@ func easyjsonE9abebc9EncodeHeshInternalPkgDomain2(out *jwriter.Writer, in Commen
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"id\":"
+		const prefix string = ",\"commentinlistinfo\":"
 		out.RawString(prefix[1:])
-		out.Uint64(uint64(in.Id))
+		(in.CommentInListInfo).MarshalEasyJSON(out)
 	}
 	{
 		const prefix string = ",\"diaryid\":"
 		out.RawString(prefix)
 		out.Uint64(uint64(in.DiaryId))
-	}
-	{
-		const prefix string = ",\"basiccommentinfo\":"
-		out.RawString(prefix)
-		(in.BasicCommentInfo).MarshalEasyJSON(out)
-	}
-	{
-		const prefix string = ",\"authorismedic\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.AuthorIsMedic))
-	}
-	{
-		const prefix string = ",\"isreaded\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.IsReaded))
-	}
-	{
-		const prefix string = ",\"creatingdate\":"
-		out.RawString(prefix)
-		out.String(string(in.CreatingDate))
 	}
 	out.RawByte('}')
 }

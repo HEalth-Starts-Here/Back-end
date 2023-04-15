@@ -49,14 +49,16 @@ func (er *dbcommentrepository) CreateComment(diaryId uint64, authorIsMedic bool,
 	}
 
 	return domain.CommentCreateResponse{
-		Id:					cast.ToUint64(resp[0][0]),
-		AuthorIsMedic:      cast.ToBool(resp[0][1]),
-		IsReaded:			cast.ToBool(resp[0][2]),
-		CreatingDate: 		cast.TimeToStr(cast.ToTime(resp[0][3]), true),
-		DiaryId:			cast.ToUint64(resp[0][4]),
-		BasicCommentInfo: domain.BasicCommentInfo{
-			Text:       cast.ToString(resp[0][5]),
+		CommentInListInfo: domain.CommentInListInfo{
+			Id:					cast.ToUint64(resp[0][0]),
+			AuthorIsMedic:      cast.ToBool(resp[0][1]),
+			IsReaded:			cast.ToBool(resp[0][2]),
+			CreatingDate: 		cast.TimeToStr(cast.ToTime(resp[0][3]), true),
+			BasicCommentInfo: domain.BasicCommentInfo{
+				Text:       cast.ToString(resp[0][4]),
+			},
 		},
+		DiaryId:			cast.ToUint64(resp[0][5]),
 	}, nil
 }
 
@@ -90,4 +92,14 @@ func (cr *dbcommentrepository) GetComment(diaryId uint64) (domain.GetCommentResp
 	}
 
 	return out, nil
+}
+
+func (er *dbcommentrepository) DeleteComment(commentId uint64) error {
+	query := queryDeleteComment
+	_, err := er.dbm.Query(query, commentId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+	}
+	return err
 }

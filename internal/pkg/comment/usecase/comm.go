@@ -59,3 +59,12 @@ func (cu CommentUsecase) GetComment (userId uint64, diaryId uint64) (domain.GetC
 	}
 	return GetCommentResponse, nil
 }
+
+func (du CommentUsecase) DeleteComment(userId, commentId uint64) error {
+	err := du.commentRepo.DeleteComment(commentId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
