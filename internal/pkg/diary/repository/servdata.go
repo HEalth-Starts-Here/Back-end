@@ -184,10 +184,10 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
 	}
 
-	medicRecords := make([]domain.RecordBasicInfo, 0)
+	medicRecords := make([]domain.RecordInDiaryBasicInfo, 0)
 	for i := range resp2 {
-		RecordCreateResponse := domain.RecordBasicInfo{
-			Id:			  cast.ToUint64(resp2[i][0]),
+		RecordCreateResponse := domain.RecordInDiaryBasicInfo{
+			Id:           cast.ToUint64(resp2[i][0]),
 			CreatingDate: cast.TimeToStr(cast.ToTime(resp2[i][1]), true),
 			Title:        cast.ToString(resp2[i][2]),
 			Details:      cast.ToString(resp2[i][3]),
@@ -206,13 +206,16 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		log.Error(err3)
 		return domain.DiaryResponse{}, domain.Err.ErrObj.InternalServer
 	}
-	patientRecords := make([]domain.RecordBasicInfo, 0)
+	patientRecords := make([]domain.PatientRecordInDiaryBasicInfo, 0)
 	for i := range resp3 {
-		RecordCreateResponse := domain.RecordBasicInfo{
-			Id:			  cast.ToUint64(resp3[i][0]),
-			CreatingDate: cast.TimeToStr(cast.ToTime(resp3[i][1]), true),
-			Title:        cast.ToString(resp3[i][2]),
-			Details:      cast.ToString(resp3[i][3]),
+		RecordCreateResponse := domain.PatientRecordInDiaryBasicInfo{
+			RecordInDiaryBasicInfo: domain.RecordInDiaryBasicInfo{
+				Id:           cast.ToUint64(resp3[i][0]),
+				CreatingDate: cast.TimeToStr(cast.ToTime(resp3[i][1]), true),
+				Title:        cast.ToString(resp3[i][2]),
+				Details:      cast.ToString(resp3[i][3]),
+			},
+			Feelings: cast.ToUint64(resp3[i][4]),
 		}
 		patientRecords = append(patientRecords, RecordCreateResponse)
 	}

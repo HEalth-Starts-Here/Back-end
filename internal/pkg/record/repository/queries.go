@@ -157,28 +157,29 @@ const (
 	
 	queryCreatePatientRecord = `
 	INSERT INTO 
-	patientrecords (diaryid, creatingdate, title, complaints, treatment, details)
+	patientrecords (diaryid, creatingdate, title, complaints, treatment, details, feelings)
 	VALUES (
 		$1,
 		$2,
 		$3,
 		$4,
 		$5,
-		$6
+		$6,
+		$7
 	)
-	RETURNING id, diaryid, creatingdate, title, complaints, treatment, details;
+	RETURNING id, diaryid, creatingdate, title, complaints, treatment, details, feelings;
 	`
 	
 	queryGetPatientRecordInfo = `
-	SELECT diaryid, id, creatingdate, title, complaints, treatment, details
+	SELECT diaryid, id, creatingdate, title, complaints, treatment, details, feelings
 	FROM patientrecords
 	WHERE id = $1;
 	`
 
 	queryUpdateTextPatientRecord = `
 	UPDATE patientrecords
-	SET title = $1, complaints = $2, treatment = $3, details = $4
-	WHERE id = $5
-	RETURNING id, diaryid, creatingdate, title, complaints, treatment, details;
+	SET title = $1, complaints = $2, treatment = $3, details = $4, feelings = $5
+	WHERE id = $6
+	RETURNING id, diaryid, creatingdate, title, complaints, treatment, details, feelings;
 	`
 )

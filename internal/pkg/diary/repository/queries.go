@@ -62,7 +62,7 @@ const (
 	`
 
 	queryGetCertainDiaryPatientRecords = `
-	SELECT id, creatingdate, title, details
+	SELECT id, creatingdate, title, details, feelings
 	FROM patientRecords
 	WHERE diaryid = $1;
 	`

@@ -128,16 +128,20 @@ type DiaryListResponse struct {
 	DiaryList []DiaryInList `json:"diarylist"`
 }
 
-type RecordBasicInfo struct {
-	Id 			 uint64 `json:"id"`
+type RecordInDiaryBasicInfo struct {
+	Id           uint64 `json:"id"`
 	CreatingDate string `json:"creatingdate"`
 	Title        string `json:"title"`
 	Details      string `json:"details"`
 }
 
 type Records struct {
-	MedicRecordList   []RecordBasicInfo `json:"medicrecordlist"`
-	PatientRecordList []RecordBasicInfo `json:"patientrecordlist"`
+	MedicRecordList   []RecordInDiaryBasicInfo 		  `json:"medicrecordlist"`
+	PatientRecordList []PatientRecordInDiaryBasicInfo `json:"patientrecordlist"`
+}
+type PatientRecordInDiaryBasicInfo struct {
+	RecordInDiaryBasicInfo RecordInDiaryBasicInfo `json:"recordindiarybasicinfo"`
+	Feelings			   uint64				  `json:"feelings"`
 }
 
 type DiaryResponse struct {

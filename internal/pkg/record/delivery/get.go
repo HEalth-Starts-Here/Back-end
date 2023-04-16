@@ -1,7 +1,6 @@
 package recorddelivery
 
 import (
-	// "fmt"
 	"fmt"
 	"hesh/internal/pkg/domain"
 	"hesh/internal/pkg/utils/filesaver"
@@ -107,7 +106,7 @@ func (handler *RecordHandler) CreateMedicRecord(w http.ResponseWriter, r *http.R
 		w.WriteHeader(httpCode)
 		return
 	}
-	// basicInfo := domain.RecordBasicInfo{}
+	// basicInfo := domain.RecordInDiaryBasicInfo{}
 	// TODO change to easyjson
 	// err = json.Unmarshal(([]byte)((r.Form["basicInfo"])[0]), RecordCreateRequest.BasicInfo)
 
@@ -439,7 +438,7 @@ func (handler *RecordHandler) CreatePatientRecord(w http.ResponseWriter, r *http
 		w.WriteHeader(httpCode)
 		return
 	}
-	// basicInfo := domain.RecordBasicInfo{}
+	// basicInfo := domain.RecordInDiaryBasicInfo{}
 	// TODO change to easyjson
 	// err = json.Unmarshal(([]byte)((r.Form["basicInfo"])[0]), RecordCreateRequest.BasicInfo)
 
@@ -447,6 +446,13 @@ func (handler *RecordHandler) CreatePatientRecord(w http.ResponseWriter, r *http
 	PatientRecordCreateRequest.BasicInfo.Treatment = fmt.Sprintf("%v", (r.Form["treatment"])[0])
 	PatientRecordCreateRequest.BasicInfo.Complaints = fmt.Sprintf("%v", (r.Form["complaints"])[0])
 	PatientRecordCreateRequest.BasicInfo.Details = fmt.Sprintf("%v", (r.Form["details"])[0])
+	feelings, err := strconv.ParseUint((r.Form["feelings"])[0], 10, 64)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		return
+	}
+	PatientRecordCreateRequest.BasicInfo.Feelings = feelings
 
 	sanitizer.SanitizePatientRecordCreateRequest(PatientRecordCreateRequest)
 	es, err := handler.RecordUsecase.CreatePatientRecord(userId, diaryId, *PatientRecordCreateRequest)
@@ -557,7 +563,6 @@ func (handler *RecordHandler) UpdateTextPatientRecord(w http.ResponseWriter, r *
 
 	PatientRecordUpdateTextRequest := new(domain.PatientRecordBasicInfo)
 	// DiaryCreateRequest.SetDefault()
-
 	err = easyjson.Unmarshal(b, PatientRecordUpdateTextRequest)
 	if err != nil {
 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)

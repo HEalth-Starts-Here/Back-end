@@ -34,6 +34,7 @@ func (record *PatientRecordBasicInfo) SetDefault() {
 	record.Complaints = ""
 	record.Treatment = ""
 	record.Details = ""
+	record.Feelings = 0
 }
 
 func (record *PatientRecordCreateRequest) SetDefault() {
@@ -172,6 +173,7 @@ type PatientRecordBasicInfo struct {
 	Complaints string `json:"complaints"`
 	Treatment  string `json:"treatment"`
 	Details    string `json:"details"`
+	Feelings   uint64 `json:"feelings"`
 }
 
 type PatientRecordCreateRequest struct {

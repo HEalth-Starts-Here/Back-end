@@ -8,6 +8,8 @@ DROP TABLE IF EXISTS patientImages        CASCADE;
 DROP TABLE IF EXISTS tags                 CASCADE;
 DROP TABLE IF EXISTS audio                CASCADE;
 DROP TABLE IF EXISTS comments             CASCADE;
+DROP TABLE IF EXISTS records_notes        CASCADE;
+DROP TABLE IF EXISTS notes                CASCADE;
 
 
 CREATE TABLE medics (
@@ -50,7 +52,8 @@ CREATE TABLE patientRecords (
     title                               VARCHAR(50),
     complaints                          VARCHAR(1000),
     treatment                           VARCHAR(1000),
-    details                             VARCHAR(3000)
+    details                             VARCHAR(3000),
+    feelings                            BIGINT DEFAULT 0
 );
 
 CREATE TABLE medicImages (
@@ -90,3 +93,19 @@ CREATE TABLE comments (
     diaryId                             BIGINT REFERENCES diaries (id) ON DELETE CASCADE,
     text                                VARCHAR(1000)
 );
+
+CREATE TABLE notes (
+    medicRecordId                       BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
+    patientRecordId                     BIGINT REFERENCES patientRecords (id) ON DELETE CASCADE,
+    IsMedicRecord                       BOOLEAN,
+    id                                  BIGSERIAL NOT NULL PRIMARY KEY,
+    creatingDate                        TIMESTAMP NOT NULL,
+    text                                VARCHAR(1000)
+);
+
+-- CREATE TABLE records_notes (
+--     medicRecordId                       BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
+--     patientRecordId                     BIGINT REFERENCES patientRecords (id) ON DELETE CASCADE,
+--     recordAuthorIsMedic                 BOOLEAN,
+--     noteId                              BIGINT REFERENCES notes (id) ON DELETE CASCADE
+-- );

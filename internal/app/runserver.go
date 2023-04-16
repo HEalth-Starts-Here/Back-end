@@ -48,6 +48,7 @@ func RunServer() {
 	User: setter.Data{Db: db, Api: api},
 	Record: setter.Data{Db: db, Api: api},
 	Comment: setter.Data{Db: db, Api: api},
+	Note: setter.Data{Db: db, Api: api},
 
 	// 	// Com: setter.Data{Db: nil, Api: api},
 	// 	// Rat: setter.Data{Db: nil, Api: api},

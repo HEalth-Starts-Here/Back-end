@@ -28,6 +28,10 @@ import (
 	commentdelivery "hesh/internal/pkg/comment/delivery"
 	commentrepository "hesh/internal/pkg/comment/repository"
 	commentusecase "hesh/internal/pkg/comment/usecase"
+
+	notedelivery "hesh/internal/pkg/note/delivery"
+	noterepository "hesh/internal/pkg/note/repository"
+	noteusecase "hesh/internal/pkg/note/usecase"
 	// eventdelivery "hesh/internal/pkg/event/delivery"
 	// eventrepository "hesh/internal/pkg/event/repository"
 	// eventusecase "hesh/internal/pkg/event/usecase"
@@ -48,6 +52,7 @@ type Services struct {
 	User Data
 	Record Data
 	Comment Data
+	Note Data
 }
 
 // func setAutMcs() autmcs.AutherClient {
@@ -66,6 +71,7 @@ func SetHandlers(svs Services) {
 	userRep := userrepository.InitUserRep(svs.User.Db)
 	recordRep := recordrepository.InitRecordRep(svs.Record.Db)
 	commentRep := commentrepository.InitCommentRep(svs.Comment.Db)
+	noteRep := noterepository.InitNoteRep(svs.Note.Db)
 
 	// userUsc := usrusecase.InitUsrUsc(userRep)
 	diaryUsc := diaryusecase.InitDiaryUsc(diaryRep)
@@ -73,6 +79,7 @@ func SetHandlers(svs Services) {
 	userUsc := userusecase.InitUserUsc(userRep)
 	recordUsc := recordusecase.InitRecordUsc(recordRep)
 	commentUsc := commentusecase.InitCommentUsc(commentRep)
+	noteUsc := noteusecase.InitNoteUsc(noteRep)
 
 	// usrdelivery.SetUsrHandlers(svs.User.Api, userUsc)
 	diarydelivery.SetDiaryHandlers(svs.Diary.Api, diaryUsc)
@@ -80,6 +87,7 @@ func SetHandlers(svs Services) {
 	userdelivery.SetUserHandlers(svs.User.Api, userUsc)
 	recorddelivery.SetRecordHandlers(svs.Record.Api, recordUsc)
 	commentdelivery.SetCommentHandlers(svs.Comment.Api, commentUsc)
+	notedelivery.SetNoteHandlers(svs.Note.Api, noteUsc)
 
 
 	// autdelivery.SetAutHandlers(svs.Aut.Api, setAutMcs())

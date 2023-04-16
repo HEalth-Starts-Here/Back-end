@@ -78,7 +78,7 @@ VALUES
     );
 
 INSERT INTO
-    patientRecords (diaryId, creatingDate, title, complaints, treatment, details)
+    patientRecords (diaryId, creatingDate, title, complaints, treatment, details, feelings)
 VALUES
     (
         1,
@@ -86,7 +86,8 @@ VALUES
         'Название записи пациента 1 дневника 1',
         'Жалобы в записи пациента 1 дневника 1',
         'Лечение в записи пациента 1 дневника 1',
-        'Подробности в записи пациента 1 дневника 1'
+        'Подробности в записи пациента 1 дневника 1',
+        6
     ),
     (
         1,
@@ -94,7 +95,8 @@ VALUES
         'Название записи пациента 2 дневника 1',
         'Жалобы в записи пациента 2 дневника 1',
         'Лечение в записи пациента 2 дневника 1',
-        'Подробности в записи пациента 2 дневника 1'
+        'Подробности в записи пациента 2 дневника 1',
+        8
     ),
     (
         2,
@@ -102,7 +104,8 @@ VALUES
         'Название записи пациента 1 дневника 2',
         'Жалобы в записи пациента 1 дневника 2',
         'Лечение в записи пациента 1 дневника 2',
-        'Подробности в записи пациента 1 дневника 2'
+        'Подробности в записи пациента 1 дневника 2',
+        8
     );
 
 INSERT INTO
@@ -223,7 +226,76 @@ VALUES
         'Text of comment 2 of diary 1'
     );
 
+INSERT INTO
+    notes (medicRecordId, patientRecordId, IsMedicRecord, creatingDate, text)
+VALUES
+    (
+        1,
+        NULL,
+        true,
+        '2022-04-10 15:47:24',
+        'Text of note 1 of medic record 1'
+    ),
+    (
+        1,
+        NULL,
+        true,
+        '2022-04-10 15:47:24',
+        'Text of note 2 of medic record 1'
+    ),
+    (
+        2,
+        NULL,
+        true,
+        '2022-04-10 15:47:24',
+        'Text of note 1 of medic record 2'
+    ),
+    (
+        NULL,
+        1,
+        false,
+        '2022-04-10 15:47:24',
+        'Text of note 1 of patient record 1'
+    ),
+    (
+        NULL,
+        1,
+        false,
+        '2022-04-10 15:47:24',
+        'Text of note 2 of patient record 1'
+    );
+-- CREATE TABLE notes (
+--     medicRecordId                       BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
+--     patientRecordId                     BIGINT REFERENCES patientRecords (id) ON DELETE CASCADE,
+--     recordAuthorIsMedic                 BOOLEAN,
+--     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
+--     creatingDate                        TIMESTAMP NOT NULL,
+--     text                                VARCHAR(1000)
+-- );
 
+-- INSERT INTO
+--     records_notes (medicRecordId, patientRecordId, recordAuthorIsMedic, noteId)
+-- VALUES
+--     (
+
+--         '2022-04-10 15:47:24',
+--         'Text of note 1 of record 1'
+--     ),
+--     (
+--         '2022-04-10 15:47:24',
+--         'Text of note 2 of record 1'
+--     ),
+--     (
+--         '2022-04-10 15:47:24',
+--         'Text of note 1 of record 2'
+--     ),;
+
+-- CREATE TABLE records_notes (
+--     medicRecordId                       BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
+--     patientRecordId                     BIGINT REFERENCES patientRecords (id) ON DELETE CASCADE,
+--     recordAuthorIsMedic                 BOOLEAN,
+--     noteId                              BIGINT REFERENCES notes (id) ON DELETE CASCADE
+-- );
 -- INSERT INTO
 --     tags (imageId, name)
 -- VALUES

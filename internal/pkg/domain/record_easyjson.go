@@ -684,6 +684,8 @@ func easyjson15d5d517DecodeHeshInternalPkgDomain6(in *jlexer.Lexer, out *Patient
 			out.Treatment = string(in.String())
 		case "details":
 			out.Details = string(in.String())
+		case "feelings":
+			out.Feelings = uint64(in.Uint64())
 		default:
 			in.SkipRecursive()
 		}
@@ -717,6 +719,11 @@ func easyjson15d5d517EncodeHeshInternalPkgDomain6(out *jwriter.Writer, in Patien
 		const prefix string = ",\"details\":"
 		out.RawString(prefix)
 		out.String(string(in.Details))
+	}
+	{
+		const prefix string = ",\"feelings\":"
+		out.RawString(prefix)
+		out.Uint64(uint64(in.Feelings))
 	}
 	out.RawByte('}')
 }

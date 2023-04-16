@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
+
 	// "strconv"
 	"strings"
 	"time"
@@ -475,14 +476,16 @@ func (rr *dbrecordrepository) CreatePatientRecord(diaryId uint64, record domain.
 		record.BasicInfo.Title,
 		record.BasicInfo.Complaints,
 		record.BasicInfo.Treatment,
-		record.BasicInfo.Details)
+		record.BasicInfo.Details,
+		record.BasicInfo.Feelings,
+	)
+	fmt.Printf("diaryId: %v\n", diaryId)
+	fmt.Printf("record.BasicInfo.Title: %v\n", record.BasicInfo.Title)
+	fmt.Printf("record.BasicInfo.Complaints: %v\n", record.BasicInfo.Complaints)
+	fmt.Printf("record.BasicInfo.Treatment: %v\n", record.BasicInfo.Treatment)
+	fmt.Printf("record.BasicInfo.Details: %v\n", record.BasicInfo.Details)
+	fmt.Printf("record.BasicInfo.Feelings: %v\n", record.BasicInfo.Feelings)
 	if err != nil {
-		fmt.Printf("diaryId: %v\n", diaryId)
-		fmt.Printf("time.Now().Format(\"2006.01.02 15:04:05\"): %v\n", time.Now().Format("2006.01.02 15:04:05"))
-		fmt.Printf("record.BasicInfo.Title: %v\n", record.BasicInfo.Title)
-		fmt.Printf("record.BasicInfo.Complaints: %v\n", record.BasicInfo.Complaints)
-		fmt.Printf("record.BasicInfo.Treatment: %v\n", record.BasicInfo.Treatment)
-		fmt.Printf("record.BasicInfo.Details: %v\n", record.BasicInfo.Details)
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
 		return domain.PatientRecordCreateResponse{}, err
@@ -496,6 +499,7 @@ func (rr *dbrecordrepository) CreatePatientRecord(diaryId uint64, record domain.
 			Complaints: cast.ToString(resp[0][4]),
 			Treatment:  cast.ToString(resp[0][5]),
 			Details:    cast.ToString(resp[0][6]),
+			Feelings:   cast.ToUint64(resp[0][7]),
 		},
 		ImageList: nil,
 	}
@@ -530,6 +534,7 @@ func (dr *dbrecordrepository) GetPatientRecordTextInfo(recordId uint64) (uint64,
 		Complaints:		 cast.ToString(resp[0][4]),
 		Treatment:       cast.ToString(resp[0][5]),
 		Details:         cast.ToString(resp[0][6]),
+		Feelings:        cast.ToUint64(resp[0][7]),
 	}, nil
 }
 
@@ -540,6 +545,7 @@ func (er *dbrecordrepository) UpdatePatientRecordText(recordId uint64, patientRe
 		patientRecordBasicInfo.Complaints,
 		patientRecordBasicInfo.Treatment,
 		patientRecordBasicInfo.Details,
+		patientRecordBasicInfo.Feelings,
 		recordId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
@@ -556,6 +562,7 @@ func (er *dbrecordrepository) UpdatePatientRecordText(recordId uint64, patientRe
 			Complaints:		 cast.ToString(resp[0][4]),
 			Treatment:       cast.ToString(resp[0][5]),
 			Details:         cast.ToString(resp[0][6]),
+			Feelings:        cast.ToUint64(resp[0][7]),
 		},
 	}, nil
 }
