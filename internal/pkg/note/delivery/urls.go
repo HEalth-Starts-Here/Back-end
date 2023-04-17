@@ -5,6 +5,6 @@ const (
 	idUrl					= "/{id:[0-9]+}"
 	noteUrl      			= "/note"
 	GetNoteUrl  	 		= noteUrl + "/get" + isMedicRecordUrl + idUrl
-	// CreateNoteUrl   		= commentUrl + "/create" + idUrl
+	CreateNoteUrl   		= noteUrl + "/create" + idUrl
 	// DeleteCommentUrl   		= commentUrl + "/delete" + idUrl
 )

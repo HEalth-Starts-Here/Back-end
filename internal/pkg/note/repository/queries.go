@@ -24,20 +24,44 @@ const (
 	// RETURNING id, authorismedic, isreaded, creatingDate, text, diaryId;
 	// `
 
-	queryGetNote = `
-	SELECT $1, id, creatingdate, text
-	FROM notes
-	WHERE $2 = $3;
+	medicrecordid = "medicrecordid"
+	patientrecordid = "patientrecordid"
+	
+	queryGetNoteFirstPart = `
+	SELECT 
 	`
+
+	queryGetNoteSecondPart = `
+	, id, creatingdate, text
+	FROM notes
+	WHERE `
+
+	queryGetNoteThirdPart = `
+	= $1;
+	`
+	
 	queryGetNote2 = `
 	SELECT medicrecordid, id, creatingdate, text
 	FROM notes
 	WHERE medicrecordid = $1;
 	`
+
 	queryGetNote3 = `
 	SELECT $1, id, creatingdate, text
 	FROM notes
-	WHERE medicrecordid = 1;
+	WHERE $2 = 1;
+	`
+
+	queryGetNote4 = `
+	SELECT $1::varchar(255), id, creatingdate, text
+	FROM notes
+	WHERE $1 = 1;
+	`
+
+	queryGetNote5 = `
+	SELECT $1 as "123", id, creatingdate, text
+	FROM notes
+	WHERE "123" = $2;
 	`
 	// queryDeleteComment = `
 	// DELETE FROM comments

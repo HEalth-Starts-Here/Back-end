@@ -5,6 +5,7 @@ import (
 	"hesh/internal/pkg/domain"
 	"hesh/internal/pkg/utils/cast"
 	"hesh/internal/pkg/utils/log"
+	"strings"
 )
 
 type dbnoterepository struct {
@@ -63,18 +64,24 @@ func (cr *dbnoterepository) GetNote(isMedicRecord bool, recordId uint64) (domain
 	var resp []database.DBbyterow
 	var err error
 
-	query := queryGetNote3
+	// query := queryGetNote3
+	var query strings.Builder
+
 	var userRecord string
 	if isMedicRecord {
 		userRecord = "medicrecordid"
 	} else {
 		userRecord = "patientrecordid"
 	}
-	// resp, err = cr.dbm.Query(query, userRecord, strconv.Itoa(int(recordId)))
-	// resp, err = cr.dbm.Query(query, strconv.Itoa(int(recordId)))
-	resp, err = cr.dbm.Query(query, userRecord)
+	query.Write([]byte(queryGetNoteFirstPart))
+	query.Write([]byte(userRecord))
+	query.Write([]byte(queryGetNoteSecondPart))
+	query.Write([]byte(userRecord))
+	query.Write([]byte(queryGetNoteThirdPart))
+	
+	resp, err = cr.dbm.Query(query.String(), recordId)
 	if err != nil {
-		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query.String())
 		log.Error(err)
 		return domain.GetNoteResponse{}, domain.Err.ErrObj.InternalServer
 	}
