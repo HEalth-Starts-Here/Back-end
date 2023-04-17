@@ -1,7 +1,6 @@
 package notedelivery
 
 import (
-	"fmt"
 	"hesh/internal/pkg/domain"
 
 	"strconv"

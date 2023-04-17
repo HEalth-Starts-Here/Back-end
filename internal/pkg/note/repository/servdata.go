@@ -1,7 +1,6 @@
 package noterepository
 
 import (
-	"fmt"
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
 	"hesh/internal/pkg/utils/cast"
