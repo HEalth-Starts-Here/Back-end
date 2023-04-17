@@ -1,6 +1,7 @@
 package noteusecase
 
 import (
+	"fmt"
 	"hesh/internal/pkg/domain"
 )
 
@@ -49,6 +50,7 @@ func (nu NoteUsecase) GetNote (medicId uint64, isMedicRecord bool, recordId uint
 	if err != nil {
 		return domain.GetNoteResponse{}, err
 	}
+	fmt.Printf("isMedicRecord: %v\n", isMedicRecord)
 	return GetNoteResponse, nil
 }
 

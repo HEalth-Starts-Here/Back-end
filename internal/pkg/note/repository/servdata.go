@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
-
 	"hesh/internal/pkg/utils/cast"
 	"hesh/internal/pkg/utils/log"
 )
@@ -65,22 +64,23 @@ func (cr *dbnoterepository) GetNote(isMedicRecord bool, recordId uint64) (domain
 	var resp []database.DBbyterow
 	var err error
 
-	query := queryGetNote
+	query := queryGetNote3
 	var userRecord string
 	if isMedicRecord {
 		userRecord = "medicrecordid"
 	} else {
 		userRecord = "patientrecordid"
 	}
-	fmt.Printf("userRecord: %v\n", userRecord)
-	fmt.Printf("recordId: %v\n", recordId)
-	resp, err = cr.dbm.Query(query, userRecord, recordId)
+	// resp, err = cr.dbm.Query(query, userRecord, strconv.Itoa(int(recordId)))
+	// resp, err = cr.dbm.Query(query, strconv.Itoa(int(recordId)))
+	resp, err = cr.dbm.Query(query, userRecord)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
 		return domain.GetNoteResponse{}, domain.Err.ErrObj.InternalServer
 	}
 	if len(resp) == 0 {
+		println("len(resp) == 0")
 		return domain.GetNoteResponse{}, nil
 	}
 	notes := make([]domain.NoteInListInfo, 0)

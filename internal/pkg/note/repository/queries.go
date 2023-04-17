@@ -27,9 +27,18 @@ const (
 	queryGetNote = `
 	SELECT $1, id, creatingdate, text
 	FROM notes
-	WHERE $1 = $2;
+	WHERE $2 = $3;
 	`
-
+	queryGetNote2 = `
+	SELECT medicrecordid, id, creatingdate, text
+	FROM notes
+	WHERE medicrecordid = $1;
+	`
+	queryGetNote3 = `
+	SELECT $1, id, creatingdate, text
+	FROM notes
+	WHERE medicrecordid = 1;
+	`
 	// queryDeleteComment = `
 	// DELETE FROM comments
 	// WHERE id = $1;
