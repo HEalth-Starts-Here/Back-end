@@ -24,7 +24,7 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 	query := queryCreateDiary
 	resp, err := er.dbm.Query(query,
 		medicId,
-		0,
+		// nil,
 		time.Now().Format("2006.01.02 15:04:05"),
 		diary.DiaryBasicInfo.Title,
 		diary.DiaryBasicInfo.Complaints,
@@ -40,14 +40,14 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 	return domain.DiaryCreateResponse{
 		Id:           cast.ToUint64(resp[0][0]),
 		MedicId:      cast.ToUint64(resp[0][1]),
-		PatientId:    cast.ToUint64(resp[0][2]),
-		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][3]), true),
+		PatientId:    0,
+		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][2]), true),
 		DiaryBasicInfo: domain.DiaryBasicInfo{
-			Title:       cast.ToString(resp[0][4]),
-			Complaints:  cast.ToString(resp[0][5]),
-			Anamnesis:   cast.ToString(resp[0][6]),
-			Objectively: cast.ToString(resp[0][7]),
-			Diagnosis:   cast.ToString(resp[0][8]),
+			Title:       cast.ToString(resp[0][3]),
+			Complaints:  cast.ToString(resp[0][4]),
+			Anamnesis:   cast.ToString(resp[0][5]),
+			Objectively: cast.ToString(resp[0][6]),
+			Diagnosis:   cast.ToString(resp[0][7]),
 		},
 	}, nil
 }

@@ -3,7 +3,7 @@ package diaryrepository
 const (
 	queryCreateDiary = `
 	INSERT INTO
-    diaries (medicId, patientId, creatingDate, title, complaints, anamnesis, objectively, diagnosis)
+    diaries (medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis)
 	VALUES
     (
 		$1,
@@ -12,10 +12,9 @@ const (
         $4,
         $5,
         $6,
-        $7,
-        $8
+        $7
     )
-	RETURNING id, medicId, patientId, creatingDate, title, complaints, anamnesis, objectively, diagnosis;
+	RETURNING id, medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis;
 	`
 	
 	queryLinkDiary = `

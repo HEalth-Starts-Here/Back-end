@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS audio                CASCADE;
 DROP TABLE IF EXISTS comments             CASCADE;
 DROP TABLE IF EXISTS records_notes        CASCADE;
 DROP TABLE IF EXISTS notes                CASCADE;
+DROP TABLE IF EXISTS diaryTokens          CASCADE;
 
 
 CREATE TABLE medics (
@@ -26,7 +27,9 @@ CREATE TABLE patients (
 CREATE TABLE diaries (
     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
     medicId                             BIGINT REFERENCES medics (vkId) ON DELETE CASCADE,
-    patientId                           BIGINT,
+    -- TODO: add reference to patients table
+    -- patientId                           BIGINT,
+    patientId                           BIGINT REFERENCES patients (vkId) ON DELETE CASCADE,
     creatingDate                        TIMESTAMP NOT NULL,
     title                               VARCHAR(50) NOT NULL,
     complaints                          VARCHAR(1000),
@@ -103,9 +106,7 @@ CREATE TABLE notes (
     text                                VARCHAR(1000)
 );
 
--- CREATE TABLE records_notes (
---     medicRecordId                       BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
---     patientRecordId                     BIGINT REFERENCES patientRecords (id) ON DELETE CASCADE,
---     recordAuthorIsMedic                 BOOLEAN,
---     noteId                              BIGINT REFERENCES notes (id) ON DELETE CASCADE
--- );
+CREATE TABLE diaryTokens (
+    diaryId                              BIGINT REFERENCES diaries (id) ON DELETE CASCADE,
+    token                                VARCHAR(256)
+);
