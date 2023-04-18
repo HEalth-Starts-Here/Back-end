@@ -52,11 +52,11 @@ func (nu NoteUsecase) GetNote (medicId uint64, isMedicRecord bool, recordId uint
 	return GetNoteResponse, nil
 }
 
-// func (du CommentUsecase) DeleteComment(userId, commentId uint64) error {
-// 	err := du.commentRepo.DeleteComment(commentId)
-// 	if err != nil {
-// 		return err
-// 	}
+func (nu NoteUsecase) DeleteNote(medicId uint64, isMedicRecord bool, commentId uint64) error {
+	err := nu.NoteRepo.DeleteNote(commentId)
+	if err != nil {
+		return err
+	}
 
-// 	return nil
-// }
+	return nil
+}

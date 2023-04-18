@@ -60,8 +60,8 @@ const (
 	= $1;
 	`
 
-	// queryDeleteComment = `
-	// DELETE FROM comments
-	// WHERE id = $1;
-	// `
+	queryDeleteNote = `
+	DELETE FROM notes
+	WHERE id = $1;
+	`
 )

@@ -119,12 +119,13 @@ func (er *dbnoterepository) CreateNote(isMedicRecord bool, recordId uint64, note
 	}, nil
 }
 
-// func (er *dbcommentrepository) DeleteComment(commentId uint64) error {
-// 	query := queryDeleteComment
-// 	_, err := er.dbm.Query(query, commentId)
-// 	if err != nil {
-// 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
-// 		log.Error(err)
-// 	}
-// 	return err
-// }
+func (er *dbnoterepository) DeleteNote(noteId uint64) error {
+	query := queryDeleteNote
+	_, err := er.dbm.Query(query,  
+							noteId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+	}
+	return err
+}

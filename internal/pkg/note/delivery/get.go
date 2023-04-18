@@ -110,33 +110,39 @@ func (handler *NoteHandler) CreateNote (w http.ResponseWriter, r *http.Request) 
 	w.Write(out)
 }
 
-// func (handler *CommentHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
-// 	defer r.Body.Close()
-// 	// sessionId, err := sessions.CheckSession(r)
-// 	// if err == domain.Err.ErrObj.UserNotLoggedIn {
-// 	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
-// 	// 	return
-// 	// }
-// 	queryParameter := r.URL.Query().Get("vk_user_id")
-// 	userId, err := strconv.ParseUint(queryParameter, 10, 64)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
-// 	params := mux.Vars(r)
-// 	commentId, err := strconv.ParseUint(params["id"], 10, 64)
-// 	if err != nil {
-// 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
-// 		return
-// 	}
+func (handler *NoteHandler) DeleteNote(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	// sessionId, err := sessions.CheckSession(r)
+	// if err == domain.Err.ErrObj.UserNotLoggedIn {
+	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
+	// 	return
+	// }
+	queryParameter := r.URL.Query().Get("vk_user_id")
+	medicId, err := strconv.ParseUint(queryParameter, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	params := mux.Vars(r)
+	isMedicRecord, err := strconv.ParseBool(params["isMedicRecord"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	noteId, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+		return
+	}
 
-// 	err = handler.CommentUsecase.DeleteComment(userId, commentId)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
+	err = handler.NoteUsecase.DeleteNote(medicId, isMedicRecord, noteId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-// 	w.WriteHeader(http.StatusOK)
-// }
+	w.WriteHeader(http.StatusOK)
+}

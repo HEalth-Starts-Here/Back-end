@@ -16,5 +16,5 @@ func SetNoteHandlers(router *mux.Router, nu domain.NoteUsecase) {
 	}
 	router.HandleFunc(GetNoteUrl, handler.GetNote).Methods("GET", "OPTIONS")
 	router.HandleFunc(CreateNoteUrl, handler.CreateNote).Methods("POST", "OPTIONS")
-	// router.HandleFunc(DeleteNoteUrl, handler.DeleteNote).Methods("POST", "OPTIONS")
+	router.HandleFunc(DeleteNoteUrl, handler.DeleteNote).Methods("POST", "OPTIONS")
 }

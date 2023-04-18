@@ -6,5 +6,5 @@ const (
 	noteUrl      			= "/note"
 	GetNoteUrl  	 		= noteUrl + "/get" + isMedicRecordUrl + idUrl
 	CreateNoteUrl   		= noteUrl + "/create" + isMedicRecordUrl + idUrl
-	// DeleteCommentUrl   		= commentUrl + "/delete" + idUrl
+	DeleteNoteUrl   		= noteUrl + "/delete" + isMedicRecordUrl + idUrl
 )

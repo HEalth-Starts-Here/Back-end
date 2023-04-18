@@ -43,6 +43,8 @@ type NoteRepository interface {
 	// CheckUserRole(userId uint64) (bool, bool, error)
 	GetNote(isMedicRecord bool, recordId uint64) (GetNoteResponse, error)
 	// DeleteComment(commentId uint64) (error)
+	DeleteNote(noteId uint64) error 
+
 }
 
 type NoteUsecase interface {
@@ -51,5 +53,6 @@ type NoteUsecase interface {
 	CreateNote(medicId uint64, isMedicRecord bool, recordId uint64, noteCreateRequest *BasicNoteInfo) (NoteCreateResponse, error)
 	GetNote(medicId uint64, isMedicRecord bool, recordId uint64) (GetNoteResponse, error)
 	// DeleteComment(userId, commentId uint64) (error)
+	DeleteNote(medicId uint64, isMedicRecord bool, noteId uint64) error
 
 }
