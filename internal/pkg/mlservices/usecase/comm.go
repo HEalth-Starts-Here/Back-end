@@ -17,7 +17,7 @@ func InitMLServicesUsc(mlsr domain.MLServicesRepository) domain.MLServicesUsecas
 	}
 }
 
-func (msu MLServicesUsecase) CreateMedicRecordDiarisations(medicId uint64, recordId uint64, DiarisationInfo domain.DiarisationInfo) (domain.DiarisationResponse, error) {
+func (msu MLServicesUsecase) CreateMedicRecordDiarisations(userId uint64, recordId uint64, DiarisationInfo domain.DiarisationInfo) (domain.DiarisationResponse, error) {
 	// TODO uncomment check
 	// var u domain.RecordUsecase
 	// u = recordusecase.RecordUsecase{}

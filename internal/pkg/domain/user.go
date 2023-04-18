@@ -55,10 +55,11 @@ type UserRepository interface {
 	RegisterMedic(registerMedicRequest RegisterMedicRequest, userId uint64) (UserInfo, error)
 	RegisterPatient(registerPatientRequest RegisterPatientRequest, userId uint64) (UserInfo, error)
 	LinkPatientToDiary(patientId, diaryId uint64) (uint64, uint64, error)
+	CheckAndDeleteToken(diaryId uint64, linkToken string) (bool, error)
 }
 
 type UserUsecase interface {
 	UserInit(userId uint64) (bool, UserInfo, error)
 	RegisterMedic(registerMedicRequest RegisterMedicRequest, userId uint64) (UserInfo, error)
-	RegisterPatient(registerPatientRequest RegisterPatientRequest, userId uint64) (RegisterPatientResponse, error)
+	RegisterPatient(registerPatientRequest RegisterPatientRequest, userId uint64, linkToken string) (RegisterPatientResponse, error)
 }

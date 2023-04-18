@@ -52,11 +52,46 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 	}, nil
 }
 
-func (er *dbdiaryrepository) LinkDiary(diaryId uint64, medicId uint64) (domain.DiaryLinkResponse, error) {
+func (er *dbdiaryrepository) CreateLinkToken(diaryId uint64, token string) error {
+	query := queryCreateDiaryLinkToken
+	log.Info("diaryId:" + string(diaryId))
+	log.Info("token:" + token)
+	_, err := er.dbm.Query(query,
+		diaryId,
+		token)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return err
+	}
+
+	return nil
+}
+
+func (er *dbdiaryrepository) CheckAndDeleteToken (diaryId uint64, linkToken string) (bool, error) {
+	query := queryDeleteLinkToken
+	// if userInitInfo.InitBasicInfo.IsMedic{
+	// 	query = queryMedicInit
+	// } else {
+	// 	query = queryPatientInit
+	// }
+	resp, err := er.dbm.Query(query, diaryId, linkToken)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return false, err
+	}
+	if len(resp) == 0 {
+		return false, nil
+	}
+	return true, nil
+}
+
+func (er *dbdiaryrepository) LinkDiary(patientId uint64, diaryId uint64) (domain.DiaryLinkResponse, error) {
 	query := queryLinkDiary
 	resp, err := er.dbm.Query(query,
 		diaryId,
-		medicId)
+		patientId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
@@ -67,7 +102,8 @@ func (er *dbdiaryrepository) LinkDiary(diaryId uint64, medicId uint64) (domain.D
 		Id:           cast.ToUint64(resp[0][0]),
 		MedicId:      cast.ToUint64(resp[0][1]),
 		MedicName:    cast.ToString(resp[0][2]),
-		PatientId:    cast.ToUint64(resp[0][3]),
+		// TODO get new value after update
+		PatientId:    patientId,
 		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][4]), true),
 		DiaryBasicInfo: domain.DiaryBasicInfo{
 			Title:       cast.ToString(resp[0][5]),
@@ -92,27 +128,35 @@ func (er *dbdiaryrepository) DeleteDiary(diaryId uint64) error {
 func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, error) {
 	var resp []database.DBbyterow
 	var err error
-
 	query := queryDiaryList
 	resp, err = cr.dbm.Query(query, userId)
-
+	
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
 		return domain.DiaryListResponse{}, domain.Err.ErrObj.InternalServer
 	}
-
+	if len(resp) == 0 {
+		return domain.DiaryListResponse{}, domain.Err.ErrObj.SmallDb
+	}
 	diaries := make([]domain.DiaryInList, 0)
 	for i := range resp {
+		// a = (resp[i][3])
+		patientId := uint64(0)
+		if len(resp[i][3]) != 0 {
+			patientId = cast.ToUint64(resp[i][3])
+		}
 		diaries = append(diaries, domain.DiaryInList{
 			Id:           cast.ToUint64(resp[i][0]),
 			MedicId:      cast.ToUint64(resp[i][1]),
 			MedicName:    cast.ToString(resp[i][2]),
-			PatientId:    cast.ToUint64(resp[i][3]),
+			PatientId:    patientId,
+			// PatientId:    cast.ToUint64(resp[i][3]),
 			PatientName:  cast.ToString(resp[i][4]),
 			CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][5]), true),
 			Title:        cast.ToString(resp[i][6]),
 			Objectively:  cast.ToString(resp[i][7]),
+			LinkToken:	  cast.ToString(resp[i][8]),
 		})
 	}
 

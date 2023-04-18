@@ -1,8 +1,10 @@
 package userdelivery
 
 import (
+	// "fmt"
 	"hesh/internal/pkg/domain"
 	"io/ioutil"
+
 	// "mime/multipart"
 
 	// "path/filepath"
@@ -145,14 +147,20 @@ func (handler *UserHandler) RegisterPatient(w http.ResponseWriter, r *http.Reque
 	// 	http.Error(w, domain.Err.ErrObj.UserNotLoggedIn.Error(), http.StatusForbidden)
 	// 	return
 	// }
-	queryParameter := r.URL.Query().Get("vk_user_id")
-	userId, err := strconv.ParseUint(queryParameter, 10, 32)
+	queryParameters := r.URL.Query()
+	vkUserId := queryParameters.Get("vk_user_id")
+	userId, err := strconv.ParseUint(vkUserId, 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
+	linkToken := queryParameters.Get("linktoken")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -179,7 +187,7 @@ func (handler *UserHandler) RegisterPatient(w http.ResponseWriter, r *http.Reque
 
 	//TODO Check is this user existed
 
-	RegisterPatientResponse, err := handler.UserUsecase.RegisterPatient(*RegisterPatientRequest, userId)
+	RegisterPatientResponse, err := handler.UserUsecase.RegisterPatient(*RegisterPatientRequest, userId, linkToken)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)

@@ -95,8 +95,15 @@ func (handler *DiaryHandler) LinkDiary(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	queryParameter := r.URL.Query().Get("vk_user_id")
-	medicId, err := strconv.ParseUint(queryParameter, 10, 64)
+	queryParameters := r.URL.Query()
+	vkUserId := queryParameters.Get("vk_user_id")
+	patientId, err := strconv.ParseUint(vkUserId, 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	linkToken := queryParameters.Get("linktoken")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
@@ -118,7 +125,7 @@ func (handler *DiaryHandler) LinkDiary(w http.ResponseWriter, r *http.Request) {
 	// 	w.WriteHeader(http.StatusBadRequest)
 	// }
 
-	es, err := handler.DiaryUsecase.LinkDiary(diaryId, medicId)
+	es, err := handler.DiaryUsecase.LinkDiary(patientId, diaryId, linkToken)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)

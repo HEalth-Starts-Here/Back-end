@@ -102,6 +102,7 @@ type DiaryCreateResponse struct {
 	PatientId      uint64         `json:"patientid"`
 	CreatingDate   string         `json:"creatingdate"`
 	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
+	LinkToken	   string         `json:"linktoken"`
 }
 
 type DiaryLinkResponse struct {
@@ -122,6 +123,7 @@ type DiaryInList struct {
 	PatientName  string `json:"patientname"`
 	CreatingDate string `json:"creatingdate"`
 	Objectively  string `json:"objectively"`
+	LinkToken	 string `json:"linktoken"`
 }
 
 type DiaryListResponse struct {
@@ -198,13 +200,14 @@ type ImageInfoUsecase struct {
 
 type DiaryRepository interface {
 	CreateDiary(diary DiaryCreateRequest, medicId uint64) (DiaryCreateResponse, error)
-	LinkDiary(diaryId uint64, medicId uint64) (DiaryLinkResponse, error)
+	LinkDiary(patientId uint64, diaryId uint64) (DiaryLinkResponse, error)
 	DeleteDiary(diaryid uint64) error
 	GetDiary(userId uint64) (DiaryListResponse, error)
 	GetUserRole(userId uint64) (bool, bool, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	UpdateDiary(diary DiaryUpdateRequest, diaryId uint64) (DiaryUpdateResponse, error)
-
+	CreateLinkToken(diaryId uint64, linkToken string) (error)
+	CheckAndDeleteToken(diaryId uint64, linkToken string) (bool, error)
 	// DiaryAlreadyExist(diary DiaryCreateRequest) (bool, error)
 	// GetCategory() (CategoryListResponse, error)
 	// CreateEventCategory(eventId uint64, categories []string) ([]string, error)
@@ -217,7 +220,7 @@ type DiaryRepository interface {
 
 type DiaryUsecase interface {
 	CreateDiary(diary DiaryCreateRequest, medicId uint64) (DiaryCreateResponse, error)
-	LinkDiary(diaryId uint64, medicId uint64) (DiaryLinkResponse, error)
+	LinkDiary(patientId uint64, diaryId uint64, linkToken string) (DiaryLinkResponse, error)
 	DeleteDiary(diaryid uint64) error
 	GetDiary(userId uint64) (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64, userId uint64) (DiaryResponse, error)

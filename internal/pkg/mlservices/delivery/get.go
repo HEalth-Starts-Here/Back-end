@@ -274,7 +274,7 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 	defer r.Body.Close()
 
 	queryParameter := r.URL.Query().Get("vk_user_id")
-	medicId, err := strconv.ParseUint(queryParameter, 10, 64)
+	userId, err := strconv.ParseUint(queryParameter, 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
@@ -337,7 +337,7 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	creatingResponse, err := handler.MLServicesUsecase.CreateMedicRecordDiarisations(medicId, recordId, domain.DiarisationInfo{
+	creatingResponse, err := handler.MLServicesUsecase.CreateMedicRecordDiarisations(userId, recordId, domain.DiarisationInfo{
 		Diarisation: response.Text,
 		Filename: audioNames[0],
 	})

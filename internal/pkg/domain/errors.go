@@ -49,6 +49,7 @@ type errObj struct {
 	InvalidText  error
 	UserNotExist  error
 	InvalidUsername  error
+	InvalidLinkToken  error
 	// PlaylistExist error
 
 	UserHaveNoAccess error
@@ -107,6 +108,7 @@ var Err = err{
 		InvalidText:  errors.New("Invalid text"),
 		UserNotExist:  errors.New("User not exist"),
 		InvalidUsername:  errors.New("Invalid username"),
+		InvalidLinkToken:  errors.New("Invalid linkToken"),
 // 		PlaylistExist: errors.New("Playlist with this title already exist"),
 		UserHaveNoAccess: errors.New("Permission denied"),
 		MedicDoestExist: errors.New("Medic does not exist"),

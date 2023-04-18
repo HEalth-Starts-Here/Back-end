@@ -16,7 +16,23 @@ const (
     )
 	RETURNING id, medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis;
 	`
+
+	queryCreateDiaryLinkToken = `
+	INSERT INTO
+    diarytokens (diaryId, token)
+	VALUES
+    (
+		$1,
+        $2
+    );
+	`
 	
+	queryDeleteLinkToken = `
+	DELETE FROM diarytokens
+	WHERE diaryid = $1 AND token = $2
+	RETURNING true;
+	`
+
 	queryLinkDiary = `
 	UPDATE diaries
 	SET patientid = $2
@@ -27,16 +43,30 @@ const (
 	RETURNING d.id, d.medicid, m.name, d.patientid, d.creatingdate, d.title, d.complaints, d.anamnesis, d.objectively, d.diagnosis;
 	`
 
+	// queryLinkDiary2 = `
+	// UPDATE diaries
+	// SET patientid = $2
+	// FROM diaries d
+	// JOIN medics m
+	// ON d.medicid = m.vkid
+	// WHERE diaries.id = $1;
+	// SELECT d.id, d.medicid, m.name, d.patientid, d.creatingdate, d.title, d.complaints, d.anamnesis, d.objectively, d.diagnosis
+	// FROM diaries d
+	// JOIN medics m
+	// ON d.medicid = m.vkid
+	// WHERE patientid = $2 AND  d.id = $1;
+	// `
 	queryDeleteDiary = `
 	DELETE FROM diaries
 	WHERE id = $1;
 	`
 
 	queryDiaryList = `
-	SELECT id, medicid, medics.name, patientid, patients.name, creatingdate, title, objectively
+	SELECT id, medicid, medics.name, patientid, patients.name, creatingdate, title, objectively, diarytokens.token
 	FROM diaries
 	LEFT JOIN patients ON diaries.patientid = patients.vkid
 	JOIN medics ON diaries.medicid = medics.vkid
+	LEFT JOIN diarytokens ON diaries.id = diarytokens.diaryid
 	WHERE medicid = $1 OR patientid = $1
 	ORDER BY creatingdate;
 	`

@@ -1248,6 +1248,8 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain13(in *jlexer.Lexer, out *DiaryI
 			out.CreatingDate = string(in.String())
 		case "objectively":
 			out.Objectively = string(in.String())
+		case "linktoken":
+			out.LinkToken = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -1301,6 +1303,11 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain13(out *jwriter.Writer, in Diary
 		const prefix string = ",\"objectively\":"
 		out.RawString(prefix)
 		out.String(string(in.Objectively))
+	}
+	{
+		const prefix string = ",\"linktoken\":"
+		out.RawString(prefix)
+		out.String(string(in.LinkToken))
 	}
 	out.RawByte('}')
 }
@@ -1357,6 +1364,8 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain14(in *jlexer.Lexer, out *DiaryC
 			out.CreatingDate = string(in.String())
 		case "diarybasicinfo":
 			(out.DiaryBasicInfo).UnmarshalEasyJSON(in)
+		case "linktoken":
+			out.LinkToken = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -1395,6 +1404,11 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain14(out *jwriter.Writer, in Diary
 		const prefix string = ",\"diarybasicinfo\":"
 		out.RawString(prefix)
 		(in.DiaryBasicInfo).MarshalEasyJSON(out)
+	}
+	{
+		const prefix string = ",\"linktoken\":"
+		out.RawString(prefix)
+		out.String(string(in.LinkToken))
 	}
 	out.RawByte('}')
 }

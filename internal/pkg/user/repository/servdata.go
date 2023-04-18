@@ -1,7 +1,6 @@
 package userrepository
 
 import (
-	// "fmt"
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
 
@@ -85,7 +84,26 @@ func (er *dbuserrepository) RegisterPatient (patientInfoRequest domain.RegisterP
 		Name:           	cast.ToString(resp[0][1]),
 		IsMedic:            false}, 
 		nil
+}
+
+func (er *dbuserrepository) CheckAndDeleteToken (diaryId uint64, linkToken string) (bool, error) {
+	query := queryDeleteLinkToken
+	// if userInitInfo.InitBasicInfo.IsMedic{
+	// 	query = queryMedicInit
+	// } else {
+	// 	query = queryPatientInit
+	// }
+	resp, err := er.dbm.Query(query, diaryId, linkToken)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return false, err
 	}
+	if len(resp) == 0 {
+		return false, nil
+	}
+	return true, nil
+}
 
 func (er *dbuserrepository) LinkPatientToDiary (patientId, diaryId uint64) (uint64, uint64, error) {
 	query := queryLinkPatientToDiary
@@ -94,8 +112,6 @@ func (er *dbuserrepository) LinkPatientToDiary (patientId, diaryId uint64) (uint
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
-		// fmt.Printf("resp[0][0]: %v\n", resp[0][0])
-		// fmt.Printf("resp[0][1]: %v\n", resp[0][1])
 		return 0, 0, err
 	}
 	// return 0, 0, nil

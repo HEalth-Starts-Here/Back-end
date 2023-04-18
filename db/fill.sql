@@ -274,6 +274,15 @@ VALUES
         '2022-04-10 15:47:24',
         'Text of note 2 of patient record 1'
     );
+
+INSERT INTO
+    diarytokens (diaryid, token)
+VALUES
+    (
+        3,
+        'linktoken'
+    );
+    
 -- CREATE TABLE notes (
 --     medicRecordId                       BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
 --     patientRecordId                     BIGINT REFERENCES patientRecords (id) ON DELETE CASCADE,

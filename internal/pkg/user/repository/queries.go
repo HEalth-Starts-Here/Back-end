@@ -39,7 +39,12 @@ const (
 	WHERE id = $2
 	RETURNING patientid, id;
 	`
-
+	
+	queryDeleteLinkToken = `
+	DELETE FROM diarytokens
+	WHERE diaryid = $1 AND token = $2
+	RETURNING true;
+	`
 // 	INSERT INTO
 //     medics (vkid, name)
 // VALUES

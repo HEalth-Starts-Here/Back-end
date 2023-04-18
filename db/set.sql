@@ -107,6 +107,6 @@ CREATE TABLE notes (
 );
 
 CREATE TABLE diaryTokens (
-    diaryId                              BIGINT REFERENCES diaries (id) ON DELETE CASCADE,
+    diaryId                              BIGINT REFERENCES diaries (id) ON DELETE CASCADE PRIMARY KEY,
     token                                VARCHAR(256)
 );

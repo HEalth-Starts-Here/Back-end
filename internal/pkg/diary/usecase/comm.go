@@ -2,16 +2,19 @@ package diaryusecase
 
 import (
 	"hesh/internal/pkg/domain"
+	"hesh/internal/pkg/utils/randomizer"
 
 	// "hesh/internal/pkg/utils/cast"
 	// "hesh/internal/pkg/utils/log"
 
 	// usrusecase "eventool/internal/pkg/user/usecase"
-	// usrdelivery "eventool/internal/pkg/user/delivery/rest"
+	// userrepository "hesh/internal/pkg/user/repository"
 	// usrusecase "eventool/internal/pkg/user/usecase"
 	// "usrdelivery"
 	"strings"
 )
+
+const tokenLength = 256
 
 type DiaryUsecase struct {
 	diaryRepo domain.DiaryRepository
@@ -46,14 +49,17 @@ func (du DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId 
 		return domain.DiaryCreateResponse{}, err
 	}
 
-	// DiaryCreateResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
-	// if err != nil {
-	// 	return domain.EventCreatingResponse{}, err
-	// }
+	token, err := randomizer.GenerateRandomString(tokenLength)
+
+	err = du.diaryRepo.CreateLinkToken(DiaryCreateResponse.Id, token)
+	if err != nil {
+		return domain.DiaryCreateResponse{}, err
+	}
+	DiaryCreateResponse.LinkToken = token
 	return DiaryCreateResponse, nil
 }
 
-func (du DiaryUsecase) LinkDiary(diaryId uint64, medicId uint64) (domain.DiaryLinkResponse, error) {
+func (du DiaryUsecase) LinkDiary(patientId uint64, diaryId uint64, linkToken string) (domain.DiaryLinkResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -63,11 +69,18 @@ func (du DiaryUsecase) LinkDiary(diaryId uint64, medicId uint64) (domain.DiaryLi
 	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
 
-	DiaryCreateResponse, err := du.diaryRepo.LinkDiary(diaryId, medicId)
+	isLinkExist, err := du.diaryRepo.CheckAndDeleteToken(diaryId, linkToken)
+	if err != nil {
+		return domain.DiaryLinkResponse{},  err
+	}
+	if !isLinkExist {
+		return domain.DiaryLinkResponse{}, domain.Err.ErrObj.InvalidLinkToken
+	} 
+
+	DiaryCreateResponse, err := du.diaryRepo.LinkDiary(patientId, diaryId)
 	if err != nil {
 		return domain.DiaryLinkResponse{}, err
 	}
-
 	// DiaryCreateResponse.Categories, err = eu.eventRepo.CreateEventCategory(eventCreatingResponse.Id, eventData.Categories)
 	// if err != nil {
 	// 	return domain.EventCreatingResponse{}, err
