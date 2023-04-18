@@ -6,6 +6,7 @@ import (
 	"hesh/internal/pkg/utils/cast"
 	"hesh/internal/pkg/utils/log"
 	"strings"
+	"time"
 )
 
 type dbnoterepository struct {
@@ -31,33 +32,6 @@ func InitNoteRep(manager *database.DBManager) domain.NoteRepository {
 // 		return false, false, nil
 // 	}
 // 	return true, cast.ToBool(resp[0][0]), nil
-// }
-
-// func (er *dbnoterepository) CreateNote(medicId uint64, isMedic bool, commentrequest domain.BasicCommentInfo) (domain.CommentCreateResponse, error) {
-// 	query := queryCreateComment
-// 	resp, err := er.dbm.Query(query,
-// 		authorIsMedic,
-// 		time.Now().Format("2006.01.02 15:04:05"),
-// 		diaryId,
-// 		commentrequest.Text)
-// 	if err != nil {
-// 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
-// 		log.Error(err)
-// 		return domain.CommentCreateResponse{}, err
-// 	}
-
-// 	return domain.CommentCreateResponse{
-// 		CommentInListInfo: domain.CommentInListInfo{
-// 			Id:					cast.ToUint64(resp[0][0]),
-// 			AuthorIsMedic:      cast.ToBool(resp[0][1]),
-// 			IsReaded:			cast.ToBool(resp[0][2]),
-// 			CreatingDate: 		cast.TimeToStr(cast.ToTime(resp[0][3]), true),
-// 			BasicCommentInfo: domain.BasicCommentInfo{
-// 				Text:       cast.ToString(resp[0][4]),
-// 			},
-// 		},
-// 		DiaryId:			cast.ToUint64(resp[0][5]),
-// 	}, nil
 // }
 
 func (cr *dbnoterepository) GetNote(isMedicRecord bool, recordId uint64) (domain.GetNoteResponse, error) {
@@ -86,7 +60,6 @@ func (cr *dbnoterepository) GetNote(isMedicRecord bool, recordId uint64) (domain
 		return domain.GetNoteResponse{}, domain.Err.ErrObj.InternalServer
 	}
 	if len(resp) == 0 {
-		println("len(resp) == 0")
 		return domain.GetNoteResponse{}, nil
 	}
 	notes := make([]domain.NoteInListInfo, 0)
@@ -107,6 +80,43 @@ func (cr *dbnoterepository) GetNote(isMedicRecord bool, recordId uint64) (domain
 	}
 
 	return out, nil
+}
+
+func (er *dbnoterepository) CreateNote(isMedicRecord bool, recordId uint64, noteRequest domain.BasicNoteInfo) (domain.NoteCreateResponse, error) {
+	var query strings.Builder
+	var userRecord string
+	if isMedicRecord {
+		userRecord = "medicrecordid"
+	} else {
+		userRecord = "patientrecordid"
+	}
+	query.Write([]byte(queryCreateNoteFirstPart))
+	query.Write([]byte(userRecord))
+	query.Write([]byte(queryCreateNoteSecondPart))
+	query.Write([]byte(userRecord))
+	query.Write([]byte(queryCreateNoteThirdPart))
+
+	resp, err := er.dbm.Query(query.String(),
+		recordId,
+		isMedicRecord,
+		time.Now().Format("2006.01.02 15:04:05"),
+		noteRequest.Text)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query.String())
+		log.Error(err)
+		return domain.NoteCreateResponse{}, err
+	}
+	return domain.NoteCreateResponse{
+		NoteInListInfo: domain.NoteInListInfo{
+			Id:					cast.ToUint64(resp[0][0]),
+			CreatingDate: 		cast.TimeToStr(cast.ToTime(resp[0][3]), true),
+			BasicNoteInfo: domain.BasicNoteInfo{
+				Text:       cast.ToString(resp[0][4]),
+			},
+		},
+		RecordId:			cast.ToUint64(resp[0][1]),
+		IsMedicRecord:		cast.ToBool(resp[0][2]),
+	}, nil
 }
 
 // func (er *dbcommentrepository) DeleteComment(commentId uint64) error {

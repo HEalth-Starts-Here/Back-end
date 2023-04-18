@@ -20,11 +20,11 @@ type BasicNoteInfo struct {
 	Text string `json:"text"`
 }
 
-// type NoteCreateResponse struct {
-// 	IsMedicRecord		bool				`json:"ismedicrecord"`
-// 	RecordId            uint64         		`json:"recordid"`
-// 	NoteInListInfo		NoteInListInfo		`json:"noteinlistinfo"`
-// }
+type NoteCreateResponse struct {
+	IsMedicRecord		bool				`json:"ismedicrecord"`
+	RecordId            uint64         		`json:"recordid"`
+	NoteInListInfo		NoteInListInfo		`json:"noteinlistinfo"`
+}
 
 type NoteInListInfo struct {
 	Id             		uint64         		`json:"id"`
@@ -39,7 +39,7 @@ type GetNoteResponse struct {
 }
 
 type NoteRepository interface {
-	// CreateComment(diaryId uint64, authorIsMedic bool, commentInfo BasicCommentInfo) (CommentCreateResponse, error)
+	CreateNote(isMedicRecord bool, recordId uint64, noteCreateRequest BasicNoteInfo) (NoteCreateResponse, error)
 	// CheckUserRole(userId uint64) (bool, bool, error)
 	GetNote(isMedicRecord bool, recordId uint64) (GetNoteResponse, error)
 	// DeleteComment(commentId uint64) (error)
@@ -48,6 +48,7 @@ type NoteRepository interface {
 type NoteUsecase interface {
 	// CreateComment(diaryId uint64, userId uint64, commentInfo BasicCommentInfo) (CommentCreateResponse, error)
 	// CheckUserRole(userId uint64) (bool, bool, error)
+	CreateNote(medicId uint64, isMedicRecord bool, recordId uint64, noteCreateRequest *BasicNoteInfo) (NoteCreateResponse, error)
 	GetNote(medicId uint64, isMedicRecord bool, recordId uint64) (GetNoteResponse, error)
 	// DeleteComment(userId, commentId uint64) (error)
 

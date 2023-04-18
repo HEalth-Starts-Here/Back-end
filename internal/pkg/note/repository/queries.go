@@ -11,21 +11,41 @@ const (
 	// WHERE patients.vkid = $1;
 	// `
 
-	// queryCreateComment = `
-	// INSERT INTO
-    // comments (authorismedic, creatingDate, diaryId, text)
-	// VALUES
-    // (
-	// 	$1,
-    //     $2,
-    //     $3,
-    //     $4
-    // )
-	// RETURNING id, authorismedic, isreaded, creatingDate, text, diaryId;
-	// `
+	queryCreateNote = `
+	INSERT INTO
+    notes (medicrecordid, ismedicrecord, creatingdate, text)
+	VALUES
+    (
+        $1,
+        $2,
+        $3,
+        $4
+    )
+	RETURNING id, $5, ismedicrecord, creatingDate, text;
+	`
 
-	medicrecordid = "medicrecordid"
-	patientrecordid = "patientrecordid"
+	queryCreateNoteFirstPart = `
+	INSERT INTO
+    notes (
+	`
+
+	queryCreateNoteSecondPart = `
+	, ismedicrecord, creatingdate, text)
+	VALUES
+    (
+        $1,
+        $2,
+        $3,
+        $4
+    )
+	RETURNING id, 
+	`
+
+	queryCreateNoteThirdPart = `
+	, ismedicrecord, creatingDate, text;	`
+
+	// medicrecordid = "medicrecordid"
+	// patientrecordid = "patientrecordid"
 	
 	queryGetNoteFirstPart = `
 	SELECT 
@@ -39,30 +59,7 @@ const (
 	queryGetNoteThirdPart = `
 	= $1;
 	`
-	
-	queryGetNote2 = `
-	SELECT medicrecordid, id, creatingdate, text
-	FROM notes
-	WHERE medicrecordid = $1;
-	`
 
-	queryGetNote3 = `
-	SELECT $1, id, creatingdate, text
-	FROM notes
-	WHERE $2 = 1;
-	`
-
-	queryGetNote4 = `
-	SELECT $1::varchar(255), id, creatingdate, text
-	FROM notes
-	WHERE $1 = 1;
-	`
-
-	queryGetNote5 = `
-	SELECT $1 as "123", id, creatingdate, text
-	FROM notes
-	WHERE "123" = $2;
-	`
 	// queryDeleteComment = `
 	// DELETE FROM comments
 	// WHERE id = $1;

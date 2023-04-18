@@ -46,6 +46,7 @@ type errObj struct {
 
 	InvalidTitle  error
 	InvalidTitleOrDescription  error
+	InvalidText  error
 	UserNotExist  error
 	InvalidUsername  error
 	// PlaylistExist error
@@ -103,6 +104,7 @@ var Err = err{
 
 		InvalidTitle:  errors.New("Invalid title"),
 		InvalidTitleOrDescription:  errors.New("Invalid title or description"),
+		InvalidText:  errors.New("Invalid text"),
 		UserNotExist:  errors.New("User not exist"),
 		InvalidUsername:  errors.New("Invalid username"),
 // 		PlaylistExist: errors.New("Playlist with this title already exist"),

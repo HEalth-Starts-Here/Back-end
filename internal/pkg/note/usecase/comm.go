@@ -23,26 +23,24 @@ func InitNoteUsc(nr domain.NoteRepository) domain.NoteUsecase {
 // 	return userExist, isMedic, nil
 // }
 
-// func (nu NoteUsecase) CreateNote(diaryId uint64, userId uint64, commentCreateRequest domain.BasicCommentInfo) (domain.CommentCreateResponse, error) {
-// 	if !commentCreateRequest.IsValid() {
-// 		return domain.CommentCreateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
-// 	}
-// 	// svs := setter.Services{}
-// 	// isExist, isMedic, err := diaryrepository.InitDiaryRep(svs.Diary.Db).GetUserRole(userId)
-// 	isExist, isMedic, err := cu.CheckUserRole(userId) 
-// 	if err != nil {
-// 		return domain.CommentCreateResponse{}, err
-// 	}
-// 	if !isExist {
-// 		return domain.CommentCreateResponse{}, domain.Err.ErrObj.UserNotExist
-// 	}
+func (nu NoteUsecase) CreateNote(medicId uint64, isMedicRecord bool, recordId uint64, noteCreateRequest *domain.BasicNoteInfo) (domain.NoteCreateResponse, error) {
+	if !noteCreateRequest.IsValid() {
+		return domain.NoteCreateResponse{}, domain.Err.ErrObj.InvalidText
+	}
+	// isExist, isMedic, err := nu.CheckUserRole(userId) 
+	// if err != nil {
+	// 	return domain.CommentCreateResponse{}, err
+	// }
+	// if !isExist {
+	// 	return domain.CommentCreateResponse{}, domain.Err.ErrObj.UserNotExist
+	// }
 
-// 	DiaryCreateResponse, err := cu.commentRepo.CreateComment(diaryId, isMedic, commentCreateRequest)
-// 	if err != nil {
-// 		return domain.CommentCreateResponse{}, err
-// 	}
-// 	return DiaryCreateResponse, nil
-// }
+	DiaryCreateResponse, err := nu.NoteRepo.CreateNote(isMedicRecord, recordId, *noteCreateRequest)
+	if err != nil {
+		return domain.NoteCreateResponse{}, err
+	}
+	return DiaryCreateResponse, nil
+}
 
 func (nu NoteUsecase) GetNote (medicId uint64, isMedicRecord bool, recordId uint64) (domain.GetNoteResponse, error) {
 	// TODO check is user have access to this diary

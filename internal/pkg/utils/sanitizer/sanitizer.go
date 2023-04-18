@@ -80,3 +80,7 @@ func SanitizePatientRecordCreateRequest(record *domain.PatientRecordCreateReques
 func SanitizeBasicCommentInfo(record *domain.BasicCommentInfo) {
 	sanitizeText(&record.Text)
 }
+
+func SanitizeBasicNoteInfo(note *domain.BasicNoteInfo) {
+	sanitizeText(&note.Text)
+}
