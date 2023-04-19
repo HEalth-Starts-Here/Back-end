@@ -3,11 +3,13 @@ package diaryrepository
 import (
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
+	// null "github.com/volatiletech/null/v9"
 
 	"hesh/internal/pkg/utils/cast"
 	"hesh/internal/pkg/utils/log"
 
 	"time"
+	// "database/sql"
 )
 
 type dbdiaryrepository struct {
@@ -197,18 +199,27 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		log.Error(domain.Err.ErrObj.SmallDb)
 		return domain.DiaryResponse{}, domain.Err.ErrObj.SmallDb
 	}
-	// var patientId uint64
+	// var a sql.NullInt64
+	// var a null.Bytes{}
+	// var b []byte
+	// b = nil
+	
 	patientId := uint64(0)
-	if len(resp[0][3]) != 0 {
-		patientId = cast.ToUint64(resp[0][3])
+	if (resp[0][4]) == nil {
+		patientId = cast.ToUint64(resp[0][4])
 	}
+	// a = sql.NullInt64(resp[0][3])
+	// if len(resp[0][3]) != 0 {
+	// 	patientId = cast.ToUint64(resp[0][3])
+	// }
 	diary := domain.DiaryResponse{
 		PatientName: cast.ToString(resp[0][0]),
 		Diary: domain.DiaryLinkResponse{
 			Id:           cast.ToUint64(resp[0][1]),
 			MedicId:      cast.ToUint64(resp[0][2]),
 			MedicName:    cast.ToString(resp[0][3]),
-			PatientId:   patientId,
+			// PatientId:    cast.ToString(resp[0][4]),
+			PatientId:    patientId,
 			CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][5]), true),
 			DiaryBasicInfo: domain.DiaryBasicInfo{
 				Title:       cast.ToString(resp[0][6]),
