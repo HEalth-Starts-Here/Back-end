@@ -86,7 +86,7 @@ CREATE TABLE audio (
     creatingDate                        TIMESTAMP NOT NULL,
     diarisation                         VARCHAR(10000),
     filename                            VARCHAR(200),
-    isComplete                          VARCHAR(200) NOT NULL DEFAULT false
+    isComplete                          BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE comments (
