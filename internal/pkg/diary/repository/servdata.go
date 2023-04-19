@@ -304,11 +304,16 @@ func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdateRequest, diaryI
 		log.Error(err)
 		return domain.DiaryUpdateResponse{}, err
 	}
+	patientId := uint64(0)
+	if resp[0][2] != nil {
+		patientId =  cast.ToUint64(resp[0][2])
+	}
 
 	return domain.DiaryUpdateResponse{
 		Id:           cast.ToUint64(resp[0][0]),
 		MedicId:      cast.ToUint64(resp[0][1]),
-		PatientId:    cast.ToUint64(resp[0][2]),
+		// PatientId:    cast.ToUint64(resp[0][2]),
+		PatientId:    patientId,
 		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][3]), true),
 		DiaryBasicInfo: domain.DiaryBasicInfo{
 			Title:       cast.ToString(resp[0][4]),
