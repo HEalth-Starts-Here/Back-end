@@ -205,7 +205,7 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	// b = nil
 	
 	patientId := uint64(0)
-	if (resp[0][4]) == nil {
+	if (resp[0][4]) != nil {
 		patientId = cast.ToUint64(resp[0][4])
 	}
 	// a = sql.NullInt64(resp[0][3])
