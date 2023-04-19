@@ -202,7 +202,6 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	if len(resp[0][3]) != 0 {
 		patientId = cast.ToUint64(resp[0][3])
 	}
-	if len(resp[0][4]) == 0 {}
 	diary := domain.DiaryResponse{
 		PatientName: cast.ToString(resp[0][0]),
 		Diary: domain.DiaryLinkResponse{
