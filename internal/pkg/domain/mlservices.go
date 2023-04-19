@@ -1,6 +1,5 @@
 package domain
 
-// TODO write valid path
 const ()
 
 type ImageQualityAssesment struct {
@@ -11,36 +10,32 @@ type DetermineAreaResponse struct {
 	Area int32 `json:"area"`
 }
 
-type DiarisationInfo struct {
-	Diarisation string `json:"diarisation"`
+type DiarisationBeforeCompletingInfo struct {
+	// Diarisation string `json:"diarisation"`
 	Filename 	string `json:"filename"`
 }
 
-type MedicRecordDiarisationsResponse struct {
-	DiarisationsInfo DiarisationInfo `json:"diarisationsinfo"`
+type DiarisationInfo struct {
+	Diarisation string `json:"diarisation"`
+	Filename 	string `json:"filename"`
+	IsComplete 	bool   `json:"iscomplete"`
 }
 
 type DiarisationResponse struct {
-	Id				uint64 `json:"id"`
-	CreatingDate	string `json:"creatingdate"`
-	MedicRecordId	uint64 `json:"medicrecordid"`
-	DiarisationInfo DiarisationInfo
+	Id				uint64 			`json:"id"`
+	CreatingDate	string 			`json:"creatingdate"`
+	MedicRecordId	uint64 			`json:"medicrecordid"`
+	DiarisationInfo DiarisationInfo `json:"diarisationinfo"`
 }
 
 type MLServicesRepository interface {
 	GetAudioNames() (map[string]struct{}, error)
-	CreateMedicRecordDiarisation (medicRecordId uint64, DiarisationInfo DiarisationInfo) (DiarisationResponse, error)
-	// CreateDiary(diary DiaryCreateRequest) (DiaryCreateResponse, error)
-	// GetDiary() (DiaryListResponse, error)
-	// GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	// CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase, Area float64) (RecordCreateResponse, error)
+	CreateMedicRecordDiarisation (medicRecordId uint64, DiarisationInfo DiarisationBeforeCompletingInfo) (DiarisationResponse, error)
+	SetDiarisationText (diarisationId uint64, diarisationText string) (error)
 }
 
 type MLServicesUsecase interface {
-	CreateMedicRecordDiarisations(medicId uint64, recordId uint64, DiarisationInfo DiarisationInfo) (DiarisationResponse, error)
-
-	// CreateDiary(diary DiaryCreateRequest) (DiaryCreateResponse, error)
-	// GetDiary() (DiaryListResponse, error)
-	// GetCertainDiary(diaryId uint64) (DiaryResponse, error)
-	// CreateRecord(diaryId uint64, record RecordCreateRequest, imageInfo []ImageInfoUsecase) (RecordCreateResponse, error)
+	CreateMedicRecordDiarisations(medicId uint64, recordId uint64, DiarisationInfo DiarisationBeforeCompletingInfo) (DiarisationResponse, error)
+	SetDiarisationText (diarisationId uint64, diarisationText string) (error)
+	// CreateMedicRecordDiarisations(medicId uint64, recordId uint64, DiarisationInfo DiarisationInfo) (DiarisationResponse, error)
 }

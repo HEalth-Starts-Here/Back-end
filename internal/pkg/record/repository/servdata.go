@@ -283,6 +283,7 @@ func (dr *dbrecordrepository) GetMedicRecordDiarisations(medicRecordId uint64) (
 			DiarisationInfo: domain.DiarisationInfo{
 				Diarisation: cast.ToString(resp[i][3]),
 				Filename:    cast.ToString(resp[i][4]),
+				IsComplete:  cast.ToBool(resp[i][5]),
 			},
 		})
 	}

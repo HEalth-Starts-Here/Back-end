@@ -39,12 +39,11 @@ func (msr *dbmlservicesrepository) GetAudioNames() (map[string]struct{}, error) 
 	return imageNames, nil
 }
 
-func (rr *dbmlservicesrepository) CreateMedicRecordDiarisation(recordId uint64, record domain.DiarisationInfo) (domain.DiarisationResponse, error) {
+func (rr *dbmlservicesrepository) CreateMedicRecordDiarisation(recordId uint64, record domain.DiarisationBeforeCompletingInfo) (domain.DiarisationResponse, error) {
 	query := queryCreateMedicRecordDiarisation
 	resp, err := rr.dbm.Query(query,
 		recordId,
 		time.Now().Format("2006.01.02 15:04:05"),
-		record.Diarisation,
 		record.Filename)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
@@ -56,8 +55,8 @@ func (rr *dbmlservicesrepository) CreateMedicRecordDiarisation(recordId uint64, 
 		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][1]), true),
 		MedicRecordId: cast.ToUint64(resp[0][2]),
 		DiarisationInfo: domain.DiarisationInfo{
-			Diarisation: cast.ToString(resp[0][3]),
-			Filename: cast.ToString(resp[0][4]),
+			Diarisation: "",
+			Filename: cast.ToString(resp[0][3]),
 		},
 	}
 	
@@ -66,4 +65,30 @@ func (rr *dbmlservicesrepository) CreateMedicRecordDiarisation(recordId uint64, 
 		return domain.DiarisationResponse{}, err
 	}
 	return response, nil
+}
+
+func (mlsr *dbmlservicesrepository) SetDiarisationText(diarisationId uint64, diarisationText string) (error) {
+	query := querySetMedicRecordDiarisation
+	resp, err := mlsr.dbm.Query(query,
+		diarisationId,
+		diarisationText)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return err
+	}
+	if len(resp) == 0 {
+		return domain.Err.ErrObj.SmallDb
+	}
+	// response := domain.DiarisationResponse{
+	// 	Id:           cast.ToUint64(resp[0][0]),
+	// 	CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][1]), true),
+	// 	MedicRecordId: cast.ToUint64(resp[0][2]),
+	// 	DiarisationInfo: domain.DiarisationInfo{
+	// 		Diarisation: "",
+	// 		Filename: cast.ToString(resp[0][3]),
+	// 	},
+	// }
+	
+	return nil
 }

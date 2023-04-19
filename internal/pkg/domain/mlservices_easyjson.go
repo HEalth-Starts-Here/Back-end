@@ -108,7 +108,7 @@ func easyjsonCb88da03DecodeHeshInternalPkgDomain1(in *jlexer.Lexer, out *Diarisa
 			out.CreatingDate = string(in.String())
 		case "medicrecordid":
 			out.MedicRecordId = uint64(in.Uint64())
-		case "DiarisationInfo":
+		case "diarisationinfo":
 			(out.DiarisationInfo).UnmarshalEasyJSON(in)
 		default:
 			in.SkipRecursive()
@@ -140,7 +140,7 @@ func easyjsonCb88da03EncodeHeshInternalPkgDomain1(out *jwriter.Writer, in Diaris
 		out.Uint64(uint64(in.MedicRecordId))
 	}
 	{
-		const prefix string = ",\"DiarisationInfo\":"
+		const prefix string = ",\"diarisationinfo\":"
 		out.RawString(prefix)
 		(in.DiarisationInfo).MarshalEasyJSON(out)
 	}
@@ -193,6 +193,8 @@ func easyjsonCb88da03DecodeHeshInternalPkgDomain2(in *jlexer.Lexer, out *Diarisa
 			out.Diarisation = string(in.String())
 		case "filename":
 			out.Filename = string(in.String())
+		case "iscomplete":
+			out.IsComplete = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -216,6 +218,11 @@ func easyjsonCb88da03EncodeHeshInternalPkgDomain2(out *jwriter.Writer, in Diaris
 		const prefix string = ",\"filename\":"
 		out.RawString(prefix)
 		out.String(string(in.Filename))
+	}
+	{
+		const prefix string = ",\"iscomplete\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsComplete))
 	}
 	out.RawByte('}')
 }
@@ -243,7 +250,73 @@ func (v *DiarisationInfo) UnmarshalJSON(data []byte) error {
 func (v *DiarisationInfo) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonCb88da03DecodeHeshInternalPkgDomain2(l, v)
 }
-func easyjsonCb88da03DecodeHeshInternalPkgDomain3(in *jlexer.Lexer, out *DetermineAreaResponse) {
+func easyjsonCb88da03DecodeHeshInternalPkgDomain3(in *jlexer.Lexer, out *DiarisationBeforeCompletingInfo) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "filename":
+			out.Filename = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonCb88da03EncodeHeshInternalPkgDomain3(out *jwriter.Writer, in DiarisationBeforeCompletingInfo) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"filename\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Filename))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v DiarisationBeforeCompletingInfo) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonCb88da03EncodeHeshInternalPkgDomain3(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v DiarisationBeforeCompletingInfo) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonCb88da03EncodeHeshInternalPkgDomain3(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *DiarisationBeforeCompletingInfo) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonCb88da03DecodeHeshInternalPkgDomain3(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *DiarisationBeforeCompletingInfo) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonCb88da03DecodeHeshInternalPkgDomain3(l, v)
+}
+func easyjsonCb88da03DecodeHeshInternalPkgDomain4(in *jlexer.Lexer, out *DetermineAreaResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -274,7 +347,7 @@ func easyjsonCb88da03DecodeHeshInternalPkgDomain3(in *jlexer.Lexer, out *Determi
 		in.Consumed()
 	}
 }
-func easyjsonCb88da03EncodeHeshInternalPkgDomain3(out *jwriter.Writer, in DetermineAreaResponse) {
+func easyjsonCb88da03EncodeHeshInternalPkgDomain4(out *jwriter.Writer, in DetermineAreaResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -289,23 +362,23 @@ func easyjsonCb88da03EncodeHeshInternalPkgDomain3(out *jwriter.Writer, in Determ
 // MarshalJSON supports json.Marshaler interface
 func (v DetermineAreaResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonCb88da03EncodeHeshInternalPkgDomain3(&w, v)
+	easyjsonCb88da03EncodeHeshInternalPkgDomain4(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v DetermineAreaResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonCb88da03EncodeHeshInternalPkgDomain3(w, v)
+	easyjsonCb88da03EncodeHeshInternalPkgDomain4(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *DetermineAreaResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonCb88da03DecodeHeshInternalPkgDomain3(&r, v)
+	easyjsonCb88da03DecodeHeshInternalPkgDomain4(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *DetermineAreaResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonCb88da03DecodeHeshInternalPkgDomain3(l, v)
+	easyjsonCb88da03DecodeHeshInternalPkgDomain4(l, v)
 }

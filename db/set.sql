@@ -85,7 +85,8 @@ CREATE TABLE audio (
     medicRecordId                       BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
     creatingDate                        TIMESTAMP NOT NULL,
     diarisation                         VARCHAR(10000),
-    filename                            VARCHAR(200)
+    filename                            VARCHAR(200),
+    isComplete                          VARCHAR(200) NOT NULL DEFAULT false
 );
 
 CREATE TABLE comments (

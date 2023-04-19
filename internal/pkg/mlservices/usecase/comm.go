@@ -17,7 +17,7 @@ func InitMLServicesUsc(mlsr domain.MLServicesRepository) domain.MLServicesUsecas
 	}
 }
 
-func (msu MLServicesUsecase) CreateMedicRecordDiarisations(userId uint64, recordId uint64, DiarisationInfo domain.DiarisationInfo) (domain.DiarisationResponse, error) {
+func (msu MLServicesUsecase) CreateMedicRecordDiarisations(userId uint64, recordId uint64, diarisationBeforeCompletingInfo domain.DiarisationBeforeCompletingInfo) (domain.DiarisationResponse, error) {
 	// TODO uncomment check
 	// var u domain.RecordUsecase
 	// u = recordusecase.RecordUsecase{}
@@ -29,14 +29,21 @@ func (msu MLServicesUsecase) CreateMedicRecordDiarisations(userId uint64, record
 
 	audioNames := filesaver.GetUniqueFileNames(1, alreadyUsed)
 	for i := 0; i < len(audioNames); i++ {
-		DiarisationInfo.Filename = audioNames[i] + filepath.Ext(DiarisationInfo.Filename)
-		audioNames[i] = DiarisationInfo.Filename
-
+		diarisationBeforeCompletingInfo.Filename = audioNames[i] + filepath.Ext(diarisationBeforeCompletingInfo.Filename)
+		audioNames[i] = diarisationBeforeCompletingInfo.Filename
 	}
 
-	RecordCreateResponse, err := msu.mlservicesRepo.CreateMedicRecordDiarisation(recordId, DiarisationInfo)
+	RecordCreateResponse, err := msu.mlservicesRepo.CreateMedicRecordDiarisation(recordId, diarisationBeforeCompletingInfo)
 	if err != nil {
 		return domain.DiarisationResponse{}, err
 	}
 	return RecordCreateResponse, nil
+}
+
+func (msu MLServicesUsecase) SetDiarisationText (diarisationId uint64, diarisationText string) (error) {
+	err := msu.mlservicesRepo.SetDiarisationText(diarisationId, diarisationText)
+	if err != nil {
+		return err
+	}
+	return nil
 }

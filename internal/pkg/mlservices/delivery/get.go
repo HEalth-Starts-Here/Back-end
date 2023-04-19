@@ -30,6 +30,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
+	// "github.com/mailru/easyjson"
 	// "encoding/json"
 	// "io"
 	// "os"
@@ -270,6 +271,35 @@ func (handler *MLServicesHandler) ImageQualityAssesment(w http.ResponseWriter, r
 	w.Write(out)
 }
 
+func (handler *MLServicesHandler) DiarisationRequestToMS (diarisationId uint64, file multipart.File,)	{
+
+	buf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, file); err != nil {
+		log.Error(err)
+	}
+
+	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Error(err)
+	}
+	defer conn.Close()
+
+	// client := mlsgrpc.AffectedAreaClient()
+	client := mlsgrpc.NewDiarisationClient(conn)
+	diarisationTextMLSResponse, err := client.TranscribeAudio(context.Background(), &mlsgrpc.DiarisationRequest{
+		Audio: buf.Bytes(),
+	})
+	if err != nil {
+		log.Error(err)
+	}
+	diarisationText := diarisationTextMLSResponse.Text
+	err = handler.MLServicesUsecase.SetDiarisationText(diarisationId, diarisationText)
+	if err != nil {
+		log.Error(err)
+
+	}
+}
+
 func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
@@ -300,7 +330,8 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 	formdata := r.MultipartForm
 	fileHeader := formdata.File["audio"] 
 	println(config.DevConfigStore.LoadedFilesPath + (fileHeader[0]).Filename)
-
+	
+	
 	file, err := fileHeader[0].Open()
 	if err != nil {
 		log.Error(err)
@@ -309,36 +340,7 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	buf := bytes.NewBuffer(nil)
-	if _, err := io.Copy(buf, file); err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	defer conn.Close()
-
-	// client := mlsgrpc.AffectedAreaClient()
-	client := mlsgrpc.NewDiarisationClient(conn)
-	response, err := client.TranscribeAudio(context.Background(), &mlsgrpc.DiarisationRequest{
-		Audio: buf.Bytes(),
-	})
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	creatingResponse, err := handler.MLServicesUsecase.CreateMedicRecordDiarisations(userId, recordId, domain.DiarisationInfo{
-		Diarisation: response.Text,
+	creatingResponse, err := handler.MLServicesUsecase.CreateMedicRecordDiarisations(userId, recordId, domain.DiarisationBeforeCompletingInfo{
 		Filename: audioNames[0],
 	})
 	if err != nil {
@@ -347,9 +349,12 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	// es := domain.DiarisationResponse{
 	// 	Diarisation: response.Text,
 	// }
+	go handler.DiarisationRequestToMS(creatingResponse.Id, file)
+
 	audioNamesToSave := make([]string, 0)
 	audioNamesToSave = append(audioNamesToSave, creatingResponse.DiarisationInfo.Filename)
 	filesaver.SaveMultipartDataFiles(audioNamesToSave, r.MultipartForm.File["audio"])

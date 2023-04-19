@@ -91,7 +91,7 @@ const (
 	`
 
 	queryGetMedicRecordDiarisationList = `
-	SELECT id, medicrecordid, creatingdate, diarisation, filename 
+	SELECT id, medicrecordid, creatingdate, diarisation, filename, iscomplete
 	FROM audio
 	WHERE medicrecordid = $1;
 	`

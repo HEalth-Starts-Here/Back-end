@@ -181,37 +181,42 @@ VALUES
 
 
 INSERT INTO
-    audio (medicRecordId, creatingDate, diarisation, filename)
+    audio (medicRecordId, creatingDate, diarisation, filename, isComplete)
 VALUES
     (
         1,
         '2022-04-10 15:47:24',
 		'Diarisation 1 of medic record 1',
-        '1.mp3'
+        '1.mp3',
+        true
     ),
     (
         1,
         '2022-04-10 15:47:24',
 		'Diarisation 2 of medic record 1',
-        '2.mp3'
+        '2.mp3',
+        true
     ),
     (
         1,
         '2022-04-10 15:47:24',
 		'Diarisation 3 of medic record 1',
-        '3.mp3'
+        '3.mp3',
+        true
     ),
     (
         2,
         '2022-04-10 15:47:24',
 		'Diarisation 1 of medic record 2',
-        '4.mp3'
+        '4.mp3',
+        true
     ),
     (
         2,
         '2022-04-10 15:47:24',
 		'Diarisation 2 of medic record 2',
-        '5.mp3'
+        '5.mp3',
+        true
     );
 
 INSERT INTO

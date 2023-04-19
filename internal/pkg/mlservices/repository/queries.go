@@ -8,13 +8,19 @@ const (
 
 	queryCreateMedicRecordDiarisation = `
 	INSERT INTO 
-	audio (medicRecordId, creatingdate, diarisation, filename)
+	audio (medicRecordId, creatingdate, filename)
 	VALUES (
 		$1,
 		$2,
-		$3,
-		$4
+		$3
 	)
-	RETURNING id, creatingdate, medicRecordId, diarisation, filename;
+	RETURNING id, creatingdate, medicRecordId, filename;
+	`
+
+	querySetMedicRecordDiarisation = `
+	UPDATE audio
+	SET diarisation = $2, iscomplete = true
+	WHERE id = $1
+	RETURNING NULL
 	`
 )
