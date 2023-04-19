@@ -268,9 +268,7 @@ func (dr *dbrecordrepository) GetMedicRecordDiarisations(medicRecordId uint64) (
 	}
 
 	if len(resp) == 0 {
-		log.Warn(cast.GetCurrentFuncName())
-		log.Error(domain.Err.ErrObj.SmallDb)
-		return domain.GetDiarisationsResponse{}, domain.Err.ErrObj.SmallDb
+		return domain.GetDiarisationsResponse{MedicRecordId: medicRecordId}, nil
 	}
 	response := domain.GetDiarisationsResponse{}
 	response.MedicRecordId = cast.ToUint64(resp[0][1])
