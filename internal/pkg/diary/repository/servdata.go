@@ -136,9 +136,9 @@ func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, 
 		log.Error(err)
 		return domain.DiaryListResponse{}, domain.Err.ErrObj.InternalServer
 	}
-	if len(resp) == 0 {
-		return domain.DiaryListResponse{}, domain.Err.ErrObj.SmallDb
-	}
+	// if len(resp) == 0 {
+	// 	return domain.DiaryListResponse{}, domain.Err.ErrObj.SmallDb
+	// }
 	diaries := make([]domain.DiaryInList, 0)
 	for i := range resp {
 		// a = (resp[i][3])
