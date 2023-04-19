@@ -151,7 +151,6 @@ func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, 
 			MedicId:      cast.ToUint64(resp[i][1]),
 			MedicName:    cast.ToString(resp[i][2]),
 			PatientId:    patientId,
-			// PatientId:    cast.ToUint64(resp[i][3]),
 			PatientName:  cast.ToString(resp[i][4]),
 			CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][5]), true),
 			Title:        cast.ToString(resp[i][6]),
@@ -198,14 +197,19 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 		log.Error(domain.Err.ErrObj.SmallDb)
 		return domain.DiaryResponse{}, domain.Err.ErrObj.SmallDb
 	}
-
+	// var patientId uint64
+	patientId := uint64(0)
+	if len(resp[0][3]) != 0 {
+		patientId = cast.ToUint64(resp[0][3])
+	}
+	if len(resp[0][4]) == 0 {}
 	diary := domain.DiaryResponse{
 		PatientName: cast.ToString(resp[0][0]),
 		Diary: domain.DiaryLinkResponse{
 			Id:           cast.ToUint64(resp[0][1]),
 			MedicId:      cast.ToUint64(resp[0][2]),
 			MedicName:    cast.ToString(resp[0][3]),
-			PatientId:    cast.ToUint64(resp[0][4]),
+			PatientId:   patientId,
 			CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][5]), true),
 			DiaryBasicInfo: domain.DiaryBasicInfo{
 				Title:       cast.ToString(resp[0][6]),
