@@ -10,7 +10,7 @@ const (
 	FROM patients 
 	WHERE vkid = $1;
 	`
-	
+
 	queryRegisterMedic = `
 	INSERT INTO
     medics (vkid, name)
@@ -39,12 +39,13 @@ const (
 	WHERE id = $2
 	RETURNING patientid, id;
 	`
-	
+
 	queryDeleteLinkToken = `
 	DELETE FROM diarytokens
 	WHERE diaryid = $1 AND token = $2
 	RETURNING true;
 	`
+
 // 	INSERT INTO
 //     medics (vkid, name)
 // VALUES
@@ -57,25 +58,25 @@ const (
 //         'Петр Петров'
 //     );
 
-	// queryMedicInit = `
-	// INSERT INTO
-    // medics (vkid, name)
-	// VALUES
-    // (
-	// 	$1,
-    //     $2
-    // )
-	// RETURNING vkid, name;
-	// `
+// queryMedicInit = `
+// INSERT INTO
+// medics (vkid, name)
+// VALUES
+// (
+// 	$1,
+//     $2
+// )
+// RETURNING vkid, name;
+// `
 
-	// queryPatientInit = `
-	// INSERT INTO
-    // patients (vkid, name)
-	// VALUES
-    // (
-	// 	$1,
-    //     $2
-    // )
-	// RETURNING vkid, name;
-	// `
+// queryPatientInit = `
+// INSERT INTO
+// patients (vkid, name)
+// VALUES
+// (
+// 	$1,
+//     $2
+// )
+// RETURNING vkid, name;
+// `
 )

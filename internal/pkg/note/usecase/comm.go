@@ -27,7 +27,7 @@ func (nu NoteUsecase) CreateNote(medicId uint64, isMedicRecord bool, recordId ui
 	if !noteCreateRequest.IsValid() {
 		return domain.NoteCreateResponse{}, domain.Err.ErrObj.InvalidText
 	}
-	// isExist, isMedic, err := nu.CheckUserRole(userId) 
+	// isExist, isMedic, err := nu.CheckUserRole(userId)
 	// if err != nil {
 	// 	return domain.CommentCreateResponse{}, err
 	// }
@@ -42,7 +42,7 @@ func (nu NoteUsecase) CreateNote(medicId uint64, isMedicRecord bool, recordId ui
 	return DiaryCreateResponse, nil
 }
 
-func (nu NoteUsecase) GetNote (medicId uint64, isMedicRecord bool, recordId uint64) (domain.GetNoteResponse, error) {
+func (nu NoteUsecase) GetNote(medicId uint64, isMedicRecord bool, recordId uint64) (domain.GetNoteResponse, error) {
 	// TODO check is user have access to this diary
 	GetNoteResponse, err := nu.NoteRepo.GetNote(isMedicRecord, recordId)
 	if err != nil {

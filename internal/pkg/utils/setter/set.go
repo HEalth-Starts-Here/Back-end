@@ -8,7 +8,6 @@ import (
 	// autmcs "hesh/internal/pkg/authorization/delivery/grpc"
 	// autdelivery "hesh/internal/pkg/authorization/delivery/rest"
 
-
 	diarydelivery "hesh/internal/pkg/diary/delivery"
 	diaryrepository "hesh/internal/pkg/diary/repository"
 	diaryusecase "hesh/internal/pkg/diary/usecase"
@@ -47,12 +46,12 @@ type Data struct {
 }
 
 type Services struct {
-	Diary Data
+	Diary      Data
 	MLServices Data
-	User Data
-	Record Data
-	Comment Data
-	Note Data
+	User       Data
+	Record     Data
+	Comment    Data
+	Note       Data
 }
 
 // func setAutMcs() autmcs.AutherClient {
@@ -88,7 +87,6 @@ func SetHandlers(svs Services) {
 	recorddelivery.SetRecordHandlers(svs.Record.Api, recordUsc)
 	commentdelivery.SetCommentHandlers(svs.Comment.Api, commentUsc)
 	notedelivery.SetNoteHandlers(svs.Note.Api, noteUsc)
-
 
 	// autdelivery.SetAutHandlers(svs.Aut.Api, setAutMcs())
 }

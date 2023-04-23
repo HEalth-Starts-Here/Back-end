@@ -47,14 +47,14 @@ const (
     medicimages (recordId, name)
 	VALUES
 	`
-    // images (ismedic, recordId, name)
+	// images (ismedic, recordId, name)
 
 	queryCreatePatientRecordImageListFirstPart = `
 	INSERT INTO
     patientimages (recordId, name)
 	VALUES
 	`
-    // patientimages (ismedic, recordId, name)
+	// patientimages (ismedic, recordId, name)
 
 	queryCreateRecordImageListSecondPart = `
 	RETURNING id;
@@ -154,7 +154,7 @@ const (
 	ON diaries.id = medicrecords.diaryid
 	WHERE medicrecords.id = $1;
 	`
-	
+
 	queryCreatePatientRecord = `
 	INSERT INTO 
 	patientrecords (diaryid, creatingdate, title, complaints, treatment, details, feelings)
@@ -169,7 +169,7 @@ const (
 	)
 	RETURNING id, diaryid, creatingdate, title, complaints, treatment, details, feelings;
 	`
-	
+
 	queryGetPatientRecordInfo = `
 	SELECT diaryid, id, creatingdate, title, complaints, treatment, details, feelings
 	FROM patientrecords

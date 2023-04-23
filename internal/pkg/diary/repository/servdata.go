@@ -70,7 +70,7 @@ func (er *dbdiaryrepository) CreateLinkToken(diaryId uint64, token string) error
 	return nil
 }
 
-func (er *dbdiaryrepository) CheckAndDeleteToken (diaryId uint64, linkToken string) (bool, error) {
+func (er *dbdiaryrepository) CheckAndDeleteToken(diaryId uint64, linkToken string) (bool, error) {
 	query := queryDeleteLinkToken
 	// if userInitInfo.InitBasicInfo.IsMedic{
 	// 	query = queryMedicInit
@@ -101,9 +101,9 @@ func (er *dbdiaryrepository) LinkDiary(patientId uint64, diaryId uint64) (domain
 	}
 
 	return domain.DiaryLinkResponse{
-		Id:           cast.ToUint64(resp[0][0]),
-		MedicId:      cast.ToUint64(resp[0][1]),
-		MedicName:    cast.ToString(resp[0][2]),
+		Id:        cast.ToUint64(resp[0][0]),
+		MedicId:   cast.ToUint64(resp[0][1]),
+		MedicName: cast.ToString(resp[0][2]),
 		// TODO get new value after update
 		PatientId:    patientId,
 		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][4]), true),
@@ -132,7 +132,7 @@ func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, 
 	var err error
 	query := queryDiaryList
 	resp, err = cr.dbm.Query(query, userId)
-	
+
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
@@ -157,7 +157,7 @@ func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, 
 			CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][5]), true),
 			Title:        cast.ToString(resp[i][6]),
 			Objectively:  cast.ToString(resp[i][7]),
-			LinkToken:	  cast.ToString(resp[i][8]),
+			LinkToken:    cast.ToString(resp[i][8]),
 		})
 	}
 
@@ -203,7 +203,7 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	// var a null.Bytes{}
 	// var b []byte
 	// b = nil
-	
+
 	patientId := uint64(0)
 	if (resp[0][4]) != nil {
 		patientId = cast.ToUint64(resp[0][4])
@@ -215,9 +215,9 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 	diary := domain.DiaryResponse{
 		PatientName: cast.ToString(resp[0][0]),
 		Diary: domain.DiaryLinkResponse{
-			Id:           cast.ToUint64(resp[0][1]),
-			MedicId:      cast.ToUint64(resp[0][2]),
-			MedicName:    cast.ToString(resp[0][3]),
+			Id:        cast.ToUint64(resp[0][1]),
+			MedicId:   cast.ToUint64(resp[0][2]),
+			MedicName: cast.ToString(resp[0][3]),
 			// PatientId:    cast.ToString(resp[0][4]),
 			PatientId:    patientId,
 			CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][5]), true),
@@ -306,12 +306,12 @@ func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdateRequest, diaryI
 	}
 	patientId := uint64(0)
 	if resp[0][2] != nil {
-		patientId =  cast.ToUint64(resp[0][2])
+		patientId = cast.ToUint64(resp[0][2])
 	}
 
 	return domain.DiaryUpdateResponse{
-		Id:           cast.ToUint64(resp[0][0]),
-		MedicId:      cast.ToUint64(resp[0][1]),
+		Id:      cast.ToUint64(resp[0][0]),
+		MedicId: cast.ToUint64(resp[0][1]),
 		// PatientId:    cast.ToUint64(resp[0][2]),
 		PatientId:    patientId,
 		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][3]), true),

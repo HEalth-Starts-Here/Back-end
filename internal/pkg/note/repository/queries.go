@@ -46,7 +46,7 @@ const (
 
 	// medicrecordid = "medicrecordid"
 	// patientrecordid = "patientrecordid"
-	
+
 	queryGetNoteFirstPart = `
 	SELECT 
 	`

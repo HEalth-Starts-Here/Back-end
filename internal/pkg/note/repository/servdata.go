@@ -52,7 +52,7 @@ func (cr *dbnoterepository) GetNote(isMedicRecord bool, recordId uint64) (domain
 	query.Write([]byte(queryGetNoteSecondPart))
 	query.Write([]byte(userRecord))
 	query.Write([]byte(queryGetNoteThirdPart))
-	
+
 	resp, err = cr.dbm.Query(query.String(), recordId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query.String())
@@ -65,8 +65,8 @@ func (cr *dbnoterepository) GetNote(isMedicRecord bool, recordId uint64) (domain
 	notes := make([]domain.NoteInListInfo, 0)
 	for i := range resp {
 		notes = append(notes, domain.NoteInListInfo{
-			Id:           		cast.ToUint64(resp[i][1]),
-			CreatingDate:    	cast.TimeToStr(cast.ToTime(resp[i][2]), true),
+			Id:           cast.ToUint64(resp[i][1]),
+			CreatingDate: cast.TimeToStr(cast.ToTime(resp[i][2]), true),
 			BasicNoteInfo: domain.BasicNoteInfo{
 				Text: cast.ToString(resp[i][3]),
 			},
@@ -74,9 +74,9 @@ func (cr *dbnoterepository) GetNote(isMedicRecord bool, recordId uint64) (domain
 	}
 
 	out := domain.GetNoteResponse{
-		RecordId: cast.ToUint64(resp[0][0]),
+		RecordId:      cast.ToUint64(resp[0][0]),
 		IsMedicRecord: isMedicRecord,
-		NoteList: notes,
+		NoteList:      notes,
 	}
 
 	return out, nil
@@ -108,21 +108,21 @@ func (er *dbnoterepository) CreateNote(isMedicRecord bool, recordId uint64, note
 	}
 	return domain.NoteCreateResponse{
 		NoteInListInfo: domain.NoteInListInfo{
-			Id:					cast.ToUint64(resp[0][0]),
-			CreatingDate: 		cast.TimeToStr(cast.ToTime(resp[0][3]), true),
+			Id:           cast.ToUint64(resp[0][0]),
+			CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][3]), true),
 			BasicNoteInfo: domain.BasicNoteInfo{
-				Text:       cast.ToString(resp[0][4]),
+				Text: cast.ToString(resp[0][4]),
 			},
 		},
-		RecordId:			cast.ToUint64(resp[0][1]),
-		IsMedicRecord:		cast.ToBool(resp[0][2]),
+		RecordId:      cast.ToUint64(resp[0][1]),
+		IsMedicRecord: cast.ToBool(resp[0][2]),
 	}, nil
 }
 
 func (er *dbnoterepository) DeleteNote(noteId uint64) error {
 	query := queryDeleteNote
-	_, err := er.dbm.Query(query,  
-							noteId)
+	_, err := er.dbm.Query(query,
+		noteId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)

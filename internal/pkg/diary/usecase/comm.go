@@ -11,17 +11,12 @@ import (
 	// userrepository "hesh/internal/pkg/user/repository"
 	// usrusecase "eventool/internal/pkg/user/usecase"
 	// "usrdelivery"
-	"strings"
 )
 
 const tokenLength = 256
 
 type DiaryUsecase struct {
 	diaryRepo domain.DiaryRepository
-}
-
-func trimTitle(title *string) {
-	*title = strings.Trim(*title, " ")
 }
 
 func InitDiaryUsc(pr domain.DiaryRepository) domain.DiaryUsecase {
@@ -71,11 +66,11 @@ func (du DiaryUsecase) LinkDiary(patientId uint64, diaryId uint64, linkToken str
 
 	isLinkExist, err := du.diaryRepo.CheckAndDeleteToken(diaryId, linkToken)
 	if err != nil {
-		return domain.DiaryLinkResponse{},  err
+		return domain.DiaryLinkResponse{}, err
 	}
 	if !isLinkExist {
 		return domain.DiaryLinkResponse{}, domain.Err.ErrObj.InvalidLinkToken
-	} 
+	}
 
 	DiaryCreateResponse, err := du.diaryRepo.LinkDiary(patientId, diaryId)
 	if err != nil {
@@ -124,16 +119,16 @@ func (du DiaryUsecase) GetCertainDiary(diaryId uint64, userId uint64) (domain.Di
 		return domain.DiaryResponse{}, err
 	}
 
-	isExisted, isMedic, err := du.diaryRepo.GetUserRole(userId) 
+	isExisted, isMedic, err := du.diaryRepo.GetUserRole(userId)
 	if err != nil {
 		return domain.DiaryResponse{}, err
 	}
 
-	if (!isExisted) {
+	if !isExisted {
 		return domain.DiaryResponse{}, domain.Err.ErrObj.UserNotExist
 	}
 
-	if (!isMedic) {
+	if !isMedic {
 		diary.Diary.DiaryBasicInfo.Anamnesis = ""
 		diary.Diary.DiaryBasicInfo.Objectively = ""
 		diary.Diary.DiaryBasicInfo.Diagnosis = ""
@@ -142,7 +137,6 @@ func (du DiaryUsecase) GetCertainDiary(diaryId uint64, userId uint64) (domain.Di
 
 	return diary, nil
 }
-
 
 func (du DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdateRequest, diaryId uint64) (domain.DiaryUpdateResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)

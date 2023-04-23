@@ -44,27 +44,24 @@ type DevConfig struct {
 			Port     string `mapstructure:"port"`
 		} `mapstructure:"rating"`
 	} `mapstructure:"mcs"`
-	LoadedFilesPath string `mapstructure:"loadedfilespath"`
+	LoadedFilesPath    string `mapstructure:"loadedfilespath"`
 	ProcessedFilesPath string `mapstructure:"processedfilespath"`
 }
 
 var DevConfigStore DevConfig
 
 const (
-	configpath = "config/"
+	configpath  = "config/"
 	devFilename = "devconfig.json"
 	devExt      = "json"
 )
 
 // var configpath string
 
-
-
 // func ReadConfigPath()  {
-	// configpath = *flag.String("configPath", "config/", "Path to config")
+// configpath = *flag.String("configPath", "config/", "Path to config")
 // 	flag.Parse()
 // }
-
 
 func (cfg *DevConfig) FromJson() error {
 

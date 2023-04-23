@@ -18,7 +18,6 @@ func InitMLServicesRep(manager *database.DBManager) domain.MLServicesRepository 
 	}
 }
 
-
 func (msr *dbmlservicesrepository) GetAudioNames() (map[string]struct{}, error) {
 	var resp []database.DBbyterow
 	var err error
@@ -51,15 +50,15 @@ func (rr *dbmlservicesrepository) CreateMedicRecordDiarisation(recordId uint64, 
 		return domain.DiarisationResponse{}, err
 	}
 	response := domain.DiarisationResponse{
-		Id:           cast.ToUint64(resp[0][0]),
-		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][1]), true),
+		Id:            cast.ToUint64(resp[0][0]),
+		CreatingDate:  cast.TimeToStr(cast.ToTime(resp[0][1]), true),
 		MedicRecordId: cast.ToUint64(resp[0][2]),
 		DiarisationInfo: domain.DiarisationInfo{
 			Diarisation: "",
-			Filename: cast.ToString(resp[0][3]),
+			Filename:    cast.ToString(resp[0][3]),
 		},
 	}
-	
+
 	if err != nil {
 		log.Error(err)
 		return domain.DiarisationResponse{}, err
@@ -67,7 +66,7 @@ func (rr *dbmlservicesrepository) CreateMedicRecordDiarisation(recordId uint64, 
 	return response, nil
 }
 
-func (mlsr *dbmlservicesrepository) SetDiarisationText(diarisationId uint64, diarisationText string) (error) {
+func (mlsr *dbmlservicesrepository) SetDiarisationText(diarisationId uint64, diarisationText string) error {
 	query := querySetMedicRecordDiarisation
 	resp, err := mlsr.dbm.Query(query,
 		diarisationId,
@@ -89,6 +88,6 @@ func (mlsr *dbmlservicesrepository) SetDiarisationText(diarisationId uint64, dia
 	// 		Filename: cast.ToString(resp[0][3]),
 	// 	},
 	// }
-	
+
 	return nil
 }

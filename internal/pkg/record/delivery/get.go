@@ -46,13 +46,15 @@ func readMultipartDataImages(r *http.Request) ([]domain.RecordImageInfo, int, er
 	files := formdata.File["images"] // grab the filenames
 	imageInfo := []domain.RecordImageInfo{}
 	// filePaths := []string{}
-	for i, _ := range files { // loop through the files one by one
+	for i := range files { // loop through the files one by one
 		file, err := files[i].Open()
-		defer file.Close()
 		if err != nil {
 			// TODO: add mapping from error to http code
-			return []domain.RecordImageInfo{}, http.StatusInternalServerError, domain.Err.ErrObj.InternalServer
+			return []domain.RecordImageInfo{}, http.StatusInternalServerError, err
 		}
+		defer func(){
+			err = file.Close()
+			}()
 
 		if !validImageExtenstions(files) {
 			return []domain.RecordImageInfo{}, http.StatusBadRequest, domain.Err.ErrObj.BadFileExtension
@@ -63,12 +65,12 @@ func readMultipartDataImages(r *http.Request) ([]domain.RecordImageInfo, int, er
 		// 	fmt.Sprintf("%v", (r.Form["title"])[0])
 		// 	tags = append(tags, fmt.Sprintf("%v", (r.Form["tags"])[i][j]))
 		// }
-		if err != nil {
-			return []domain.RecordImageInfo{}, http.StatusBadRequest, domain.Err.ErrObj.BadInput
-		}
+		// if err != nil {
+		// 	return []domain.RecordImageInfo{}, http.StatusBadRequest, domain.Err.ErrObj.BadInput
+		// }
 		imageInfo = append(imageInfo, domain.RecordImageInfo{ImageName: filesaver.ExtractName(files[i].Filename), Tags: nil})
 	}
-	return imageInfo, http.StatusCreated, nil
+	return imageInfo, http.StatusCreated, err
 }
 
 // MEDIC
@@ -136,8 +138,13 @@ func (handler *RecordHandler) CreateMedicRecord(w http.ResponseWriter, r *http.R
 		imageNames = append(imageNames, RecordCreateRequest.Images[i].ImageName)
 	}
 	//TODO ser response image valuse in repository
-	filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
-
+	err = filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	es.ImageList = make([]domain.RecordImageInfo, 0)
 	for i := range imageNames {
 		es.ImageList = append(es.ImageList, domain.RecordImageInfo{ImageName: imageNames[i], Tags: nil})
@@ -150,8 +157,14 @@ func (handler *RecordHandler) CreateMedicRecord(w http.ResponseWriter, r *http.R
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
 func (handler *RecordHandler) GetMedicRecord(w http.ResponseWriter, r *http.Request) {
@@ -194,8 +207,14 @@ func (handler *RecordHandler) GetMedicRecord(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
 func (handler *RecordHandler) GetMedicRecordDiarisations(w http.ResponseWriter, r *http.Request) {
@@ -238,8 +257,14 @@ func (handler *RecordHandler) GetMedicRecordDiarisations(w http.ResponseWriter, 
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
 func (handler *RecordHandler) UpdateTextMedicRecord(w http.ResponseWriter, r *http.Request) {
@@ -306,8 +331,14 @@ func (handler *RecordHandler) UpdateTextMedicRecord(w http.ResponseWriter, r *ht
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
 func (handler *RecordHandler) UpdateImageMedicRecord(w http.ResponseWriter, r *http.Request) {
@@ -357,7 +388,13 @@ func (handler *RecordHandler) UpdateImageMedicRecord(w http.ResponseWriter, r *h
 	for i := range medicRecordUpdateResponse.Images {
 		imageNames = append(imageNames, medicRecordUpdateResponse.Images[i].ImageName)
 	}
-	filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
+	err = filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	out, err := easyjson.Marshal(medicRecordUpdateResponse)
 	if err != nil {
@@ -366,9 +403,15 @@ func (handler *RecordHandler) UpdateImageMedicRecord(w http.ResponseWriter, r *h
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
+	
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
 func (handler *RecordHandler) DeleteMedicRecord(w http.ResponseWriter, r *http.Request) {
@@ -468,7 +511,13 @@ func (handler *RecordHandler) CreatePatientRecord(w http.ResponseWriter, r *http
 		imageNames = append(imageNames, PatientRecordCreateRequest.Images[i].ImageName)
 	}
 	//TODO ser response image valuse in repository
-	filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
+	err = filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	es.ImageList = make([]domain.RecordImageInfo, 0)
 	for i := range imageNames {
@@ -482,8 +531,14 @@ func (handler *RecordHandler) CreatePatientRecord(w http.ResponseWriter, r *http
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
 func (handler *RecordHandler) GetPatientRecord(w http.ResponseWriter, r *http.Request) {
@@ -526,8 +581,14 @@ func (handler *RecordHandler) GetPatientRecord(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
 func (handler *RecordHandler) UpdateTextPatientRecord(w http.ResponseWriter, r *http.Request) {
@@ -593,8 +654,14 @@ func (handler *RecordHandler) UpdateTextPatientRecord(w http.ResponseWriter, r *
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
 func (handler *RecordHandler) UpdateImagePatientRecord(w http.ResponseWriter, r *http.Request) {
@@ -644,8 +711,13 @@ func (handler *RecordHandler) UpdateImagePatientRecord(w http.ResponseWriter, r 
 	for i := range patientRecordUpdateResponse.Images {
 		imageNames = append(imageNames, patientRecordUpdateResponse.Images[i].ImageName)
 	}
-	filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
-
+	err = filesaver.SaveMultipartDataFiles(imageNames, r.MultipartForm.File["images"])
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	out, err := easyjson.Marshal(patientRecordUpdateResponse)
 	if err != nil {
 		log.Error(err)
@@ -654,8 +726,14 @@ func (handler *RecordHandler) UpdateImagePatientRecord(w http.ResponseWriter, r 
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
 func (handler *RecordHandler) DeletePatientRecord(w http.ResponseWriter, r *http.Request) {

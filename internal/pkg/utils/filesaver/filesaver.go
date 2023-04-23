@@ -62,9 +62,9 @@ func createFile(root, dir, name string) (*os.File, error) {
 	file, err := os.Create(root + dir + name)
 	return file, err
 }
-func GetUniqueFileNames (quantity int, alreadyUsed map[string]struct{}) ([]string){
+func GetUniqueFileNames(quantity int, alreadyUsed map[string]struct{}) []string {
 	fileNames := make([]string, 0)
-	for i := 0; i < quantity; i++{
+	for i := 0; i < quantity; i++ {
 		randStringTemporary := ""
 		for {
 			randStringTemporary, err := randomizer.GenerateRandomString(6)
@@ -100,7 +100,7 @@ func UploadFile(reader io.Reader, root, path, name, ext string) (string, error) 
 	return filepath.Base(filename), nil
 }
 
-func deleteFile(root, dir, name string) (error) {
+func deleteFile(root, dir, name string) error {
 	_, err := os.ReadDir(root + dir)
 	if err != nil {
 		err = os.MkdirAll(root+dir, 0777)
@@ -112,11 +112,14 @@ func deleteFile(root, dir, name string) (error) {
 	return err
 }
 
-func SaveMultipartDataFiles(fileNames []string, fileHeaders []*multipart.FileHeader) (error) {
+func SaveMultipartDataFiles(fileNames []string, fileHeaders []*multipart.FileHeader) error {
 	// TODO: add mapping from error to http code
-	for i, _ := range fileNames {
+	err := error(nil)
+	for i := range fileNames {
 		file, err := fileHeaders[i].Open()
-		defer file.Close()
+		defer func(){
+			err = file.Close()
+		}()
 		if err != nil {
 			return domain.Err.ErrObj.InternalServer
 		}
@@ -124,13 +127,13 @@ func SaveMultipartDataFiles(fileNames []string, fileHeaders []*multipart.FileHea
 		nameWithouExtension := fileNames[i][:len(fileNames[i])-len(extension)]
 		_, err = UploadFile(file, "", config.DevConfigStore.LoadedFilesPath, nameWithouExtension, filepath.Ext(fileNames[i]))
 		if err != nil {
-			return domain.Err.ErrObj.InternalServer
+			return err
 		}
 	}
-	return nil
+	return err
 }
 
-func DeleteFiles(root, path string, names []string) (error) {
+func DeleteFiles(root, path string, names []string) error {
 
 	for i := range names {
 		log.Info("Delete file with name " + names[i])
@@ -142,4 +145,3 @@ func DeleteFiles(root, path string, names []string) (error) {
 	}
 	return nil
 }
-

@@ -1,7 +1,6 @@
 package domain
 
-const (
-)
+const ()
 
 // func (ur *UserInitRequest) SetDefault() {
 // 	ur.InitBasicInfo.name = ""
@@ -22,9 +21,9 @@ const (
 // }
 
 type UserInfo struct {
-	Id uint64		`json:"id"`
-	Name string		`json:"name"`
-	IsMedic bool	`json:"ismedic"`
+	Id      uint64 `json:"id"`
+	Name    string `json:"name"`
+	IsMedic bool   `json:"ismedic"`
 }
 
 // type UserInitRequest struct {
@@ -37,17 +36,17 @@ type UserInfo struct {
 // }
 
 type RegisterMedicRequest struct {
-	Name string		`json:"name"`
+	Name string `json:"name"`
 }
 
 type RegisterPatientRequest struct {
-	Name	string		`json:"name"`
-	DiaryId uint64		`json:"diaryid"`
+	Name    string `json:"name"`
+	DiaryId uint64 `json:"diaryid"`
 }
 
 type RegisterPatientResponse struct {
-	UserInfo	UserInfo	`json:"userinfo"`
-	DiaryId		uint64		`json:"diaryid"`
+	UserInfo UserInfo `json:"userinfo"`
+	DiaryId  uint64   `json:"diaryid"`
 }
 
 type UserRepository interface {

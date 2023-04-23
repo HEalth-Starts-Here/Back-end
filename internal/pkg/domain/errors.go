@@ -28,7 +28,7 @@ type errObj struct {
 	// BadPassword        error
 
 	BadInput error
-	
+
 	BadFileExtension error
 	// AlreadyIn   error
 	// EmailExists error
@@ -44,17 +44,17 @@ type errObj struct {
 
 	// BadGenre error
 
-	InvalidTitle  error
-	InvalidTitleOrDescription  error
-	InvalidText  error
-	UserNotExist  error
-	InvalidUsername  error
-	InvalidLinkToken  error
+	InvalidTitle              error
+	InvalidTitleOrDescription error
+	InvalidText               error
+	UserNotExist              error
+	InvalidUsername           error
+	InvalidLinkToken          error
 	// PlaylistExist error
 
-	UserHaveNoAccess error
-	MedicDoestExist error
-	DiaryDoestExist error
+	UserHaveNoAccess      error
+	MedicDoestExist       error
+	DiaryDoestExist       error
 	MedicRecordDoestExist error
 }
 
@@ -68,51 +68,51 @@ var Err = err{
 		tmp: "lolkek",
 	},
 	errObj{
-// 		UserNotLoggedIn: errors.New("User not logged in"),
-// 		Uint64Cast:      errors.New("Id uint64 cast error"),
-// 		FinishSession:   errors.New("Passed through if on FinishSession"),
+		// 		UserNotLoggedIn: errors.New("User not logged in"),
+		// 		Uint64Cast:      errors.New("Id uint64 cast error"),
+		// 		FinishSession:   errors.New("Passed through if on FinishSession"),
 
-// 		NoUser:         errors.New("No user found"),
-// 		NoEvent:        errors.New("No event found"),
-// 		NoCategory:     errors.New("No user categories found"),
+		// 		NoUser:         errors.New("No user found"),
+		// 		NoEvent:        errors.New("No event found"),
+		// 		NoCategory:     errors.New("No user categories found"),
 		InternalServer: errors.New("Internal server error"),
 
-// 		InvalidEmail:    errors.New("Invalid email"),
-// 		InvalidUsername: errors.New("Invalid username"),
-// 		InvalidPhoneNumber: errors.New("Invalid phone number"),
-// 		InvalidPassword: errors.New("Invalid password"),
+		// 		InvalidEmail:    errors.New("Invalid email"),
+		// 		InvalidUsername: errors.New("Invalid username"),
+		// 		InvalidPhoneNumber: errors.New("Invalid phone number"),
+		// 		InvalidPassword: errors.New("Invalid password"),
 
-// 		EmptyField:         errors.New("Empty field"),
-// 		UnmatchedPasswords: errors.New("Unmatched passwords"),
-// 		BadPassword:        errors.New("Wrong password"),
+		// 		EmptyField:         errors.New("Empty field"),
+		// 		UnmatchedPasswords: errors.New("Unmatched passwords"),
+		// 		BadPassword:        errors.New("Wrong password"),
 
 		BadInput: errors.New("Bad input"),
-		
-		BadFileExtension: errors.New("Bad file extension"),
-// 		AlreadyIn:   errors.New("User is already logged in"),
-// 		EmailExists: errors.New("Email not unique"),
-// 		UserAlreadySignUpForThisEvent: errors.New("User already sign up for this event"),
-// 		UserDontSignUpForThisEvent: errors.New("User do not sign up for this event"),
 
-// 		ParseId: errors.New("Parse Id error"),
+		BadFileExtension: errors.New("Bad file extension"),
+		// 		AlreadyIn:   errors.New("User is already logged in"),
+		// 		EmailExists: errors.New("Email not unique"),
+		// 		UserAlreadySignUpForThisEvent: errors.New("User already sign up for this event"),
+		// 		UserDontSignUpForThisEvent: errors.New("User do not sign up for this event"),
+
+		// 		ParseId: errors.New("Parse Id error"),
 		SmallDb: errors.New("Sorry, our database is too small yet"),
 
-// 		InvalidRating:      errors.New("Invalid value of `rating`"),
-// 		InvalidId:          errors.New("Invalid id in database request"),
-// 		InvalidCommentType: errors.New("Invalid comment type (expected {1, 2, 3} default:2)"),
+		// 		InvalidRating:      errors.New("Invalid value of `rating`"),
+		// 		InvalidId:          errors.New("Invalid id in database request"),
+		// 		InvalidCommentType: errors.New("Invalid comment type (expected {1, 2, 3} default:2)"),
 
-// 		BadGenre: errors.New("Genre request gives empty response from db"),
+		// 		BadGenre: errors.New("Genre request gives empty response from db"),
 
-		InvalidTitle:  errors.New("Invalid title"),
-		InvalidTitleOrDescription:  errors.New("Invalid title or description"),
-		InvalidText:  errors.New("Invalid text"),
-		UserNotExist:  errors.New("User not exist"),
-		InvalidUsername:  errors.New("Invalid username"),
-		InvalidLinkToken:  errors.New("Invalid linkToken"),
-// 		PlaylistExist: errors.New("Playlist with this title already exist"),
-		UserHaveNoAccess: errors.New("Permission denied"),
-		MedicDoestExist: errors.New("Medic does not exist"),
-		DiaryDoestExist: errors.New("Diary does not exist"),
+		InvalidTitle:              errors.New("Invalid title"),
+		InvalidTitleOrDescription: errors.New("Invalid title or description"),
+		InvalidText:               errors.New("Invalid text"),
+		UserNotExist:              errors.New("User not exist"),
+		InvalidUsername:           errors.New("Invalid username"),
+		InvalidLinkToken:          errors.New("Invalid linkToken"),
+		// 		PlaylistExist: errors.New("Playlist with this title already exist"),
+		UserHaveNoAccess:      errors.New("Permission denied"),
+		MedicDoestExist:       errors.New("Medic does not exist"),
+		DiaryDoestExist:       errors.New("Diary does not exist"),
 		MedicRecordDoestExist: errors.New("Medic record does not exist"),
 	},
 }

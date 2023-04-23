@@ -67,7 +67,7 @@ func StringToFloat64(src string) (float64, error) {
 func ToTime(src []byte) time.Time {
 	tmp := pgtype.Timestamp{}
 	err := tmp.DecodeBinary(nil, src)
-	if (err != nil){
+	if err != nil {
 		log.Error(err)
 		return time.Time{}
 	}
@@ -77,7 +77,7 @@ func ToTime(src []byte) time.Time {
 func ToDate(src []byte) time.Time {
 	tmp := pgtype.Date{}
 	err := tmp.DecodeBinary(nil, src)
-	if (err != nil){
+	if err != nil {
 		log.Error(err)
 		return time.Time{}
 	}
@@ -87,7 +87,7 @@ func ToDate(src []byte) time.Time {
 func ToBool(src []byte) bool {
 	tmp := pgtype.Bool{}
 	err := tmp.DecodeBinary(nil, src)
-	if (err != nil){
+	if err != nil {
 		log.Error(err)
 		return tmp.Bool
 	}
@@ -106,5 +106,5 @@ func DateToStringUnderscore(src []byte) (string, error) {
 
 func GetCurrentFuncName() string {
 	pc, _, _, _ := runtime.Caller(1)
-	return fmt.Sprintf("%s", runtime.FuncForPC(pc).Name())
+	return runtime.FuncForPC(pc).Name()
 }

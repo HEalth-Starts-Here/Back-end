@@ -15,14 +15,12 @@ func (er *DiaryCreateRequest) SetDefault() {
 	er.DiaryBasicInfo.Anamnesis = ""
 	er.DiaryBasicInfo.Objectively = ""
 	er.DiaryBasicInfo.Diagnosis = ""
-	return
 }
 
 func (er *RecordCreateRequest) SetDefault() {
 	er.Description = ""
 	er.Title = ""
 	er.Characteristics = Characteristics{}
-	return
 }
 
 func (er *RecordCreateResponse) SetDefault() {
@@ -34,7 +32,6 @@ func (er *RecordCreateResponse) SetDefault() {
 	er.Area = 0
 	er.Characteristics = Characteristics{}
 	er.ImageList = []ImageInfo{}
-	return
 }
 
 func (er DiaryCreateRequest) IsValid() (isValid bool) {
@@ -102,7 +99,7 @@ type DiaryCreateResponse struct {
 	PatientId      uint64         `json:"patientid"`
 	CreatingDate   string         `json:"creatingdate"`
 	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
-	LinkToken	   string         `json:"linktoken"`
+	LinkToken      string         `json:"linktoken"`
 }
 
 type DiaryLinkResponse struct {
@@ -123,7 +120,7 @@ type DiaryInList struct {
 	PatientName  string `json:"patientname"`
 	CreatingDate string `json:"creatingdate"`
 	Objectively  string `json:"objectively"`
-	LinkToken	 string `json:"linktoken"`
+	LinkToken    string `json:"linktoken"`
 }
 
 type DiaryListResponse struct {
@@ -138,12 +135,12 @@ type RecordInDiaryBasicInfo struct {
 }
 
 type Records struct {
-	MedicRecordList   []RecordInDiaryBasicInfo 		  `json:"medicrecordlist"`
+	MedicRecordList   []RecordInDiaryBasicInfo        `json:"medicrecordlist"`
 	PatientRecordList []PatientRecordInDiaryBasicInfo `json:"patientrecordlist"`
 }
 type PatientRecordInDiaryBasicInfo struct {
 	RecordInDiaryBasicInfo RecordInDiaryBasicInfo `json:"recordindiarybasicinfo"`
-	Feelings			   uint64				  `json:"feelings"`
+	Feelings               uint64                 `json:"feelings"`
 }
 
 type DiaryResponse struct {
@@ -206,7 +203,7 @@ type DiaryRepository interface {
 	GetUserRole(userId uint64) (bool, bool, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
 	UpdateDiary(diary DiaryUpdateRequest, diaryId uint64) (DiaryUpdateResponse, error)
-	CreateLinkToken(diaryId uint64, linkToken string) (error)
+	CreateLinkToken(diaryId uint64, linkToken string) error
 	CheckAndDeleteToken(diaryId uint64, linkToken string) (bool, error)
 	// DiaryAlreadyExist(diary DiaryCreateRequest) (bool, error)
 	// GetCategory() (CategoryListResponse, error)

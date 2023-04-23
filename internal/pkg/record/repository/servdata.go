@@ -367,7 +367,7 @@ func (dr *dbrecordrepository) DeleteRecord(isMedic bool, recordId uint64) error 
 	var query string
 	if isMedic {
 		query = queryDeleteMedicRecord
-	} else {	
+	} else {
 		query = queryDeletePatientRecord
 	}
 	resp, err = dr.dbm.Query(query, recordId)
@@ -529,11 +529,11 @@ func (dr *dbrecordrepository) GetPatientRecordTextInfo(recordId uint64) (uint64,
 	}
 
 	return cast.ToUint64(resp[0][0]), cast.ToUint64(resp[0][1]), cast.TimeToStr(cast.ToTime(resp[0][2]), true), domain.PatientRecordBasicInfo{
-		Title:           cast.ToString(resp[0][3]),
-		Complaints:		 cast.ToString(resp[0][4]),
-		Treatment:       cast.ToString(resp[0][5]),
-		Details:         cast.ToString(resp[0][6]),
-		Feelings:        cast.ToUint64(resp[0][7]),
+		Title:      cast.ToString(resp[0][3]),
+		Complaints: cast.ToString(resp[0][4]),
+		Treatment:  cast.ToString(resp[0][5]),
+		Details:    cast.ToString(resp[0][6]),
+		Feelings:   cast.ToUint64(resp[0][7]),
 	}, nil
 }
 
@@ -557,11 +557,11 @@ func (er *dbrecordrepository) UpdatePatientRecordText(recordId uint64, patientRe
 		DiaryId:      cast.ToUint64(resp[0][1]),
 		CreatingDate: cast.TimeToStr(cast.ToTime(resp[0][2]), true),
 		BasicInfo: domain.PatientRecordBasicInfo{
-			Title:           cast.ToString(resp[0][3]),
-			Complaints:		 cast.ToString(resp[0][4]),
-			Treatment:       cast.ToString(resp[0][5]),
-			Details:         cast.ToString(resp[0][6]),
-			Feelings:        cast.ToUint64(resp[0][7]),
+			Title:      cast.ToString(resp[0][3]),
+			Complaints: cast.ToString(resp[0][4]),
+			Treatment:  cast.ToString(resp[0][5]),
+			Details:    cast.ToString(resp[0][6]),
+			Feelings:   cast.ToUint64(resp[0][7]),
 		},
 	}, nil
 }

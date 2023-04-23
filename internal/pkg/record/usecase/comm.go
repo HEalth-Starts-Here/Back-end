@@ -157,11 +157,6 @@ func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, record
 		return domain.MedicRecordCreateResponse{}, err
 	}
 
-	// imagenames := []string{}
-	// for i := range recordData.Images {
-	// 	imagenames = append(imagenames, recordData.Images[i].ImageName)
-	// }
-	// println(imageNames)
 	// TODO check case with 0 images
 	_, err = ru.recordRepo.CreateRecordImageLists(true, RecordCreateResponse.Id, imageNames)
 	if err != nil {
@@ -171,10 +166,10 @@ func (ru RecordUsecase) CreateMedicRecord(diaryId uint64, medicId uint64, record
 		RecordCreateResponse.ImageList[i].ImageName = imageNames[i]
 	}
 
-	tags := [][]string{}
-	for i := range recordData.Images {
-		tags = append(tags, recordData.Images[i].Tags)
-	}
+	// tags := [][]string{}
+	// for i := range recordData.Images {
+	// 	tags = append(tags, recordData.Images[i].Tags)
+	// }
 
 	// imageIds, tags, err = ru.recordRepo.CreateImageTags(imageIds, tags)
 	// for i := range imageIds {
@@ -373,12 +368,6 @@ func (ru RecordUsecase) CreatePatientRecord(patientId, diaryId uint64, recordDat
 	if err != nil {
 		return domain.PatientRecordCreateResponse{}, err
 	}
-
-	// imagenames := []string{}
-	// for i := range recordData.Images {
-	// 	imagenames = append(imagenames, recordData.Images[i].ImageName)
-	// }
-	// println(imageNames)
 	// TODO check case with 0 images
 	_, err = ru.recordRepo.CreateRecordImageLists(false, RecordCreateResponse.Id, imageNames)
 	if err != nil {
@@ -388,10 +377,10 @@ func (ru RecordUsecase) CreatePatientRecord(patientId, diaryId uint64, recordDat
 		RecordCreateResponse.ImageList[i].ImageName = imageNames[i]
 	}
 
-	tags := [][]string{}
-	for i := range recordData.Images {
-		tags = append(tags, recordData.Images[i].Tags)
-	}
+	// tags := [][]string{}
+	// for i := range recordData.Images {
+	// 	tags = append(tags, recordData.Images[i].Tags)
+	// }
 
 	// imageIds, tags, err = ru.recordRepo.CreateImageTags(imageIds, tags)
 	// for i := range imageIds {

@@ -1,8 +1,8 @@
 package database
 
 import (
-	"hesh/internal/pkg/utils/log"
 	"hesh/internal/pkg/utils/config"
+	"hesh/internal/pkg/utils/log"
 
 	"context"
 

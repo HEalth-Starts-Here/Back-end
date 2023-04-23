@@ -37,21 +37,21 @@ func (eu UserUsecase) RegisterMedic(userInfoRequest domain.RegisterMedicRequest,
 func (eu UserUsecase) RegisterPatient(patientInfoRequest domain.RegisterPatientRequest, patientId uint64, linkToken string) (domain.RegisterPatientResponse, error) {
 	UserInfo, err := eu.userRepo.RegisterPatient(patientInfoRequest, patientId)
 	if err != nil {
-		return domain.RegisterPatientResponse{},  err
+		return domain.RegisterPatientResponse{}, err
 	}
 	isLinkExist, err := eu.userRepo.CheckAndDeleteToken(patientInfoRequest.DiaryId, linkToken)
 	if err != nil {
-		return domain.RegisterPatientResponse{},  err
+		return domain.RegisterPatientResponse{}, err
 	}
 	if !isLinkExist {
 		return domain.RegisterPatientResponse{}, domain.Err.ErrObj.InvalidLinkToken
-	} 
-	patientId, patientInfoRequest.DiaryId, err = eu.userRepo.LinkPatientToDiary(patientId, patientInfoRequest.DiaryId)
+	}
+	_, patientInfoRequest.DiaryId, err = eu.userRepo.LinkPatientToDiary(patientId, patientInfoRequest.DiaryId)
 	if err != nil {
-		return domain.RegisterPatientResponse{},  err
+		return domain.RegisterPatientResponse{}, err
 	}
 	return domain.RegisterPatientResponse{
 		UserInfo: UserInfo,
-		DiaryId: patientInfoRequest.DiaryId,
+		DiaryId:  patientInfoRequest.DiaryId,
 	}, nil
 }

@@ -2,6 +2,7 @@ package notedelivery
 
 import (
 	"hesh/internal/pkg/domain"
+	"hesh/internal/pkg/utils/log"
 	"hesh/internal/pkg/utils/sanitizer"
 	"io/ioutil"
 
@@ -14,13 +15,14 @@ import (
 	"github.com/mailru/easyjson"
 )
 
-func (handler *NoteHandler) GetNote (w http.ResponseWriter, r *http.Request) {
+func (handler *NoteHandler) GetNote(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	// categoryString := r.URL.Query().Get("category")
 	// categories := strings.Split(categoryString, " ")
 	queryParameter := r.URL.Query().Get("vk_user_id")
 	medicId, err := strconv.ParseUint(queryParameter, 10, 64)
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -28,33 +30,45 @@ func (handler *NoteHandler) GetNote (w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	isMedicRecord, err := strconv.ParseBool(params["isMedicRecord"])
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	noteId, err := strconv.ParseUint(params["id"], 10, 64)
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	noteList, err := handler.NoteUsecase.GetNote(medicId, isMedicRecord, noteId)
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	out, err := easyjson.Marshal(noteList)
 	if err != nil {
-		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(out)
 }
 
-func (handler *NoteHandler) CreateNote (w http.ResponseWriter, r *http.Request) {
+func (handler *NoteHandler) CreateNote(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	queryParameter := r.URL.Query().Get("vk_user_id")
 	medicId, err := strconv.ParseUint(queryParameter, 10, 64)
@@ -106,8 +120,14 @@ func (handler *NoteHandler) CreateNote (w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(out)
 }
 
 func (handler *NoteHandler) DeleteNote(w http.ResponseWriter, r *http.Request) {

@@ -4,15 +4,10 @@ import (
 	"hesh/internal/pkg/domain"
 	// setter "hesh/internal/pkg/utils/setter"
 	// diaryrepository "hesh/internal/pkg/diary/repository"
-	"strings"
 )
 
 type CommentUsecase struct {
 	commentRepo domain.CommentRepository
-}
-
-func trimTitle(title *string) {
-	*title = strings.Trim(*title, " ")
 }
 
 // Try to import with this function
@@ -36,7 +31,7 @@ func (cu CommentUsecase) CreateComment(diaryId uint64, userId uint64, commentCre
 	}
 	// svs := setter.Services{}
 	// isExist, isMedic, err := diaryrepository.InitDiaryRep(svs.Diary.Db).GetUserRole(userId)
-	isExist, isMedic, err := cu.CheckUserRole(userId) 
+	isExist, isMedic, err := cu.CheckUserRole(userId)
 	if err != nil {
 		return domain.CommentCreateResponse{}, err
 	}
@@ -51,7 +46,7 @@ func (cu CommentUsecase) CreateComment(diaryId uint64, userId uint64, commentCre
 	return DiaryCreateResponse, nil
 }
 
-func (cu CommentUsecase) GetComment (userId uint64, diaryId uint64) (domain.GetCommentResponse, error) {
+func (cu CommentUsecase) GetComment(userId uint64, diaryId uint64) (domain.GetCommentResponse, error) {
 	// TODO check is user have access to this diary
 	GetCommentResponse, err := cu.commentRepo.GetComment(diaryId)
 	if err != nil {

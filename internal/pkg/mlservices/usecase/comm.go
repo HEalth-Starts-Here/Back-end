@@ -26,7 +26,9 @@ func (msu MLServicesUsecase) CreateMedicRecordDiarisations(userId uint64, record
 	// 		return domain.DiarisationResponse{}, err
 	// }
 	alreadyUsed, err := msu.mlservicesRepo.GetAudioNames()
-
+	if err != nil {
+		return domain.DiarisationResponse{}, err
+	}
 	audioNames := filesaver.GetUniqueFileNames(1, alreadyUsed)
 	for i := 0; i < len(audioNames); i++ {
 		diarisationBeforeCompletingInfo.Filename = audioNames[i] + filepath.Ext(diarisationBeforeCompletingInfo.Filename)
@@ -40,7 +42,7 @@ func (msu MLServicesUsecase) CreateMedicRecordDiarisations(userId uint64, record
 	return RecordCreateResponse, nil
 }
 
-func (msu MLServicesUsecase) SetDiarisationText (diarisationId uint64, diarisationText string) (error) {
+func (msu MLServicesUsecase) SetDiarisationText(diarisationId uint64, diarisationText string) error {
 	err := msu.mlservicesRepo.SetDiarisationText(diarisationId, diarisationText)
 	if err != nil {
 		return err

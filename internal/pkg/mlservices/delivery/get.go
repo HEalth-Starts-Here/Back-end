@@ -36,7 +36,6 @@ import (
 	// "os"
 )
 
-
 func validAudioExtenstions(files []*multipart.FileHeader) bool {
 	availableExtensions := map[string]struct{}{"mp3": {}}
 	for i := range files {
@@ -53,12 +52,11 @@ func validAudioExtenstions(files []*multipart.FileHeader) bool {
 	return true
 }
 
-
-func readMultipartDataAudio(r *http.Request) ([]string, int,  error) {
+func readMultipartDataAudio(r *http.Request) ([]string, int, error) {
 
 	err := r.ParseMultipartForm(1 << 28) // maxMemory 256MB
 	if err != nil {
-		return nil, http.StatusBadRequest, err 
+		return nil, http.StatusBadRequest, err
 	}
 
 	formdata := r.MultipartForm
@@ -128,7 +126,6 @@ func readMultipartDataAudio(r *http.Request) ([]string, int,  error) {
 // 	return response, nil
 // }
 
-
 func (handler *MLServicesHandler) DetermineArea(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
@@ -139,9 +136,8 @@ func (handler *MLServicesHandler) DetermineArea(w http.ResponseWriter, r *http.R
 		return
 	}
 	formdata := r.MultipartForm
- 	fileHeader := formdata.File["image"] 
+	fileHeader := formdata.File["image"]
 	println(config.DevConfigStore.LoadedFilesPath + (fileHeader[0]).Filename)
-
 
 	//TODO: check extension
 	file, err := fileHeader[0].Open()
@@ -160,7 +156,6 @@ func (handler *MLServicesHandler) DetermineArea(w http.ResponseWriter, r *http.R
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
 
 	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -184,11 +179,10 @@ func (handler *MLServicesHandler) DetermineArea(w http.ResponseWriter, r *http.R
 	}
 	// log.Printf("book list: %v", bookList)
 
-
 	es := domain.DetermineAreaResponse{
 		Area: response.Area,
 	}
-	
+
 	out, err := easyjson.Marshal(es)
 	if err != nil {
 		log.Error(err)
@@ -197,8 +191,14 @@ func (handler *MLServicesHandler) DetermineArea(w http.ResponseWriter, r *http.R
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
 func (handler *MLServicesHandler) ImageQualityAssesment(w http.ResponseWriter, r *http.Request) {
@@ -211,7 +211,7 @@ func (handler *MLServicesHandler) ImageQualityAssesment(w http.ResponseWriter, r
 		return
 	}
 	formdata := r.MultipartForm
- 	fileHeader := formdata.File["image"] 
+	fileHeader := formdata.File["image"]
 	println(config.DevConfigStore.LoadedFilesPath + (fileHeader[0]).Filename)
 
 	//TODO: check extension
@@ -231,7 +231,6 @@ func (handler *MLServicesHandler) ImageQualityAssesment(w http.ResponseWriter, r
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
 
 	conn, err := grpc.Dial("127.0.0.1:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -254,11 +253,10 @@ func (handler *MLServicesHandler) ImageQualityAssesment(w http.ResponseWriter, r
 	}
 	// log.Printf("book list: %v", bookList)
 
-
 	es := domain.ImageQualityAssesment{
 		Assesment: response.Quality,
 	}
-	
+
 	out, err := easyjson.Marshal(es)
 	if err != nil {
 		log.Error(err)
@@ -267,11 +265,17 @@ func (handler *MLServicesHandler) ImageQualityAssesment(w http.ResponseWriter, r
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
 
-func (handler *MLServicesHandler) DiarisationRequestToMS (diarisationId uint64, file multipart.File,)	{
+func (handler *MLServicesHandler) DiarisationRequestToMS(diarisationId uint64, file multipart.File) {
 
 	buf := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buf, file); err != nil {
@@ -300,7 +304,7 @@ func (handler *MLServicesHandler) DiarisationRequestToMS (diarisationId uint64, 
 	}
 }
 
-func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Request) {
+func (handler *MLServicesHandler) Diarisation(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	queryParameter := r.URL.Query().Get("vk_user_id")
@@ -318,7 +322,7 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 		http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
 		return
 	}
-	
+
 	audioNames, httpStatus, err := readMultipartDataAudio(r)
 	if err != nil {
 		log.Error(err)
@@ -328,10 +332,9 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 	}
 
 	formdata := r.MultipartForm
-	fileHeader := formdata.File["audio"] 
+	fileHeader := formdata.File["audio"]
 	println(config.DevConfigStore.LoadedFilesPath + (fileHeader[0]).Filename)
-	
-	
+
 	file, err := fileHeader[0].Open()
 	if err != nil {
 		log.Error(err)
@@ -358,7 +361,7 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 	audioNamesToSave := make([]string, 0)
 	audioNamesToSave = append(audioNamesToSave, creatingResponse.DiarisationInfo.Filename)
 	filesaver.SaveMultipartDataFiles(audioNamesToSave, r.MultipartForm.File["audio"])
-	
+
 	out, err := easyjson.Marshal(creatingResponse)
 	if err != nil {
 		log.Error(err)
@@ -367,11 +370,15 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write(out)
 }
-
-
 
 // func (handler *MLServicesHandler) Diarisation (file multipart.File) (*mlsgrpc.DiarisationResponse, error) {
 // 	// defer r.Body.Close()
@@ -386,7 +393,7 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 // 	// filesaver.SaveMultipartDataFiles(audioNames, r.MultipartForm.File["audio"])
 
 // 	// formdata := r.MultipartForm
-// 	// fileHeader := formdata.File["audio"] 
+// 	// fileHeader := formdata.File["audio"]
 // 	// println(config.DevConfigStore.LoadedFilesPath + (fileHeader[0]).Filename)
 
 // 	// file, err := fileHeader[0].Open()
@@ -419,11 +426,10 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 // 	return response, nil
 // 	// log.Printf("book list: %v", bookList)
 
-
 // 	// es := domain.DiarisationResponse{
 // 	// 	Diarisation: response.Text,
 // 	// }
-	
+
 // 	// out, err := easyjson.Marshal(es)
 // 	// if err != nil {
 // 	// 	log.Error(err)
@@ -446,7 +452,7 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 // 		return
 // 	}
 // 	formdata := r.MultipartForm
-//  	fileHeader := formdata.File["audio"] 
+//  	fileHeader := formdata.File["audio"]
 // 	println(config.DevConfigStore.LoadedFilesPath + (fileHeader[0]).Filename)
 
 // 	//TODO: check extension
@@ -466,7 +472,6 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 // 		w.WriteHeader(http.StatusInternalServerError)
 // 		return
 // 	}
-
 
 // 	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 // 	if err != nil {
@@ -489,11 +494,10 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 // 	}
 // 	// log.Printf("book list: %v", bookList)
 
-
 // 	es := domain.ImageQualityAssesment{
 // 		Assesment: response.Quality,
 // 	}
-	
+
 // 	out, err := easyjson.Marshal(es)
 // 	if err != nil {
 // 		log.Error(err)
@@ -504,6 +508,5 @@ func (handler *MLServicesHandler) Diarisation (w http.ResponseWriter, r *http.Re
 
 // 	w.WriteHeader(http.StatusCreated)
 // 	w.Write(out)
-	
-// }
 
+// }

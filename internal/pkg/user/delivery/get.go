@@ -69,16 +69,20 @@ func (handler *UserHandler) UserInit(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-	
+
+		_, err = w.Write(out)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		w.WriteHeader(http.StatusOK)
-		w.Write(out)
 	} else {
 		w.Header().Set("X-Message", "This user has not yet registered")
 		w.WriteHeader(http.StatusNoContent)
 	}
 
 }
-
 
 func (handler *UserHandler) RegisterMedic(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
@@ -94,7 +98,6 @@ func (handler *UserHandler) RegisterMedic(w http.ResponseWriter, r *http.Request
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
 
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -135,8 +138,13 @@ func (handler *UserHandler) RegisterMedic(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(out)
 
 }
 
@@ -201,7 +209,12 @@ func (handler *UserHandler) RegisterPatient(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	_, err = w.Write(out)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(out)
 
 }

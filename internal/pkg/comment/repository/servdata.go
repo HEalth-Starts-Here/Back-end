@@ -50,15 +50,15 @@ func (er *dbcommentrepository) CreateComment(diaryId uint64, authorIsMedic bool,
 
 	return domain.CommentCreateResponse{
 		CommentInListInfo: domain.CommentInListInfo{
-			Id:					cast.ToUint64(resp[0][0]),
-			AuthorIsMedic:      cast.ToBool(resp[0][1]),
-			IsReaded:			cast.ToBool(resp[0][2]),
-			CreatingDate: 		cast.TimeToStr(cast.ToTime(resp[0][3]), true),
+			Id:            cast.ToUint64(resp[0][0]),
+			AuthorIsMedic: cast.ToBool(resp[0][1]),
+			IsReaded:      cast.ToBool(resp[0][2]),
+			CreatingDate:  cast.TimeToStr(cast.ToTime(resp[0][3]), true),
 			BasicCommentInfo: domain.BasicCommentInfo{
-				Text:       cast.ToString(resp[0][4]),
+				Text: cast.ToString(resp[0][4]),
 			},
 		},
-		DiaryId:			cast.ToUint64(resp[0][5]),
+		DiaryId: cast.ToUint64(resp[0][5]),
 	}, nil
 }
 
@@ -78,16 +78,16 @@ func (cr *dbcommentrepository) GetComment(diaryId uint64) (domain.GetCommentResp
 	comments := make([]domain.CommentInListInfo, 0)
 	for i := range resp {
 		comments = append(comments, domain.CommentInListInfo{
-			Id:           		cast.ToUint64(resp[i][0]),
-			AuthorIsMedic:      cast.ToBool(resp[i][1]),
-			IsReaded:      		cast.ToBool(resp[i][2]),
-			CreatingDate:    	cast.TimeToStr(cast.ToTime(resp[0][3]), true),
-			BasicCommentInfo:   domain.BasicCommentInfo{Text: cast.ToString(resp[i][4]),},
+			Id:               cast.ToUint64(resp[i][0]),
+			AuthorIsMedic:    cast.ToBool(resp[i][1]),
+			IsReaded:         cast.ToBool(resp[i][2]),
+			CreatingDate:     cast.TimeToStr(cast.ToTime(resp[0][3]), true),
+			BasicCommentInfo: domain.BasicCommentInfo{Text: cast.ToString(resp[i][4])},
 		})
 	}
 
 	out := domain.GetCommentResponse{
-		DiaryId: cast.ToUint64(resp[0][5]),
+		DiaryId:     cast.ToUint64(resp[0][5]),
 		CommentList: comments,
 	}
 
