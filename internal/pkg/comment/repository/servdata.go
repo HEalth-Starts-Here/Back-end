@@ -86,9 +86,10 @@ func (cr *dbcommentrepository) GetComment(diaryId uint64) (domain.GetCommentResp
 		})
 	}
 	var out domain.GetCommentResponse
+	out.DiaryId = diaryId
 	if len(resp) != 0 {
 		out = domain.GetCommentResponse{
-			DiaryId:     diaryId,
+			DiaryId:     cast.ToUint64(resp[0][5]),
 			CommentList: comments,
 		}
 	}
