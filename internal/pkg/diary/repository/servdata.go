@@ -150,6 +150,16 @@ func (er *dbdiaryrepository) DeleteDiary(diaryId uint64) error {
 	return err
 }
 
+func (er *dbdiaryrepository) CompleteDiary(diaryId uint64) error {
+	query := queryCompleteDiary
+	_, err := er.dbm.Query(query, diaryId)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+	}
+	return err
+}
+
 func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, error) {
 	var resp []database.DBbyterow
 	var err error

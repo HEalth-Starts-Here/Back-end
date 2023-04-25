@@ -37,7 +37,8 @@ CREATE TABLE diaries (
     diagnosis                           VARCHAR(1000),
     variant                             BOOLEAN DEFAULT false,
     frequency                           BIGINT DEFAULT 0,
-    startdate                           DATE
+    startdate                           DATE,
+    isComplete                          BOOLEAN DEFAULT false
 );
 
 CREATE TABLE medicRecords (

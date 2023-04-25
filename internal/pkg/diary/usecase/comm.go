@@ -100,6 +100,25 @@ func (du DiaryUsecase) DeleteDiary(diaryId uint64) error {
 	return nil
 }
 
+func (du DiaryUsecase) CompleteDiary(medicId, diaryId uint64) error {
+	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
+	// if err != nil {
+	// 	return domain.DiaryCreateResponse{}, err
+	// }
+
+	// if alreadyExist {
+	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
+	// }
+
+
+	err := du.diaryRepo.CompleteDiary(diaryId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (du DiaryUsecase) GetDiary(userId uint64) (domain.DiaryListResponse, error) {
 
 	feed, err := du.diaryRepo.GetDiary(userId)

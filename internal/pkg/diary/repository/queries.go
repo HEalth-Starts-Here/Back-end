@@ -64,6 +64,12 @@ const (
 	WHERE id = $1;
 	`
 
+	queryCompleteDiary = `
+	UPDATE diaries 
+	SET iscomplete = true
+	WHERE id = $1;
+	`
+
 	queryDiaryList = `
 	SELECT id, medicid, medics.name, patientid, patients.name, creatingdate, title, objectively, diarytokens.token
 	FROM diaries

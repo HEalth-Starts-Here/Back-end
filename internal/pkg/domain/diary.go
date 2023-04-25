@@ -223,6 +223,7 @@ type DiaryRepository interface {
 	CreateDiary(diary DiaryCreateRequest, medicId uint64) (DiaryCreateResponse, error)
 	LinkDiary(patientId uint64, diaryId uint64) (DiaryLinkResponse, error)
 	DeleteDiary(diaryid uint64) error
+	CompleteDiary(diaryid uint64) error
 	GetDiary(userId uint64) (DiaryListResponse, error)
 	GetUserRole(userId uint64) (bool, bool, error)
 	GetCertainDiary(diaryId uint64) (DiaryResponse, error)
@@ -243,6 +244,7 @@ type DiaryUsecase interface {
 	CreateDiary(diary DiaryCreateRequest, medicId uint64) (DiaryCreateResponse, error)
 	LinkDiary(patientId uint64, diaryId uint64, linkToken string) (DiaryLinkResponse, error)
 	DeleteDiary(diaryid uint64) error
+	CompleteDiary(medicid, diaryid uint64) error
 	GetDiary(userId uint64) (DiaryListResponse, error)
 	GetCertainDiary(diaryId uint64, userId uint64) (DiaryResponse, error)
 	UpdateDiary(diary DiaryUpdateRequest, diaryId uint64) (DiaryUpdateResponse, error)
