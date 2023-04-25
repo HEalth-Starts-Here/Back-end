@@ -145,6 +145,7 @@ type DiaryInList struct {
 	CreatingDate string `json:"creatingdate"`
 	Objectively  string `json:"objectively"`
 	LinkToken    string `json:"linktoken"`
+	IsComplete   bool	`json:"iscomplete"`
 }
 
 type DiaryListResponse struct {

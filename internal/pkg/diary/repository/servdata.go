@@ -191,6 +191,7 @@ func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, 
 			Title:        cast.ToString(resp[i][6]),
 			Objectively:  cast.ToString(resp[i][7]),
 			LinkToken:    cast.ToString(resp[i][8]),
+			IsComplete:   cast.ToBool(resp[i][9]),
 		})
 	}
 

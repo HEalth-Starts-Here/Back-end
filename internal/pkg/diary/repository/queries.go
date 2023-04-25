@@ -71,7 +71,7 @@ const (
 	`
 
 	queryDiaryList = `
-	SELECT id, medicid, medics.name, patientid, patients.name, creatingdate, title, objectively, diarytokens.token
+	SELECT id, medicid, medics.name, patientid, patients.name, creatingdate, title, objectively, diarytokens.token, iscomplete
 	FROM diaries
 	LEFT JOIN patients ON diaries.patientid = patients.vkid
 	JOIN medics ON diaries.medicid = medics.vkid

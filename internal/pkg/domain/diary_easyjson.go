@@ -1330,6 +1330,8 @@ func easyjson1ddc3ff7DecodeHeshInternalPkgDomain14(in *jlexer.Lexer, out *DiaryI
 			out.Objectively = string(in.String())
 		case "linktoken":
 			out.LinkToken = string(in.String())
+		case "iscomplete":
+			out.IsComplete = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -1388,6 +1390,11 @@ func easyjson1ddc3ff7EncodeHeshInternalPkgDomain14(out *jwriter.Writer, in Diary
 		const prefix string = ",\"linktoken\":"
 		out.RawString(prefix)
 		out.String(string(in.LinkToken))
+	}
+	{
+		const prefix string = ",\"iscomplete\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsComplete))
 	}
 	out.RawByte('}')
 }
