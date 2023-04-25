@@ -54,6 +54,7 @@ type errObj struct {
 
 	UserHaveNoAccess      error
 	MedicDoestExist       error
+	UserDoestExist        error
 	DiaryDoestExist       error
 	MedicRecordDoestExist error
 }
@@ -111,6 +112,7 @@ var Err = err{
 		InvalidLinkToken:          errors.New("Invalid linkToken"),
 		// 		PlaylistExist: errors.New("Playlist with this title already exist"),
 		UserHaveNoAccess:      errors.New("Permission denied"),
+		UserDoestExist:        errors.New("User does not exist"),
 		MedicDoestExist:       errors.New("Medic does not exist"),
 		DiaryDoestExist:       errors.New("Diary does not exist"),
 		MedicRecordDoestExist: errors.New("Medic record does not exist"),

@@ -40,6 +40,23 @@ func (cr *dbrecordrepository) MedicExist(medicId uint64) (bool, error) {
 	return true, nil
 }
 
+func (cr *dbrecordrepository) UserExist(userId uint64) (bool, error) {
+	var resp []database.DBbyterow
+	var err error
+	query := queryUserExist
+	resp, err = cr.dbm.Query(query, userId)
+
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return false, domain.Err.ErrObj.InternalServer
+	}
+	if len(resp) == 0 {
+		return false, nil
+	}
+	return true, nil
+}
+
 func (cr *dbrecordrepository) DiaryExist(diaryId uint64) (bool, error) {
 	var resp []database.DBbyterow
 	var err error
@@ -446,24 +463,24 @@ func (dr *dbrecordrepository) GetMedicIdFromDiary(diaryId uint64) (uint64, error
 	return cast.ToUint64(resp[0][0]), nil
 }
 
-func (dr *dbrecordrepository) GetMedicIdFromDiaryOfRecord(recordId uint64) (uint64, error) {
+func (dr *dbrecordrepository) GetMedicAndPatientIdsFromDiaryOfRecord(recordId uint64) (uint64, uint64, error) {
 	var resp []database.DBbyterow
 	var err error
-	query := queryGetMedicIdFromDiaryOfRecord
+	query := queryGetMedicAndPatientIdsFromDiaryOfRecord
 	resp, err = dr.dbm.Query(query, recordId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
-		return 0, domain.Err.ErrObj.InternalServer
+		return 0, 0, domain.Err.ErrObj.InternalServer
 	}
 
 	if len(resp) == 0 {
 		log.Warn(cast.GetCurrentFuncName())
 		log.Error(domain.Err.ErrObj.SmallDb)
-		return 0, domain.Err.ErrObj.SmallDb
+		return 0, 0, domain.Err.ErrObj.SmallDb
 	}
 
-	return cast.ToUint64(resp[0][0]), nil
+	return cast.ToUint64(resp[0][0]), cast.ToUint64(resp[0][1]), nil
 }
 
 // PATIENT

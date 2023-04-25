@@ -19,6 +19,16 @@ const (
 	WHERE vkid = $1;
 	`
 
+	queryUserExist = `
+	SELECT 
+	FROM medics
+	WHERE vkid = $1
+	UNION ALL
+	SELECT
+	FROM patients
+	WHERE vkid = $1;
+	`
+
 	//TODO rename to filename
 	queryGetImageList = `
 	SELECT name
@@ -147,8 +157,8 @@ const (
 	WHERE id = $1;
 	`
 
-	queryGetMedicIdFromDiaryOfRecord = `
-	SELECT medicid
+	queryGetMedicAndPatientIdsFromDiaryOfRecord = `
+	SELECT medicid, patientid
 	FROM diaries
 	JOIN medicrecords
 	ON diaries.id = medicrecords.diaryid
@@ -182,4 +192,5 @@ const (
 	WHERE id = $6
 	RETURNING id, diaryid, creatingdate, title, complaints, treatment, details, feelings;
 	`
+
 )

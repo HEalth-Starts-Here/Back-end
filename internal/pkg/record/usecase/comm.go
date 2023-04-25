@@ -43,12 +43,12 @@ func (ru RecordUsecase) CheckMedicDiaryAccess(medicId uint64, diaryId uint64) (b
 // 	return true, nil
 // }
 
-func (ru RecordUsecase) CheckMedicRecordAccess(medicId uint64, medicRecordId uint64) (bool, error) {
-	ownerId, err := ru.recordRepo.GetMedicIdFromDiaryOfRecord(medicRecordId)
+func (ru RecordUsecase) CheckMedicRecordAccess(userId uint64, medicRecordId uint64) (bool, error) {
+	medicId, patientId, err := ru.recordRepo.GetMedicAndPatientIdsFromDiaryOfRecord(medicRecordId)
 	if err != nil {
 		return false, err
 	}
-	if medicId != ownerId {
+	if userId != medicId && userId != patientId{
 		return false, nil
 	}
 	return true, nil
@@ -76,6 +76,14 @@ func (ru RecordUsecase) CheckMedicExist(medicId uint64) (bool, error) {
 		return false, err
 	}
 	return medicExist, nil
+}
+
+func (ru RecordUsecase) CheckUserExist(userId uint64) (bool, error) {
+	userExist, err := ru.recordRepo.UserExist(userId)
+	if err != nil {
+		return false, err
+	}
+	return userExist, nil
 }
 
 func (ru RecordUsecase) CheckMedicAndDiaryExistAndMedicHaveAccess(medicId, diaryId uint64) error {
@@ -106,13 +114,13 @@ func (ru RecordUsecase) CheckMedicAndDiaryExistAndMedicHaveAccess(medicId, diary
 	return nil
 }
 
-func (ru RecordUsecase) CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(medicId, recordId uint64) error {
-	medicExist, err := ru.CheckMedicExist(medicId)
+func (ru RecordUsecase) CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(userId, recordId uint64) error {
+	userExist, err := ru.CheckUserExist(userId)
 	if err != nil {
 		return err
 	}
-	if !medicExist {
-		return domain.Err.ErrObj.MedicDoestExist
+	if !userExist {
+		return domain.Err.ErrObj.UserDoestExist
 	}
 
 	recordExist, err := ru.CheckRecordExist(recordId)
@@ -123,7 +131,7 @@ func (ru RecordUsecase) CheckMedicAndDiaryAndRecordExistAndMedicHaveAccess(medic
 		return domain.Err.ErrObj.MedicRecordDoestExist
 	}
 
-	haveAccess, err := ru.CheckMedicRecordAccess(medicId, recordId)
+	haveAccess, err := ru.CheckMedicRecordAccess(userId, recordId)
 	if err != nil {
 		return err
 	}

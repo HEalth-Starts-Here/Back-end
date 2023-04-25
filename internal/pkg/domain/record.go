@@ -209,7 +209,7 @@ type RecordRepository interface {
 	UpdateMedicRecordText(recordId uint64, medicRecordBasicInfo MedicRecordBasicInfo) (MedicRecordUpdateTextResponse, error)
 	DeleteRecordImage(isMedic bool, recordId uint64) (RecordUpdateImageResponse, error)
 	GetMedicIdFromDiary(diaryId uint64) (uint64, error)
-	GetMedicIdFromDiaryOfRecord(recordId uint64) (uint64, error)
+	GetMedicAndPatientIdsFromDiaryOfRecord(medicRecordId uint64) (uint64, uint64, error)
 	DiaryExist(diaryId uint64) (bool, error)
 	MedicExist(medicId uint64) (bool, error)
 	MedicRecordExist(medicId uint64) (bool, error)
@@ -220,6 +220,9 @@ type RecordRepository interface {
 	CreatePatientRecord(diaryId uint64, record PatientRecordCreateRequest) (PatientRecordCreateResponse, error)
 	GetPatientRecordTextInfo(recordId uint64) (uint64, uint64, string, PatientRecordBasicInfo, error)
 	UpdatePatientRecordText(recordId uint64, patientRecordBasicInfo PatientRecordBasicInfo) (PatientRecordUpdateTextResponse, error)
+
+	// GENERAL
+	UserExist(userId uint64) (bool, error)
 }
 
 type RecordUsecase interface {

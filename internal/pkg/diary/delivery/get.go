@@ -195,15 +195,15 @@ func (handler *DiaryHandler) GetDiary(w http.ResponseWriter, r *http.Request) {
 
 	vk := api.NewVK("e80e2119e80e2119e80e21198ceb1d081fee80ee80e21198c168a958ccfd793e077d5da")
 
-	// users, err := vk.UsersGet(api.Params{
-	// 	"user_ids": 165523569,
-	// 	"fields": "photo_50,verified,photo_id,bdate",
-	// 	// "fields": "photo_50,verified",
-	// })
-	// if err != nil {
-	// 	log.Error(err)
-	// }
-	// fmt.Printf("users: %v\n", users)
+	users, err := vk.UsersGet(api.Params{
+		"user_ids": 165523569,
+		"fields": "photo_50,verified,photo_id,bdate",
+		// "fields": "photo_50,verified",
+	})
+	if err != nil {
+		log.Error(err)
+	}
+	fmt.Printf("users: %v\n", users)
 
 	var userIds []int
 	userIds = append(userIds, 165523569)
