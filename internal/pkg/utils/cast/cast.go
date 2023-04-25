@@ -35,6 +35,23 @@ func TimeToStr(src time.Time, withTime bool) string {
 	return src.Format("2006.01.02")
 }
 
+func StringToDate(src string) (time.Time, error){
+	var result time.Time
+	year, err := strconv.Atoi(src[0:4]) 
+	if err != nil {
+		return result, err
+	}
+	month, err := strconv.Atoi(src[5:7])
+	if err != nil {
+		return result, err
+	}
+	day, err := strconv.Atoi(src[8:])
+	if err != nil {
+		return result, err
+	}
+	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.Local), nil
+}
+
 func ToUint64(src []byte) uint64 {
 	return binary.BigEndian.Uint64(src)
 }

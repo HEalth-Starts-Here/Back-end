@@ -1,8 +1,10 @@
 package diaryrepository
 
 import (
+	"fmt"
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
+
 	// null "github.com/volatiletech/null/v9"
 
 	"hesh/internal/pkg/utils/cast"
@@ -24,6 +26,14 @@ func InitDiaryRep(manager *database.DBManager) domain.DiaryRepository {
 
 func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicId uint64) (domain.DiaryCreateResponse, error) {
 	query := queryCreateDiary
+	fmt.Printf("diary.DiaryBasicInfo.Reminder.StartDate: %v\n", diary.DiaryBasicInfo.Reminder.StartDate)
+	startDate, err := cast.StringToDate(diary.DiaryBasicInfo.Reminder.StartDate)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.DiaryCreateResponse{}, err
+	}
+	fmt.Printf("startDate: %v\n", startDate)
 	resp, err := er.dbm.Query(query,
 		medicId,
 		// nil,
@@ -32,7 +42,11 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 		diary.DiaryBasicInfo.Complaints,
 		diary.DiaryBasicInfo.Anamnesis,
 		diary.DiaryBasicInfo.Objectively,
-		diary.DiaryBasicInfo.Diagnosis)
+		diary.DiaryBasicInfo.Diagnosis,
+		diary.DiaryBasicInfo.Reminder.Variant,
+		diary.DiaryBasicInfo.Reminder.Frequency,
+		startDate)
+		// diary.DiaryBasicInfo.Reminder.StartDate)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
@@ -50,14 +64,17 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 			Anamnesis:   cast.ToString(resp[0][5]),
 			Objectively: cast.ToString(resp[0][6]),
 			Diagnosis:   cast.ToString(resp[0][7]),
+			Reminder : domain.ReminderInfo {
+				Variant: cast.ToBool(resp[0][8]),
+				Frequency: cast.ToUint64(resp[0][9]),
+				StartDate: cast.TimeToStr(cast.ToDate(resp[0][10]), false),
+			},
 		},
 	}, nil
 }
 
 func (er *dbdiaryrepository) CreateLinkToken(diaryId uint64, token string) error {
 	query := queryCreateDiaryLinkToken
-	log.Info("diaryId:" + string(diaryId))
-	log.Info("token:" + token)
 	_, err := er.dbm.Query(query,
 		diaryId,
 		token)
@@ -113,6 +130,12 @@ func (er *dbdiaryrepository) LinkDiary(patientId uint64, diaryId uint64) (domain
 			Anamnesis:   cast.ToString(resp[0][7]),
 			Objectively: cast.ToString(resp[0][8]),
 			Diagnosis:   cast.ToString(resp[0][9]),
+			Reminder: domain.ReminderInfo{
+				Variant: cast.ToBool(resp[0][10]),
+				Frequency: cast.ToUint64(resp[0][11]),
+				StartDate: cast.TimeToStr(cast.ToDate(resp[0][12]), false),
+				
+			},
 		},
 	}, nil
 }
@@ -227,6 +250,11 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 				Anamnesis:   cast.ToString(resp[0][8]),
 				Objectively: cast.ToString(resp[0][9]),
 				Diagnosis:   cast.ToString(resp[0][10]),
+				Reminder: domain.ReminderInfo{
+					Variant: cast.ToBool(resp[0][11]),
+					Frequency: cast.ToUint64(resp[0][12]),
+					StartDate: cast.TimeToStr(cast.ToDate(resp[0][13]), false),
+				},			
 			},
 		},
 	}
@@ -292,12 +320,22 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 
 func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdateRequest, diaryId uint64) (domain.DiaryUpdateResponse, error) {
 	query := queryUpdateDiary
+	startDate, err := cast.StringToDate(diary.DiaryBasicInfo.Reminder.StartDate)
+	if err != nil {
+		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
+		log.Error(err)
+		return domain.DiaryUpdateResponse{}, err
+	}
+	fmt.Printf("startDate: %v\n", startDate)
 	resp, err := er.dbm.Query(query,
 		diary.DiaryBasicInfo.Title,
 		diary.DiaryBasicInfo.Complaints,
 		diary.DiaryBasicInfo.Anamnesis,
 		diary.DiaryBasicInfo.Objectively,
 		diary.DiaryBasicInfo.Diagnosis,
+		diary.DiaryBasicInfo.Reminder.Variant,
+		diary.DiaryBasicInfo.Reminder.Frequency,
+		startDate,
 		diaryId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
@@ -321,6 +359,11 @@ func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdateRequest, diaryI
 			Anamnesis:   cast.ToString(resp[0][6]),
 			Objectively: cast.ToString(resp[0][7]),
 			Diagnosis:   cast.ToString(resp[0][8]),
+			Reminder: domain.ReminderInfo{
+				Variant: cast.ToBool(resp[0][9]),
+				Frequency: cast.ToUint64(resp[0][10]),
+				StartDate: cast.TimeToStr(cast.ToDate(resp[0][11]), false),
+			},
 		},
 	}, nil
 }

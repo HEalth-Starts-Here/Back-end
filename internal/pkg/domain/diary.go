@@ -9,12 +9,24 @@ const (
 	maxRecordDescriptionLength = 3000
 )
 
+func (r *ReminderInfo) SetDefault() {
+	r.Variant = false
+	r.Frequency = 0
+	r.StartDate = ""
+}
+
+func (d *DiaryBasicInfo) SetDefault() {
+	d.Title = ""
+	d.Complaints = ""
+	d.Anamnesis = ""
+	d.Objectively = ""
+	d.Diagnosis = ""
+	d.Reminder.SetDefault()
+}
+
+
 func (er *DiaryCreateRequest) SetDefault() {
-	er.DiaryBasicInfo.Title = ""
-	er.DiaryBasicInfo.Complaints = ""
-	er.DiaryBasicInfo.Anamnesis = ""
-	er.DiaryBasicInfo.Objectively = ""
-	er.DiaryBasicInfo.Diagnosis = ""
+	er.DiaryBasicInfo.SetDefault()
 }
 
 func (er *RecordCreateRequest) SetDefault() {
@@ -34,11 +46,21 @@ func (er *RecordCreateResponse) SetDefault() {
 	er.ImageList = []ImageInfo{}
 }
 
-func (er DiaryCreateRequest) IsValid() (isValid bool) {
-	if len(er.DiaryBasicInfo.Title) > maxDiaryTitleLength || len(er.DiaryBasicInfo.Objectively) > maxDiaryObjectivelyLength {
+func (d DiaryBasicInfo) IsValid() (isValid bool) {
+	if len(d.Title) > maxDiaryTitleLength || len(d.Objectively) > maxDiaryObjectivelyLength || !d.Reminder.IsValid() {
 		return false
-	}
+	}	
 	return true
+}
+
+func (r ReminderInfo) IsValid() (isValid bool) {
+	// TODO isDate function
+	// return !isDate(r.StartDate)
+	return true
+}
+
+func (dr DiaryCreateRequest) IsValid() (isValid bool) {
+	return dr.DiaryBasicInfo.IsValid()
 }
 
 func (er RecordCreateRequest) IsValid() (isValid bool) {
@@ -61,10 +83,7 @@ func (er RecordCreateRequest) IsValid() (isValid bool) {
 }
 
 func (er DiaryUpdateRequest) IsValid() (isValid bool) {
-	if len(er.DiaryBasicInfo.Title) > maxDiaryTitleLength || len(er.DiaryBasicInfo.Objectively) > maxDiaryObjectivelyLength {
-		return false
-	}
-	return true
+	return er.DiaryBasicInfo.IsValid()
 }
 
 type DiaryUpdateRequest struct {
@@ -79,17 +98,22 @@ type DiaryUpdateResponse struct {
 	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
 }
 
+type ReminderInfo struct {
+	Variant		bool `json:"variant"`
+	Frequency	uint64 `json:"frequency"`
+	StartDate	string `json:"startdate"`
+}
+
 type DiaryBasicInfo struct {
-	Title       string `json:"title"`
-	Complaints  string `json:"complaints"`
-	Anamnesis   string `json:"anamnesis"`
-	Objectively string `json:"objectively"`
-	Diagnosis   string `json:"diagnosis"`
+	Title       string			`json:"title"`
+	Complaints  string			`json:"complaints"`
+	Anamnesis   string			`json:"anamnesis"`
+	Objectively string			`json:"objectively"`
+	Diagnosis   string			`json:"diagnosis"`
+	Reminder	ReminderInfo	`json:"reminder"`
 }
 
 type DiaryCreateRequest struct {
-	// MedicId		   uint64 `json:"medicid"`
-	// PatientId	   uint64 `json:"patientid"`
 	DiaryBasicInfo DiaryBasicInfo `json:"diarybasicinfo"`
 }
 

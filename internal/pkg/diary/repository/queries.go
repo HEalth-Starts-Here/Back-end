@@ -3,7 +3,7 @@ package diaryrepository
 const (
 	queryCreateDiary = `
 	INSERT INTO
-    diaries (medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis)
+    diaries (medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate)
 	VALUES
     (
 		$1,
@@ -12,9 +12,12 @@ const (
         $4,
         $5,
         $6,
-        $7
+        $7,
+        $8,
+        $9,
+        $10
     )
-	RETURNING id, medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis;
+	RETURNING id, medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
 	`
 
 	queryCreateDiaryLinkToken = `
@@ -40,7 +43,7 @@ const (
 	JOIN medics m
 	ON d.medicid = m.vkid
 	WHERE diaries.id = $1
-	RETURNING d.id, d.medicid, m.name, d.patientid, d.creatingdate, d.title, d.complaints, d.anamnesis, d.objectively, d.diagnosis;
+	RETURNING d.id, d.medicid, m.name, d.patientid, d.creatingdate, d.title, d.complaints, d.anamnesis, d.objectively, d.diagnosis, d.variant, d.frequency, d.startdate;
 	`
 
 	// queryLinkDiary2 = `
@@ -72,7 +75,7 @@ const (
 	`
 
 	queryGetCertainDiaryMainInfo = `
-	SELECT patients.name, diaries.id, medicid, medics.name, patientid, creatingDate, title, complaints, anamnesis, objectively, diagnosis
+	SELECT patients.name, diaries.id, medicid, medics.name, patientid, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate
 	FROM diaries 
 	LEFT JOIN patients on diaries.patientid = patients.vkid
 	LEFT JOIN medics on diaries.medicid = medics.vkid
@@ -140,8 +143,8 @@ const (
 
 	queryUpdateDiary = `
 	UPDATE diaries
-	SET title = $1, complaints = $2, anamnesis = $3, objectively = $4, diagnosis = $5
-	WHERE id = $6
-	RETURNING id, medicid, patientid, creatingdate, title, complaints, anamnesis, objectively, diagnosis;
+	SET title = $1, complaints = $2, anamnesis = $3, objectively = $4, diagnosis = $5, variant = $6, frequency = $7, startdate = $8
+	WHERE id = $9
+	RETURNING id, medicid, patientid, creatingdate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
 	`
 )

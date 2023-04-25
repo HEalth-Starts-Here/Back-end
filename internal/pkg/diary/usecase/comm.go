@@ -1,16 +1,9 @@
 package diaryusecase
 
 import (
+	"fmt"
 	"hesh/internal/pkg/domain"
 	"hesh/internal/pkg/utils/randomizer"
-
-	// "hesh/internal/pkg/utils/cast"
-	// "hesh/internal/pkg/utils/log"
-
-	// usrusecase "eventool/internal/pkg/user/usecase"
-	// userrepository "hesh/internal/pkg/user/repository"
-	// usrusecase "eventool/internal/pkg/user/usecase"
-	// "usrdelivery"
 )
 
 const tokenLength = 256
@@ -34,10 +27,14 @@ func (du DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId 
 	// if alreadyExist {
 	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
-
+	fmt.Printf("diaryData.DiaryBasicInfo.Reminder.StartDate: %v\n", diaryData.DiaryBasicInfo.Reminder.StartDate)
+	if diaryData.DiaryBasicInfo.Reminder.StartDate == "" {
+		diaryData.DiaryBasicInfo.Reminder.StartDate = "1970.01.01"
+	}
 	if !diaryData.IsValid() {
 		return domain.DiaryCreateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
+	fmt.Printf("diaryData.DiaryBasicInfo.Reminder.StartDate: %v\n", diaryData.DiaryBasicInfo.Reminder.StartDate)
 
 	DiaryCreateResponse, err := du.diaryRepo.CreateDiary(diaryData, medicId)
 	if err != nil {
@@ -45,7 +42,9 @@ func (du DiaryUsecase) CreateDiary(diaryData domain.DiaryCreateRequest, medicId 
 	}
 
 	token, err := randomizer.GenerateRandomString(tokenLength)
-
+	if err != nil {
+		return domain.DiaryCreateResponse{}, err
+	}
 	err = du.diaryRepo.CreateLinkToken(DiaryCreateResponse.Id, token)
 	if err != nil {
 		return domain.DiaryCreateResponse{}, err
@@ -138,7 +137,7 @@ func (du DiaryUsecase) GetCertainDiary(diaryId uint64, userId uint64) (domain.Di
 	return diary, nil
 }
 
-func (du DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdateRequest, diaryId uint64) (domain.DiaryUpdateResponse, error) {
+func (du DiaryUsecase) UpdateDiary(DiaryData domain.DiaryUpdateRequest, diaryId uint64) (domain.DiaryUpdateResponse, error) {
 	// alreadyExist, err := eu.diaryRepo.DiaryAlreadyExist(diaryData)
 	// if err != nil {
 	// 	return domain.DiaryCreateResponse{}, err
@@ -147,11 +146,13 @@ func (du DiaryUsecase) UpdateDiary(updateDiaryData domain.DiaryUpdateRequest, di
 	// if alreadyExist {
 	// 	return domain.DiaryCreateResponse{}, domain.Err.ErrObj.PlaylistExist
 	// }
-
-	if !updateDiaryData.IsValid() {
+	if DiaryData.DiaryBasicInfo.Reminder.StartDate == "" {
+		DiaryData.DiaryBasicInfo.Reminder.StartDate = "1970.01.01"
+	}
+	if !DiaryData.IsValid() {
 		return domain.DiaryUpdateResponse{}, domain.Err.ErrObj.InvalidTitleOrDescription
 	}
-	DiaryUpdateResponse, err := du.diaryRepo.UpdateDiary(updateDiaryData, diaryId)
+	DiaryUpdateResponse, err := du.diaryRepo.UpdateDiary(DiaryData, diaryId)
 	if err != nil {
 		return domain.DiaryUpdateResponse{}, err
 	}

@@ -8,10 +8,9 @@ DROP TABLE IF EXISTS patientImages        CASCADE;
 DROP TABLE IF EXISTS tags                 CASCADE;
 DROP TABLE IF EXISTS audio                CASCADE;
 DROP TABLE IF EXISTS comments             CASCADE;
-DROP TABLE IF EXISTS records_notes        CASCADE;
+-- DROP TABLE IF EXISTS records_notes        CASCADE;
 DROP TABLE IF EXISTS notes                CASCADE;
 DROP TABLE IF EXISTS diaryTokens          CASCADE;
-
 
 CREATE TABLE medics (
     vkId                                BIGINT NOT NULL PRIMARY KEY,
@@ -35,7 +34,10 @@ CREATE TABLE diaries (
     complaints                          VARCHAR(1000),
     anamnesis                           VARCHAR(1000),
     objectively                         VARCHAR(1000),
-    diagnosis                           VARCHAR(1000)
+    diagnosis                           VARCHAR(1000),
+    variant                             BOOLEAN DEFAULT false,
+    frequency                           BIGINT DEFAULT 0,
+    startdate                           DATE
 );
 
 CREATE TABLE medicRecords (
