@@ -77,7 +77,7 @@ const (
 	JOIN medics ON diaries.medicid = medics.vkid
 	LEFT JOIN diarytokens ON diaries.id = diarytokens.diaryid
 	WHERE medicid = $1 OR patientid = $1
-	ORDER BY creatingdate;
+	ORDER BY creatingdate DESC;
 	`
 
 	queryGetCertainDiaryMainInfo = `
