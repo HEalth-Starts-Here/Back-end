@@ -15,14 +15,6 @@ func InitNoteUsc(nr domain.NoteRepository) domain.NoteUsecase {
 	}
 }
 
-// func (cu CommentUsecase) CheckUserRole(userId uint64) (bool, bool, error) {
-// 	userExist, isMedic, err := cu.commentRepo.CheckUserRole(userId)
-// 	if err != nil {
-// 		return false, false, err
-// 	}
-// 	return userExist, isMedic, nil
-// }
-
 func (nu NoteUsecase) CreateNote(medicId uint64, isMedicRecord bool, recordId uint64, noteCreateRequest *domain.BasicNoteInfo) (domain.NoteCreateResponse, error) {
 	if !noteCreateRequest.IsValid() {
 		return domain.NoteCreateResponse{}, domain.Err.ErrObj.InvalidText

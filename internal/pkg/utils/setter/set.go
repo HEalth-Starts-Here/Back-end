@@ -31,9 +31,10 @@ import (
 	notedelivery "hesh/internal/pkg/note/delivery"
 	noterepository "hesh/internal/pkg/note/repository"
 	noteusecase "hesh/internal/pkg/note/usecase"
-	// eventdelivery "hesh/internal/pkg/event/delivery"
-	// eventrepository "hesh/internal/pkg/event/repository"
-	// eventusecase "hesh/internal/pkg/event/usecase"
+
+	searchdelivery "hesh/internal/pkg/search/delivery"
+	searchrepository "hesh/internal/pkg/search/repository"
+	searchusecase "hesh/internal/pkg/search/usecase"
 
 	"github.com/gorilla/mux"
 	// "google.golang.org/grpc"
@@ -52,6 +53,7 @@ type Services struct {
 	Record     Data
 	Comment    Data
 	Note       Data
+	Search     Data
 }
 
 // func setAutMcs() autmcs.AutherClient {
@@ -71,6 +73,7 @@ func SetHandlers(svs Services) {
 	recordRep := recordrepository.InitRecordRep(svs.Record.Db)
 	commentRep := commentrepository.InitCommentRep(svs.Comment.Db)
 	noteRep := noterepository.InitNoteRep(svs.Note.Db)
+	searchRep := searchrepository.InitSearchRep(svs.Search.Db)
 
 	// userUsc := usrusecase.InitUsrUsc(userRep)
 	diaryUsc := diaryusecase.InitDiaryUsc(diaryRep)
@@ -79,6 +82,7 @@ func SetHandlers(svs Services) {
 	recordUsc := recordusecase.InitRecordUsc(recordRep)
 	commentUsc := commentusecase.InitCommentUsc(commentRep)
 	noteUsc := noteusecase.InitNoteUsc(noteRep)
+	searchUsc := searchusecase.InitSearchUsc(searchRep)
 
 	// usrdelivery.SetUsrHandlers(svs.User.Api, userUsc)
 	diarydelivery.SetDiaryHandlers(svs.Diary.Api, diaryUsc)
@@ -87,6 +91,7 @@ func SetHandlers(svs Services) {
 	recorddelivery.SetRecordHandlers(svs.Record.Api, recordUsc)
 	commentdelivery.SetCommentHandlers(svs.Comment.Api, commentUsc)
 	notedelivery.SetNoteHandlers(svs.Note.Api, noteUsc)
+	searchdelivery.SetSearchHandlers(svs.Search.Api, searchUsc)
 
 	// autdelivery.SetAutHandlers(svs.Aut.Api, setAutMcs())
 }

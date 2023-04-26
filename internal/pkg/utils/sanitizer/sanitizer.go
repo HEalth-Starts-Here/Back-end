@@ -84,3 +84,7 @@ func SanitizeBasicCommentInfo(record *domain.BasicCommentInfo) {
 func SanitizeBasicNoteInfo(note *domain.BasicNoteInfo) {
 	sanitizeText(&note.Text)
 }
+
+func SanitizeSearchDiaryParams(params *domain.SearchDiaryRequest) {
+	sanitizeText(&params.Text)
+}

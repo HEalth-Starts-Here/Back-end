@@ -19,21 +19,6 @@ func InitNoteRep(manager *database.DBManager) domain.NoteRepository {
 	}
 }
 
-// func (er *dbnoterepository) CheckUserRole(userId uint64) (bool, bool, error) {
-// 	query := queryCheckUserRole
-// 	resp, err := er.dbm.Query(query,
-// 		userId)
-// 	if err != nil {
-// 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
-// 		log.Error(err)
-// 		return false, false, err
-// 	}
-// 	if len(resp) == 0 {
-// 		return false, false, nil
-// 	}
-// 	return true, cast.ToBool(resp[0][0]), nil
-// }
-
 func (cr *dbnoterepository) GetNote(isMedicRecord bool, recordId uint64) (domain.GetNoteResponse, error) {
 	var resp []database.DBbyterow
 	var err error
