@@ -479,8 +479,11 @@ func (dr *dbrecordrepository) GetMedicAndPatientIdsFromDiaryOfRecord(recordId ui
 		log.Error(domain.Err.ErrObj.SmallDb)
 		return 0, 0, domain.Err.ErrObj.SmallDb
 	}
-
-	return cast.ToUint64(resp[0][0]), cast.ToUint64(resp[0][1]), nil
+	patientId := uint64(0)
+	if resp[0][1] != nil {
+		patientId = cast.ToUint64(resp[0][1])
+	}
+	return cast.ToUint64(resp[0][0]), patientId, nil
 }
 
 // PATIENT
