@@ -27,7 +27,7 @@ from entities.models_params import DiarisationParams
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler(sys.stdout)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
 
@@ -69,30 +69,36 @@ class DiarisationService(DiarisationServicer):
         result = self.model.transcribe(path)
         segments = result["segments"]
 
-        with contextlib.closing(wave.open(path, "r")) as f:
-            frames = f.getnframes()
-            rate = f.getframerate()
-            duration = frames / float(rate)
+        logger.debug(f"Segments count: {len(segments)}")
+        if len(segments) > 1:
+            with contextlib.closing(wave.open(path, "r")) as f:
+                frames = f.getnframes()
+                rate = f.getframerate()
+                duration = frames / float(rate)
 
-        audio = Audio()
+            audio = Audio()
 
-        def segment_embedding(segment):
-            start = segment["start"]
-            # Whisper overshoots the end timestamp in the last segment
-            end = min(duration, segment["end"])
-            clip = Segment(start, end)
-            waveform, _ = audio.crop(path, clip)
-            return self.embedding_model(waveform[None])
+            def segment_embedding(segment):
+                start = segment["start"]
+                # Whisper overshoots the end timestamp in the last segment
+                end = min(duration, segment["end"])
+                clip = Segment(start, end)
+                waveform, _ = audio.crop(path, clip)
+                return self.embedding_model(waveform[None])
 
-        embeddings = np.zeros(shape=(len(segments), 192))
-        for i, segment in enumerate(segments):
-            embeddings[i] = segment_embedding(segment)
-        embeddings = np.nan_to_num(embeddings)
+            embeddings = np.zeros(shape=(len(segments), 192))
+            for i, segment in enumerate(segments):
+                embeddings[i] = segment_embedding(segment)
+            embeddings = np.nan_to_num(embeddings)
 
-        clustering = AgglomerativeClustering(self.params.num_speakers).fit(embeddings)
-        labels = clustering.labels_
-        for i in range(len(segments)):
-            segments[i]["speaker"] = "SPEAKER " + str(labels[i] + 1)
+            clustering = AgglomerativeClustering(self.params.num_speakers).fit(embeddings)
+            labels = clustering.labels_
+            for i in range(len(segments)):
+                segments[i]["speaker"] = "SPEAKER " + str(labels[i] + 1)
+        elif len(segments) == 0:
+            return "No text in audio"
+        else:
+            segments[0]["speaker"] = "SPEAKER 1"
 
         f = io.StringIO()
         for i, segment in enumerate(segments):
@@ -103,7 +109,7 @@ class DiarisationService(DiarisationServicer):
             f.write(segment["text"][1:] + " ")
 
         end_time = time()
-        logger.info(f"Total transcribing time: {get_time(end_time - start_time)}")
+        logger.debug(f"Total transcribing time: {get_time(end_time - start_time)}")
 
         return f.getvalue()
 
