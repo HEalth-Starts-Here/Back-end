@@ -4,8 +4,7 @@ import io
 import numpy as np
 import whisper
 import datetime
-import wave
-import contextlib
+import librosa
 import torch
 import requests
 import base64
@@ -61,21 +60,16 @@ class DiarisationService(DiarisationServicer):
         data = io.BytesIO(audio)
 
         sound = AudioSegment.from_file(data)
-        sound.export("temp/file.wav", format="wav")
-        path = "temp/file.wav"
+        duration = sound.duration_seconds
+        audio_wave, _ = librosa.load(sound.export(format="wav"), sr=16000)
 
         logger.info("Transcribing audio...")
         start_time = time()
-        result = self.model.transcribe(path)
+        result = self.model.transcribe(audio_wave)
         segments = result["segments"]
 
         logger.debug(f"Segments count: {len(segments)}")
         if len(segments) > 1:
-            with contextlib.closing(wave.open(path, "r")) as f:
-                frames = f.getnframes()
-                rate = f.getframerate()
-                duration = frames / float(rate)
-
             audio = Audio()
 
             def segment_embedding(segment):
@@ -83,7 +77,7 @@ class DiarisationService(DiarisationServicer):
                 # Whisper overshoots the end timestamp in the last segment
                 end = min(duration, segment["end"])
                 clip = Segment(start, end)
-                waveform, _ = audio.crop(path, clip)
+                waveform, _ = audio.crop(sound.export(format="wav"), clip)
                 return self.embedding_model(waveform[None])
 
             embeddings = np.zeros(shape=(len(segments), 192))
