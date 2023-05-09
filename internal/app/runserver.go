@@ -43,17 +43,16 @@ func RunServer() {
 		// 	// Ann: setter.Data{Db: db, Api: api},
 		// 	// Ser: setter.Data{Db: db, Api: api},
 		// 	// Pla: setter.Data{Db: db, Api: api},
-		Diary:      setter.Data{Db: db, Api: api},
-		MLServices: setter.Data{Db: db, Api: api},
-		User:       setter.Data{Db: db, Api: api},
-		Record:     setter.Data{Db: db, Api: api},
-		Comment:    setter.Data{Db: db, Api: api},
-		Note:       setter.Data{Db: db, Api: api},
-		Search:     setter.Data{Db: db, Api: api},
+		Diary:      	setter.Data{Db: db, Api: api},
+		MLServices: 	setter.Data{Db: db, Api: api},
+		User:       	setter.Data{Db: db, Api: api},
+		Record:     	setter.Data{Db: db, Api: api},
+		Comment:    	setter.Data{Db: db, Api: api},
+		Note:       	setter.Data{Db: db, Api: api},
+		Search:     	setter.Data{Db: db, Api: api},
+		Notification:	setter.Data{Db: db},
 
-		// 	// Com: setter.Data{Db: nil, Api: api},
-		// 	// Rat: setter.Data{Db: nil, Api: api},
-		// 	Aut: setter.Data{Db: nil, Api: api},
+		// Not:		setter.Data{Db: nil, Api: api},
 	})
 
 	// router.Handle("/metrics", promhttp.Handler())

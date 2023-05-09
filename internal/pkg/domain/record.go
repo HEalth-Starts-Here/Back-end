@@ -2,10 +2,12 @@ package domain
 
 const (
 	maxTitleLenght          = 50
-	maxTreatmentLenght      = 1000
-	maxRecomendationsLenght = 1000
 	maxComplaintsLenght     = 1000
+	maxTreatmentLenght      = 1000
 	maxDetailsLenght        = 3000
+
+	maxRecomendationsLenght = 1000
+
 	maxImageNameLenght      = 200
 	maxTagsLenght           = 50
 )
@@ -47,7 +49,7 @@ func (record *PatientRecordCreateRequest) SetDefault() {
 // TODO: add returning errors
 func (record MedicRecordBasicInfo) IsValid() bool {
 	if len(record.Title) > maxTitleLenght ||
-		len(record.Treatment) > maxDetailsLenght ||
+		len(record.Treatment) > maxTreatmentLenght ||
 		len(record.Recommendations) > maxRecomendationsLenght ||
 		len(record.Details) > maxDetailsLenght {
 		return false

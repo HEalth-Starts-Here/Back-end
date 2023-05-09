@@ -228,41 +228,6 @@ func (handler *DiaryHandler) CompleteDiary(w http.ResponseWriter, r *http.Reques
 func (handler *DiaryHandler) GetDiary(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-
-	// vk := api.NewVK("e80e2119e80e2119e80e21198ceb1d081fee80ee80e21198c168a958ccfd793e077d5da")
-
-	// users, err := vk.UsersGet(api.Params{
-	// 	"user_ids": 165523569,
-	// 	"fields": "photo_50,verified,photo_id,bdate",
-	// 	// "fields": "photo_50,verified",
-	// })
-	// if err != nil {
-	// 	log.Error(err)
-	// }
-	// fmt.Printf("users: %v\n", users)
-
-	// var userIds []int
-	// userIds = append(userIds, 165523569)
-	// // userIds = append(userIds, 165523569)
-	// notidications, err := vk.NotificationsSendMessage(api.Params{
-	// 	"user_ids": userIds,
-	// 	"message":  "Вам пришла электронная повестка! Узнать подробности можно в личном кабинете на портале ГосУслуг (gosuslugi.ru)",
-	// 	// "sending_mode":  5,
-	// })
-	// if err != nil {
-	// 	log.Error(err)
-	// 	http.Error(w, err.Error(), http.StatusBadRequest)
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// 	return
-	// }
-	// fmt.Printf("notidications: %v\n", notidications)
-	// println()
-	// println()
-
-
-
-	// categoryString := r.URL.Query().Get("category")
-	// categories := strings.Split(categoryString, " ")
 	queryParameter := r.URL.Query().Get("vk_user_id")
 	userId, err := strconv.ParseUint(queryParameter, 10, 64)
 	if err != nil {
@@ -279,6 +244,54 @@ func (handler *DiaryHandler) GetDiary(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(httpStatus)
 		return
 	}
+
+	// vk := api.NewVK("e80e2119e80e2119e80e21198ceb1d081fee80ee80e21198c168a958ccfd793e077d5da")
+	// println("123")
+	// println("123")
+	// println("123")
+	// println("123")
+	// println("123")
+	// println("123")
+	// users, err := vk.UsersGet(api.Params{
+	// 	"user_ids": 165523569,
+	// 	"fields": "photo_50,verified,photo_id,bdate",
+	// 	// "fields": "photo_50,verified",
+	// })
+	// if err != nil {
+	// 	log.Error(err)
+	// }
+	// fmt.Printf("users: %v\n", users)
+
+	// var userIds []int
+	// userIds = append(userIds, 165523569)
+	// // userIds = append(userIds, 165523569)
+	// notidications, err := vk.NotificationsSendMessage(api.Params{
+	// 	"user_ids": userIds,
+	// 	// "message":  "Вам пришла электронная повестка! Узнать подробности можно в личном кабинете на портале ГосУслуг (gosuslugi.ru)",
+	// 	"message":  "Доброе утро! Сегодня вам по плану желательно сделать: 2 запись(и) в дневнике \"Дневник №1\", 1 запись(и) в дневнике \"Дневник №2\"",
+	// 	// "sending_mode":  5,
+	// })
+	// if err != nil {
+	// 	log.Error(err)
+	// }
+	// fmt.Printf("notidications: %v\n", notidications)
+	// fmt.Printf("notidications: %v\n", notidications)
+	// fmt.Printf("notidications: %v\n", notidications)
+	// fmt.Printf("notidications: %v\n", notidications)
+	// fmt.Printf("notidications: %v\n", notidications)
+	// fmt.Printf("notidications: %v\n", notidications)
+	// fmt.Printf("notidications: %v\n", notidications)
+	// fmt.Printf("notidications: %v\n", notidications)
+	// println()
+	// println()
+
+
+
+
+
+
+
+
 
 	out, err := easyjson.Marshal(diaryList)
 	if err != nil {

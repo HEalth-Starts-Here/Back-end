@@ -2,6 +2,7 @@ package setter
 
 import (
 	"hesh/internal/pkg/database"
+
 	// "hesh/internal/pkg/utils/config"
 	// "hesh/internal/pkg/utils/log"
 
@@ -36,7 +37,17 @@ import (
 	searchrepository "hesh/internal/pkg/search/repository"
 	searchusecase "hesh/internal/pkg/search/usecase"
 
+	// notificationdelivery "hesh/internal/pkg/notification/delivery/rest"
+	// notificationrepository "hesh/internal/pkg/notification/repository"
+	// notificationusecase "hesh/internal/pkg/notification/usecase"
+
+	// notificationmcs "hesh/internal/pkg/notification/delivery/grpc"
+
+	// "hesh/internal/pkg/notification/delivery/rest"
+
 	"github.com/gorilla/mux"
+
+	// "github.com/rs/zerolog/log"
 	// "google.golang.org/grpc"
 	// "google.golang.org/grpc/credentials/insecure"
 )
@@ -47,26 +58,27 @@ type Data struct {
 }
 
 type Services struct {
-	Diary      Data
-	MLServices Data
-	User       Data
-	Record     Data
-	Comment    Data
-	Note       Data
-	Search     Data
+	Diary      		Data
+	MLServices 		Data
+	User       		Data
+	Record     		Data
+	Comment    		Data
+	Note       		Data
+	Search     		Data
+
+	Notification	Data
 }
 
-// func setAutMcs() autmcs.AutherClient {
-// 	autconn, err := grpc.Dial(":"+config.DevConfigStore.Mcs.Auth.Port, grpc.WithTransportCredentials(insecure.NewCredentials()))
-// 	if err != nil {
-// 		log.Warn("{setAutMcs} mcs Dial")
-// 	}
+// func setNotificationMcs()  {
+// 	// notificationconn, err := grpc.Dial(":"+config.DevConfigStore.Mcs.Auth.Port, grpc.WithInsecure())
+// 	// if err != nil {
+// 	// 	log.Warn("{setAutMcs} mcs Dial")
+// 	// }
 
-// 	return autmcs.NewAutherClient(autconn)
+// 	// return notificationmcs.NewNotificationClient(notificationconn)
 // }
 
 func SetHandlers(svs Services) {
-	// userRep := usrrepository.InitUsrRep(svs.User.Db)
 	diaryRep := diaryrepository.InitDiaryRep(svs.Diary.Db)
 	mlservicesRep := mlservicesrepository.InitMLServicesRep(svs.MLServices.Db)
 	userRep := userrepository.InitUserRep(svs.User.Db)
@@ -74,8 +86,8 @@ func SetHandlers(svs Services) {
 	commentRep := commentrepository.InitCommentRep(svs.Comment.Db)
 	noteRep := noterepository.InitNoteRep(svs.Note.Db)
 	searchRep := searchrepository.InitSearchRep(svs.Search.Db)
+	// notificationRep := notificationrepository.InitNotificationRep(svs.Notification.Db)
 
-	// userUsc := usrusecase.InitUsrUsc(userRep)
 	diaryUsc := diaryusecase.InitDiaryUsc(diaryRep)
 	mlservicesUsc := mlservicesusecase.InitMLServicesUsc(mlservicesRep)
 	userUsc := userusecase.InitUserUsc(userRep)
@@ -83,8 +95,8 @@ func SetHandlers(svs Services) {
 	commentUsc := commentusecase.InitCommentUsc(commentRep)
 	noteUsc := noteusecase.InitNoteUsc(noteRep)
 	searchUsc := searchusecase.InitSearchUsc(searchRep)
+	// notificationUsc := notificationusecase.InitNotificationUsc(notificationRep)
 
-	// usrdelivery.SetUsrHandlers(svs.User.Api, userUsc)
 	diarydelivery.SetDiaryHandlers(svs.Diary.Api, diaryUsc)
 	mlservicesdelivery.SetMLServicesHandlers(svs.MLServices.Api, mlservicesUsc)
 	userdelivery.SetUserHandlers(svs.User.Api, userUsc)
@@ -92,6 +104,7 @@ func SetHandlers(svs Services) {
 	commentdelivery.SetCommentHandlers(svs.Comment.Api, commentUsc)
 	notedelivery.SetNoteHandlers(svs.Note.Api, noteUsc)
 	searchdelivery.SetSearchHandlers(svs.Search.Api, searchUsc)
+	
+	// notificationdelivery.SetNotificationHandlers(notificationUsc)
 
-	// autdelivery.SetAutHandlers(svs.Aut.Api, setAutMcs())
 }

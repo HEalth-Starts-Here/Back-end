@@ -39,7 +39,7 @@ const (
 	JOIN medics ON diaries.medicid = medics.vkid
 	LEFT JOIN diarytokens ON diaries.id = diarytokens.diaryid
 	WHERE (medicid = $1 OR patientid = $1) AND 
-	(title LIKE '%s' OR objectively LIKE '%s' OR %s.name LIKE '%s')
+	(LOWER(title) LIKE LOWER('%s') OR LOWER(objectively) LIKE LOWER('%s') OR LOWER(%s.name) LIKE LOWER('%s'))
 	ORDER BY creatingdate DESC;
 	`
 )

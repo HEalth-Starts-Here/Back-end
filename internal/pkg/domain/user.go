@@ -1,24 +1,8 @@
 package domain
 
-const ()
-
-// func (ur *UserInitRequest) SetDefault() {
-// 	ur.InitBasicInfo.name = ""
-// 	return
-// }
-
-// TODO: add returning errors
-// func (ur UserInitRequest) IsValid() (bool) {
-// 	if len(ur.InitBasicInfo.Name) == 0 {
-// 		return false
-// 	}
-// 	return true
-// }
-
-// type InitBasicInfo struct {
-// 	Name string		`json:"name"`
-// 	IsMedic bool	`json:"ismedic"`
-// }
+const (
+	maxNameLength = 200
+)
 
 type UserInfo struct {
 	Id      uint64 `json:"id"`
@@ -26,14 +10,30 @@ type UserInfo struct {
 	IsMedic bool   `json:"ismedic"`
 }
 
-// type UserInitRequest struct {
-// 	InitBasicInfo InitBasicInfo `json:"initbasicinfo"`
-// }
+func (registerMedicRequest *RegisterMedicRequest) SetDefault() {
+	registerMedicRequest.Name = ""
+	return
+}
 
-// type UserInitResponse struct {
-// 	Id            uint64        `json:"id"`
-// 	InitBasicInfo InitBasicInfo `json:"initbasicinfo"`
-// }
+func (registerMedicRequest *RegisterMedicRequest) IsValid() (isValid bool) {
+	if len(registerMedicRequest.Name) > maxNameLength {
+		return false
+	}
+	return true
+}
+
+func (registerPatientRequest *RegisterPatientRequest) SetDefault() {
+	registerPatientRequest.Name = ""
+	return
+}
+
+func (registerPatientRequest *RegisterPatientRequest) IsValid() (isValid bool) {
+	if len(registerPatientRequest.Name) > maxNameLength {
+		return false
+	}
+	return true
+}
+
 
 type RegisterMedicRequest struct {
 	Name string `json:"name"`

@@ -4,9 +4,15 @@ package domain
 const (
 	// BaseEventPicture = "/home/ubuntu/lolkek/static/event/event.png"
 	maxDiaryTitleLength        = 200
-	maxRecordTitleLength       = 200
+	maxDiaryComplaintsLength   = 1000
+	maxDiaryAnamnesisLength	   = 1000
 	maxDiaryObjectivelyLength  = 1000
+	maxDiaryDiagnosisLength	   = 200
+
+	maxRecordTitleLength       = 200
 	maxRecordDescriptionLength = 3000
+
+	maxReminderFrequency	   = 50
 )
 
 func (r *ReminderInfo) SetDefault() {
@@ -29,11 +35,11 @@ func (er *DiaryCreateRequest) SetDefault() {
 	er.DiaryBasicInfo.SetDefault()
 }
 
-func (er *RecordCreateRequest) SetDefault() {
-	er.Description = ""
-	er.Title = ""
-	er.Characteristics = Characteristics{}
-}
+// func (er *RecordCreateRequest) SetDefault() {
+// 	er.Description = ""
+// 	er.Title = ""
+// 	er.Characteristics = Characteristics{}
+// }
 
 func (er *RecordCreateResponse) SetDefault() {
 	er.Id = 0
@@ -47,15 +53,21 @@ func (er *RecordCreateResponse) SetDefault() {
 }
 
 func (d DiaryBasicInfo) IsValid() (isValid bool) {
-	if len(d.Title) > maxDiaryTitleLength || len(d.Objectively) > maxDiaryObjectivelyLength || !d.Reminder.IsValid() {
+	if len(d.Title) > maxDiaryTitleLength ||
+	len(d.Complaints) > maxDiaryComplaintsLength ||
+	len(d.Anamnesis) > maxDiaryAnamnesisLength ||
+	len(d.Objectively) > maxDiaryObjectivelyLength ||
+	len(d.Diagnosis) > maxDiaryDiagnosisLength ||
+	!d.Reminder.IsValid() {
 		return false
 	}	
 	return true
 }
 
 func (r ReminderInfo) IsValid() (isValid bool) {
-	// TODO isDate function
-	// return !isDate(r.StartDate)
+	if (r.Frequency > maxReminderFrequency) {
+		return false
+	}
 	return true
 }
 
@@ -63,24 +75,24 @@ func (dr DiaryCreateRequest) IsValid() (isValid bool) {
 	return dr.DiaryBasicInfo.IsValid()
 }
 
-func (er RecordCreateRequest) IsValid() (isValid bool) {
-	if len(er.Title) > maxRecordTitleLength || len(er.Description) > maxRecordDescriptionLength {
-		return false
-	}
-	characteristicsList := [](*uint8){&er.Characteristics.Dryness,
-		&er.Characteristics.Edema,
-		&er.Characteristics.Itching,
-		&er.Characteristics.Pain,
-		&er.Characteristics.Peeling,
-		&er.Characteristics.Redness,
-	}
-	for ch := range characteristicsList {
-		if ch > 10 {
-			return false
-		}
-	}
-	return true
-}
+// func (er RecordCreateRequest) IsValid() (isValid bool) {
+// 	if len(er.Title) > maxRecordTitleLength || len(er.Description) > maxRecordDescriptionLength {
+// 		return false
+// 	}
+// 	characteristicsList := [](*uint8){&er.Characteristics.Dryness,
+// 		&er.Characteristics.Edema,
+// 		&er.Characteristics.Itching,
+// 		&er.Characteristics.Pain,
+// 		&er.Characteristics.Peeling,
+// 		&er.Characteristics.Redness,
+// 	}
+// 	for ch := range characteristicsList {
+// 		if ch > 10 {
+// 			return false
+// 		}
+// 	}
+// 	return true
+// }
 
 func (er DiaryUpdateRequest) IsValid() (isValid bool) {
 	return er.DiaryBasicInfo.IsValid()
@@ -174,11 +186,11 @@ type DiaryResponse struct {
 	Records     Records           `json:"records"`
 }
 
-type RecordCreateRequest struct {
-	Title           string          `json:"title"`
-	Description     string          `json:"description"`
-	Characteristics Characteristics `json:"characteristics"`
-}
+// type RecordCreateRequest struct {
+// 	Title           string          `json:"title"`
+// 	Description     string          `json:"description"`
+// 	Characteristics Characteristics `json:"characteristics"`
+// }
 
 type ImageInfo struct {
 	Id       uint64  `json:"id"`
@@ -198,10 +210,10 @@ type RecordCreateResponse struct {
 	ImageList       []ImageInfo     `json:"imagelist"`
 }
 
-type RecordUpdateRequest struct {
-	Id                  uint64              `json:"id"`
-	RecordCreateRequest RecordCreateRequest `json:"RecordCreateRequest"`
-}
+// type RecordUpdateRequest struct {
+// 	Id                  uint64              `json:"id"`
+// 	RecordCreateRequest RecordCreateRequest `json:"RecordCreateRequest"`
+// }
 
 type Characteristics struct {
 	Dryness uint8 `json:"dryness"`
