@@ -230,7 +230,7 @@ func (handler *MLServicesHandler) ImageQualityAssesment(w http.ResponseWriter, r
 		return
 	}
 
-	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("127.0.0.1:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Error(err)
 		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
@@ -280,7 +280,7 @@ func (handler *MLServicesHandler) DiarisationRequestToMS(diarisationId uint64, f
 		log.Error(err)
 	}
 
-	conn, err := grpc.Dial("127.0.0.1:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Error(err)
 	}
