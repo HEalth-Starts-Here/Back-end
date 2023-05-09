@@ -27,6 +27,8 @@ func validImageExtenstions(files []*multipart.FileHeader) bool {
 		}
 		_, is := availableExtensions[extension]
 		if !is {
+			log.Info("Wrong extension:")
+			log.Info(extension)
 			return false
 		}
 
