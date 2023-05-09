@@ -13,20 +13,21 @@ import (
 	"os"
 )
 
-func GetExtension(file *multipart.FileHeader) (string, bool) {
-	k := len(file.Filename) - 1
-	extension := ""
-	for k != 0 {
-		if k == 0 {
-			return "", false
-		}
-		if (file.Filename)[k] == '.' {
-			extension = (file.Filename)[k+1:]
-		}
-		k = k - 1
-	}
-	return extension, true
-}
+// func GetExtension(file *multipart.FileHeader) (string) {
+// 	// k := len(file.Filename) - 1
+// 	// extension := ""
+// 	// for k != 0 {
+// 	// 	if k == 0 {
+// 	// 		return "", false
+// 	// 	}
+// 	// 	if (file.Filename)[k] == '.' {
+// 	// 		extension = (file.Filename)[k+1:]
+// 	// 	}
+// 	// 	k = k - 1
+// 	// }
+// 	return filepath.Ext(file.Filename)
+// 	// return extension, true
+// }
 
 func ExtractNames(filePaths []string) (fileName []string) {
 	imageNames := []string{}

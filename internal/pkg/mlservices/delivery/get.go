@@ -5,6 +5,7 @@ import (
 	"hesh/internal/pkg/domain"
 	"io"
 	"mime/multipart"
+	"path/filepath"
 	"strconv"
 
 	// "mime/multipart"
@@ -37,12 +38,9 @@ import (
 )
 
 func validAudioExtenstions(files []*multipart.FileHeader) bool {
-	availableExtensions := map[string]struct{}{"mp3": {}}
+	availableExtensions := map[string]struct{}{".mp3": {}}
 	for i := range files {
-		extension, haveExtension := filesaver.GetExtension(files[i])
-		if !haveExtension {
-			return false
-		}
+		extension := filepath.Ext(files[i].Filename)
 		_, is := availableExtensions[extension]
 		if !is {
 			return false
@@ -232,7 +230,7 @@ func (handler *MLServicesHandler) ImageQualityAssesment(w http.ResponseWriter, r
 		return
 	}
 
-	conn, err := grpc.Dial("127.0.0.1:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Error(err)
 		http.Error(w, domain.Err.ErrObj.InternalServer.Error(), http.StatusInternalServerError)
@@ -282,7 +280,7 @@ func (handler *MLServicesHandler) DiarisationRequestToMS(diarisationId uint64, f
 		log.Error(err)
 	}
 
-	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("127.0.0.1:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Error(err)
 	}

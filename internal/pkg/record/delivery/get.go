@@ -6,6 +6,7 @@ import (
 	"hesh/internal/pkg/utils/filesaver"
 	"hesh/internal/pkg/utils/log"
 	"hesh/internal/pkg/utils/sanitizer"
+	"path/filepath"
 
 	"io/ioutil"
 	"mime/multipart"
@@ -19,12 +20,10 @@ import (
 )
 
 func validImageExtenstions(files []*multipart.FileHeader) bool {
-	availableExtensions := map[string]struct{}{"jpeg": {}, "png": {}, "jpg": {}}
+	availableExtensions := map[string]struct{}{".jpeg": {}, ".png": {}, ".jpg": {}}
 	for i := range files {
-		extension, haveExtension := filesaver.GetExtension(files[i])
-		if !haveExtension {
-			return false
-		}
+		// extension := filesaver.GetExtension(files[i])
+		extension := filepath.Ext(files[i].Filename)
 		_, is := availableExtensions[extension]
 		if !is {
 			log.Info("Wrong extension:")
