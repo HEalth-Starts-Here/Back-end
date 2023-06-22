@@ -1,6 +1,7 @@
 package userrepository
 
 import (
+	"fmt"
 	"hesh/internal/pkg/database"
 	"hesh/internal/pkg/domain"
 
@@ -19,7 +20,7 @@ func InitUserRep(manager *database.DBManager) domain.UserRepository {
 }
 
 func (er *dbuserrepository) UserInit(userId uint64) (bool, domain.UserInfo, error) {
-	query := queryGetUserInfo
+	query := fmt.Sprintf(queryGetUserInfo, er.dbm.EncryptionKey, er.dbm.EncryptionKey)
 	// if userInitInfo.InitBasicInfo.IsMedic{
 	// 	query = queryMedicInit
 	// } else {
@@ -44,7 +45,7 @@ func (er *dbuserrepository) UserInit(userId uint64) (bool, domain.UserInfo, erro
 }
 
 func (er *dbuserrepository) RegisterMedic(userInfoRequest domain.RegisterMedicRequest, medicId uint64) (domain.UserInfo, error) {
-	query := queryRegisterMedic
+	query := fmt.Sprintf(queryRegisterMedic, er.dbm.EncryptionKey, er.dbm.EncryptionKey)
 	// if userInitInfo.InitBasicInfo.IsMedic{
 	// 	query = queryMedicInit
 	// } else {
@@ -65,7 +66,7 @@ func (er *dbuserrepository) RegisterMedic(userInfoRequest domain.RegisterMedicRe
 }
 
 func (er *dbuserrepository) RegisterPatient(patientInfoRequest domain.RegisterPatientRequest, patientId uint64) (domain.UserInfo, error) {
-	query := queryRegisterPatient
+	query := fmt.Sprintf(queryRegisterPatient, er.dbm.EncryptionKey, er.dbm.EncryptionKey)
 	// if userInitInfo.InitBasicInfo.IsMedic{
 	// 	query = queryMedicInit
 	// } else {
@@ -104,7 +105,7 @@ func (er *dbuserrepository) CheckAndDeleteToken(diaryId uint64, linkToken string
 }
 
 func (er *dbuserrepository) LinkPatientToDiary(patientId, diaryId uint64) (uint64, uint64, error) {
-	query := queryLinkPatientToDiary
+	query := fmt.Sprintf(queryLinkPatientToDiary, er.dbm.EncryptionKey, er.dbm.EncryptionKey)
 	resp, err := er.dbm.Query(query,
 		patientId, diaryId)
 	if err != nil {

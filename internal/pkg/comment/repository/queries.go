@@ -4,11 +4,11 @@ const (
 	queryCheckUserRole = `
 	SELECT true
 	FROM medics
-	WHERE medics.vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text
+	WHERE medics.vkid = encrypt($1::bigint::text::bytea,'%s'::bytea,'aes'::text)::text
 	UNION ALL
 	SELECT false
 	FROM patients
-	WHERE patients.vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text;
+	WHERE patients.vkid = encrypt($1::bigint::text::bytea,'%s'::bytea,'aes'::text)::text;
 	`
 
 	queryCreateComment = `
@@ -34,3 +34,4 @@ const (
 	WHERE id = $1;
 	`
 )
+

@@ -16,17 +16,17 @@ const (
 	queryMedicExist = `
 	SELECT 
 	FROM medics
-	WHERE vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text;
+	WHERE vkid = encrypt($1::bigint::text::bytea,'%s'::bytea,'aes'::text)::text;
 	`
 
 	queryUserExist = `
 	SELECT 
 	FROM medics
-	WHERE vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text
+	WHERE vkid = encrypt($1::bigint::text::bytea,'%s'::bytea,'aes'::text)::text
 	UNION ALL
 	SELECT
 	FROM patients
-	WHERE vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text;
+	WHERE vkid = encrypt($1::bigint::text::bytea,'%s'::bytea,'aes'::text)::text;
 	`
 
 	//TODO rename to filename
@@ -152,13 +152,13 @@ const (
 	`
 
 	queryGetMedicIdFromDiary = `
-	SELECT convert_from(decrypt(medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint
+	SELECT convert_from(decrypt(medicid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint
 	FROM diaries
 	WHERE id = $1;
 	`
 
 	queryGetMedicAndPatientIdsFromDiaryOfRecord = `
-	SELECT convert_from(decrypt(medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, convert_from(decrypt(patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint
+	SELECT convert_from(decrypt(medicid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint, convert_from(decrypt(patientid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint
 	FROM diaries
 	JOIN medicrecords
 	ON diaries.id = medicrecords.diaryid

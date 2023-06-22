@@ -19,7 +19,7 @@ func InitSearchRep(manager *database.DBManager) domain.SearchRepository {
 }
 
 func (er *dbsearchrepository) CheckUserRole(userId uint64) (bool, bool, error) {
-	query := queryCheckUserRole
+	query := fmt.Sprintf(queryCheckUserRole, er.dbm.EncryptionKey, er.dbm.EncryptionKey)
 	resp, err := er.dbm.Query(query,
 		userId)
 	if err != nil {
@@ -44,7 +44,7 @@ func (cr *dbsearchrepository) SearchDiary (userId uint64, isMedic bool, searchPa
 		visavis = "patients"
 	}
 	textInDiary := "%" + searchParams.Text +"%"
-	query = fmt.Sprintf(query, textInDiary, textInDiary, visavis, textInDiary)
+	query = fmt.Sprintf(query,cr.dbm.EncryptionKey, cr.dbm.EncryptionKey, cr.dbm.EncryptionKey, cr.dbm.EncryptionKey, textInDiary, textInDiary, visavis, textInDiary)
 	resp, err = cr.dbm.Query(query, userId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)

@@ -13,7 +13,7 @@ clean:
 .PHONY: server test clean
 
 go-run: ${SRC_MAIN}
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go run ${SRC_MAIN}
+	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go run ${SRC_MAIN} -key secret
 
 go-run-autmcs: ${SRC_AUTMCS}
 	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go run ${SRC_AUTMCS}

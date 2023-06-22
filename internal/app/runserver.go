@@ -10,6 +10,7 @@ import (
 	"hesh/internal/pkg/utils/setter"
 	"net/http"
 	"os"
+	"flag"
 
 	"github.com/gorilla/mux"
 	// "github.com/prometheus/client_golang/prometheus/promhttp"
@@ -29,8 +30,11 @@ func RunServer() {
 	// api.Use(metrics.Metrics)
 	// api.Use(middlewares.PanicRecovery)
 	// api.Use(middlewares.CsrfMdlw)
+	encryptionKey := flag.String("key", "", "encrypt key")
+	flag.Parse()
+	fmt.Printf("(*encryptionKey): %v\n", (*encryptionKey))
 
-	db := database.InitDatabase()
+	db := database.InitDatabase(*encryptionKey)
 	db.Connect()
 	defer db.Disconnect()
 

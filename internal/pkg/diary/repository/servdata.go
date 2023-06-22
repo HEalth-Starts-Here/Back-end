@@ -25,7 +25,7 @@ func InitDiaryRep(manager *database.DBManager) domain.DiaryRepository {
 }
 
 func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicId uint64) (domain.DiaryCreateResponse, error) {
-	query := queryCreateDiary
+	query := fmt.Sprintf(queryCreateDiary, er.dbm.EncryptionKey, er.dbm.EncryptionKey)
 	fmt.Printf("diary.DiaryBasicInfo.Reminder.StartDate: %v\n", diary.DiaryBasicInfo.Reminder.StartDate)
 	startDate, err := cast.StringToDate(diary.DiaryBasicInfo.Reminder.StartDate)
 	if err != nil {
@@ -60,7 +60,7 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 		diary.DiaryBasicInfo.Reminder.Variant,
 		diary.DiaryBasicInfo.Reminder.Frequency,
 		startDate.Format("2006-01-02"))
-		// diary.DiaryBasicInfo.Reminder.StartDate)
+	// diary.DiaryBasicInfo.Reminder.StartDate)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)
@@ -78,8 +78,8 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 			Anamnesis:   cast.ToString(resp[0][5]),
 			Objectively: cast.ToString(resp[0][6]),
 			Diagnosis:   cast.ToString(resp[0][7]),
-			Reminder : domain.ReminderInfo {
-				Variant: cast.ToBool(resp[0][8]),
+			Reminder: domain.ReminderInfo{
+				Variant:   cast.ToBool(resp[0][8]),
 				Frequency: cast.ToUint64(resp[0][9]),
 				StartDate: cast.TimeToStr(cast.ToDate(resp[0][10]), false),
 			},
@@ -121,7 +121,7 @@ func (er *dbdiaryrepository) CheckAndDeleteToken(diaryId uint64, linkToken strin
 }
 
 func (er *dbdiaryrepository) LinkDiary(patientId uint64, diaryId uint64) (domain.DiaryLinkResponse, error) {
-	query := queryLinkDiary
+	query := fmt.Sprintf(queryLinkDiary, er.dbm.EncryptionKey, er.dbm.EncryptionKey, er.dbm.EncryptionKey)
 	resp, err := er.dbm.Query(query,
 		diaryId,
 		patientId)
@@ -145,10 +145,9 @@ func (er *dbdiaryrepository) LinkDiary(patientId uint64, diaryId uint64) (domain
 			Objectively: cast.ToString(resp[0][8]),
 			Diagnosis:   cast.ToString(resp[0][9]),
 			Reminder: domain.ReminderInfo{
-				Variant: cast.ToBool(resp[0][10]),
+				Variant:   cast.ToBool(resp[0][10]),
 				Frequency: cast.ToUint64(resp[0][11]),
 				StartDate: cast.TimeToStr(cast.ToDate(resp[0][12]), false),
-				
 			},
 		},
 	}, nil
@@ -177,7 +176,8 @@ func (er *dbdiaryrepository) CompleteDiary(diaryId uint64) error {
 func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, error) {
 	var resp []database.DBbyterow
 	var err error
-	query := queryDiaryList
+	// query := queryDiaryList
+	query := fmt.Sprintf(queryDiaryList, cr.dbm.EncryptionKey, cr.dbm.EncryptionKey, cr.dbm.EncryptionKey, cr.dbm.EncryptionKey)
 	resp, err = cr.dbm.Query(query, userId)
 
 	if err != nil {
@@ -217,7 +217,7 @@ func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, 
 }
 
 func (er *dbdiaryrepository) GetUserRole(userId uint64) (bool, bool, error) {
-	query := queryGetUserRole
+	query := fmt.Sprintf(queryGetUserRole, er.dbm.EncryptionKey, er.dbm.EncryptionKey)
 	resp, err := er.dbm.Query(query, userId)
 	// resp, err := er.dbm.Query(query, cast.cast.Uint64ToStr(userId))
 	if err != nil {
@@ -234,7 +234,7 @@ func (er *dbdiaryrepository) GetUserRole(userId uint64) (bool, bool, error) {
 func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryResponse, error) {
 	var resp []database.DBbyterow
 	var err error
-	query := queryGetCertainDiaryMainInfo
+	query := fmt.Sprintf(queryGetCertainDiaryMainInfo, dr.dbm.EncryptionKey, dr.dbm.EncryptionKey)
 	resp, err = dr.dbm.Query(query, diaryId)
 
 	if err != nil {
@@ -277,10 +277,10 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 				Objectively: cast.ToString(resp[0][9]),
 				Diagnosis:   cast.ToString(resp[0][10]),
 				Reminder: domain.ReminderInfo{
-					Variant: cast.ToBool(resp[0][11]),
+					Variant:   cast.ToBool(resp[0][11]),
 					Frequency: cast.ToUint64(resp[0][12]),
 					StartDate: cast.TimeToStr(cast.ToDate(resp[0][13]), false),
-				},			
+				},
 			},
 		},
 	}
@@ -345,7 +345,7 @@ func (dr *dbdiaryrepository) GetCertainDiary(diaryId uint64) (domain.DiaryRespon
 }
 
 func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdateRequest, diaryId uint64) (domain.DiaryUpdateResponse, error) {
-	query := queryUpdateDiary
+	query := fmt.Sprintf(queryUpdateDiary, er.dbm.EncryptionKey, er.dbm.EncryptionKey)
 	startDate, err := cast.StringToDate(diary.DiaryBasicInfo.Reminder.StartDate)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
@@ -386,7 +386,7 @@ func (er *dbdiaryrepository) UpdateDiary(diary domain.DiaryUpdateRequest, diaryI
 			Objectively: cast.ToString(resp[0][7]),
 			Diagnosis:   cast.ToString(resp[0][8]),
 			Reminder: domain.ReminderInfo{
-				Variant: cast.ToBool(resp[0][9]),
+				Variant:   cast.ToBool(resp[0][9]),
 				Frequency: cast.ToUint64(resp[0][10]),
 				StartDate: cast.TimeToStr(cast.ToDate(resp[0][11]), false),
 			},

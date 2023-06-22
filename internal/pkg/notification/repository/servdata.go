@@ -23,7 +23,7 @@ func InitNotificationRep(manager *database.DBManager) domain.NotificationReposit
 func (r *dbNotificationRepository) PatientRecordRemind() ([]domain.PatientNotificationInfo, error) {
 	var resp []database.DBbyterow
 	var err error
-	query := getPatientsReminders
+	query := fmt.Sprintf(getPatientsReminders, r.dbm.EncryptionKey,"%", r.dbm.EncryptionKey)
 
 	resp, err = r.dbm.Query(query)
 

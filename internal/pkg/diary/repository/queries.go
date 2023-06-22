@@ -3,18 +3,18 @@ package diaryrepository
 // import "fmt"
 
 // func encryptVKID(id uint64)(string){
-// 	return fmt.Sprintf("encrypt(%d::text::bytea,'secret','aes')", id)
+// 	return fmt.Sprintf("encrypt(%d::text::bytea,'%s','aes')", id)
 // }
 
 const (
-	// encryptVKID = "encrypt(%s::text::bytea,'secret','aes')"
+	// encryptVKID = "encrypt(%s::text::bytea,'%s','aes')"
 
 	queryCreateDiary = `
 	INSERT INTO
     diaries (medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate)
 	VALUES
     (
-		encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text,
+		encrypt($1::bigint::text::bytea,'%s'::bytea,'aes'::text)::text,
         $2,
         $3,
         $4,
@@ -25,7 +25,7 @@ const (
         $9,
         $10
     )
-	RETURNING id, convert_from(decrypt(medicId::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
+	RETURNING id, convert_from(decrypt(medicId::text::bytea,'%s','aes'),'SQL_ASCII')::bigint, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
 	`
 
 	queryCreateDiaryLinkToken = `
@@ -46,12 +46,12 @@ const (
 
 	queryLinkDiary = `
 	UPDATE diaries
-	SET patientid = encrypt($2::bigint::text::bytea,'secret'::bytea,'aes'::text)::text
+	SET patientid = encrypt($2::bigint::text::bytea,'%s'::bytea,'aes'::text)::text
 	FROM diaries d
 	JOIN medics m
 	ON d.medicid = m.vkid
 	WHERE diaries.id = $1
-	RETURNING d.id, convert_from(decrypt(d.medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, m.name, convert_from(decrypt(d.patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, d.creatingdate, d.title, d.complaints, d.anamnesis, d.objectively, d.diagnosis, d.variant, d.frequency, d.startdate;
+	RETURNING d.id, convert_from(decrypt(d.medicid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint, m.name, convert_from(decrypt(d.patientid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint, d.creatingdate, d.title, d.complaints, d.anamnesis, d.objectively, d.diagnosis, d.variant, d.frequency, d.startdate;
 	`
 
 	// queryLinkDiary2 = `
@@ -79,17 +79,17 @@ const (
 	`
 
 	queryDiaryList = `
-	SELECT id, convert_from(decrypt(medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, medics.name, convert_from(decrypt(patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, patients.name, creatingdate, title, objectively, diarytokens.token, iscomplete
+	SELECT id, convert_from(decrypt(medicid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint, medics.name, convert_from(decrypt(patientid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint, patients.name, creatingdate, title, objectively, diarytokens.token, iscomplete
 	FROM diaries
 	LEFT JOIN patients ON diaries.patientid = patients.vkid
 	JOIN medics ON diaries.medicid = medics.vkid
 	LEFT JOIN diarytokens ON diaries.id = diarytokens.diaryid
-	WHERE medicid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text OR patientid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text
+	WHERE medicid = encrypt($1::bigint::text::bytea,'%s'::bytea,'aes'::text)::text OR patientid = encrypt($1::bigint::text::bytea,'%s'::bytea,'aes'::text)::text
 	ORDER BY creatingdate DESC;
 	`
 
 	queryGetCertainDiaryMainInfo = `
-	SELECT patients.name, diaries.id, convert_from(decrypt(medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, medics.name, convert_from(decrypt(patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate
+	SELECT patients.name, diaries.id, convert_from(decrypt(medicid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint, medics.name, convert_from(decrypt(patientid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate
 	FROM diaries 
 	LEFT JOIN patients on diaries.patientid = patients.vkid
 	LEFT JOIN medics on diaries.medicid = medics.vkid
@@ -125,24 +125,24 @@ const (
 	queryGetUserRole = `
 	SELECT true
 	FROM medics 
-	WHERE vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text 
+	WHERE vkid = encrypt($1::bigint::text::bytea,'%s'::bytea,'aes'::text)::text 
 	UNION ALL 
 	SELECT false
 	FROM patients 
-	WHERE vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text;
+	WHERE vkid = encrypt($1::bigint::text::bytea,'%s'::bytea,'aes'::text)::text;
 	`
 
-	queryGetCertainDiaryRecords = `
-	SELECT convert_from(decrypt(diaries.medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint as userid, mr.creatingdate, mr.title, details
-	FROM medicRecords mr
-	JOIN diaries ON diaries.id = diaryid 
-	WHERE diaryid = $1
-	UNION ALL
-	SELECT convert_from(decrypt(diaries.patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint as userid, pr.creatingdate, pr.title, details
-	FROM patientRecords pr
-	JOIN diaries ON diaries.id = diaryid 
-	WHERE diaryid = $1;
-	`
+	// queryGetCertainDiaryRecords = `
+	// SELECT convert_from(decrypt(diaries.medicid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint as userid, mr.creatingdate, mr.title, details
+	// FROM medicRecords mr
+	// JOIN diaries ON diaries.id = diaryid 
+	// WHERE diaryid = $1
+	// UNION ALL
+	// SELECT convert_from(decrypt(diaries.patientid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint as userid, pr.creatingdate, pr.title, details
+	// FROM patientRecords pr
+	// JOIN diaries ON diaries.id = diaryid 
+	// WHERE diaryid = $1;
+	// `
 
 	// queryCreateRecord = `
 	// INSERT INTO
@@ -168,6 +168,6 @@ const (
 	UPDATE diaries
 	SET title = $1, complaints = $2, anamnesis = $3, objectively = $4, diagnosis = $5, variant = $6, frequency = $7, startdate = $8
 	WHERE id = $9
-	RETURNING id, convert_from(decrypt(medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, convert_from(decrypt(patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, creatingdate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
+	RETURNING id, convert_from(decrypt(medicid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint, convert_from(decrypt(patientid::text::bytea,'%s','aes'),'SQL_ASCII')::bigint, creatingdate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
 	`
 )

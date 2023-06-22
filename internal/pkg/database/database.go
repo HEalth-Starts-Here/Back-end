@@ -18,12 +18,14 @@ type ConnectionPool interface {
 }
 
 type DBManager struct {
-	Pool ConnectionPool
+	Pool          ConnectionPool
+	EncryptionKey string
 }
 
-func InitDatabase() *DBManager {
+func InitDatabase(encryptionKey string) *DBManager {
 	return &DBManager{
-		Pool: nil,
+		Pool:          nil,
+		EncryptionKey: encryptionKey,
 	}
 }
 

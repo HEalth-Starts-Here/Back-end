@@ -22,7 +22,7 @@ func InitCommentRep(manager *database.DBManager) domain.CommentRepository {
 }
 
 func (er *dbcommentrepository) CheckUserRole(userId uint64) (bool, bool, error) {
-	query := queryCheckUserRole
+	query := fmt.Sprintf(queryCheckUserRole, er.dbm.EncryptionKey, er.dbm.EncryptionKey)
 	resp, err := er.dbm.Query(query,
 		userId)
 	if err != nil {

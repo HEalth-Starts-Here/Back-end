@@ -26,7 +26,7 @@ func InitRecordRep(manager *database.DBManager) domain.RecordRepository {
 func (cr *dbrecordrepository) MedicExist(medicId uint64) (bool, error) {
 	var resp []database.DBbyterow
 	var err error
-	query := queryMedicExist
+	query := fmt.Sprintf(queryMedicExist, cr.dbm.EncryptionKey)
 	resp, err = cr.dbm.Query(query, medicId)
 
 	if err != nil {
@@ -43,7 +43,7 @@ func (cr *dbrecordrepository) MedicExist(medicId uint64) (bool, error) {
 func (cr *dbrecordrepository) UserExist(userId uint64) (bool, error) {
 	var resp []database.DBbyterow
 	var err error
-	query := queryUserExist
+	query := fmt.Sprintf(queryUserExist, cr.dbm.EncryptionKey, cr.dbm.EncryptionKey)
 	resp, err = cr.dbm.Query(query, userId)
 
 	if err != nil {
@@ -446,7 +446,7 @@ func (er *dbrecordrepository) DeleteRecordImage(isMedic bool, recordId uint64) (
 func (dr *dbrecordrepository) GetMedicIdFromDiary(diaryId uint64) (uint64, error) {
 	var resp []database.DBbyterow
 	var err error
-	query := queryGetMedicIdFromDiary
+	query := fmt.Sprintf(queryGetMedicIdFromDiary, dr.dbm.EncryptionKey)
 	resp, err = dr.dbm.Query(query, diaryId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
@@ -466,7 +466,7 @@ func (dr *dbrecordrepository) GetMedicIdFromDiary(diaryId uint64) (uint64, error
 func (dr *dbrecordrepository) GetMedicAndPatientIdsFromDiaryOfRecord(recordId uint64) (uint64, uint64, error) {
 	var resp []database.DBbyterow
 	var err error
-	query := queryGetMedicAndPatientIdsFromDiaryOfRecord
+	query := fmt.Sprintf(queryGetMedicAndPatientIdsFromDiaryOfRecord, dr.dbm.EncryptionKey, dr.dbm.EncryptionKey)
 	resp, err = dr.dbm.Query(query, recordId)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
