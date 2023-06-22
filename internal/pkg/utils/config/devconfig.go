@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -44,8 +45,9 @@ type DevConfig struct {
 			Port     string `mapstructure:"port"`
 		} `mapstructure:"rating"`
 	} `mapstructure:"mcs"`
-	LoadedFilesPath    string `mapstructure:"loadedfilespath"`
-	ProcessedFilesPath string `mapstructure:"processedfilespath"`
+	LoadedFilesPath                string `mapstructure:"loadedfilespath"`
+	ProcessedFilesPath             string `mapstructure:"processedfilespath"`
+	VkTokenEnvironmentVariableName string `mapstructure:"vktokenenvironmentvariablename"`
 }
 
 var DevConfigStore DevConfig

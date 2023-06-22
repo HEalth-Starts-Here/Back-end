@@ -2,9 +2,12 @@ package mlservicesdelivery
 
 import (
 	"bytes"
+	"fmt"
 	"hesh/internal/pkg/domain"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
+	"path"
 	"path/filepath"
 	"strconv"
 
@@ -26,7 +29,11 @@ import (
 	mlsgrpc "hesh/internal/pkg/mlservices/delivery/grpc"
 	"net/http"
 
+	"crypto/tls"
+	"crypto/x509"
+
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/gorilla/mux"
@@ -273,6 +280,35 @@ func (handler *MLServicesHandler) ImageQualityAssesment(w http.ResponseWriter, r
 	w.WriteHeader(http.StatusCreated)
 }
 
+func loadTLSCredentials() (credentials.TransportCredentials, error) {
+	SSLFolder := "internal/app/SSL/"
+    // serverCert, err := tls.LoadX509KeyPair(path.Join("server-req.pem"), path.Join(SSLFolder, "server-key.pem"))
+    // Load certificate of the CA who signed server's certificate
+    pemServerCA, err := ioutil.ReadFile(path.Join(SSLFolder, "ca-cert.pem"))
+    if err != nil {
+        return nil, err
+    }
+
+    certPool := x509.NewCertPool()
+    if !certPool.AppendCertsFromPEM(pemServerCA) {
+        return nil, fmt.Errorf("failed to add server CA's certificate")
+    }
+
+    // Load client's certificate and private key
+    clientCert, err := tls.LoadX509KeyPair(path.Join(SSLFolder, "client-cert.pem"), path.Join(SSLFolder,"client-key.pem"))
+    if err != nil {
+        return nil, err
+    }
+
+    // Create the credentials and return it
+    config := &tls.Config{
+        Certificates: []tls.Certificate{clientCert},
+        RootCAs:      certPool,
+    }
+
+    return credentials.NewTLS(config), nil
+}
+
 func (handler *MLServicesHandler) DiarisationRequestToMS(diarisationId uint64, file multipart.File) {
 
 	buf := bytes.NewBuffer(nil)
@@ -280,7 +316,22 @@ func (handler *MLServicesHandler) DiarisationRequestToMS(diarisationId uint64, f
 		log.Error(err)
 	}
 
+
+
+	// tlsCredentials, err := loadTLSCredentials()
+    // if err != nil {
+	// 	msgError := "cannot load TLS credentials: "
+    //     panic(msgError + err.Error())
+    // }
+
+    // grpcServer := grpc.NewServer(
+    //     grpc.Creds(tlsCredentials),
+    //     grpc.UnaryInterceptor(interceptor.Unary()),
+    //     grpc.StreamInterceptor(interceptor.Stream()),
+    // )
+
 	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithTransportCredentials(tlsCredentials))
 	if err != nil {
 		log.Error(err)
 	}

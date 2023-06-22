@@ -37,6 +37,7 @@
             "port": "8083"
         } 
     },
-    "loadedfilespath": "static/lesions/raw/",
-    "processedfilespath": "static/segmented/"
+    "loadedfilespath":                  "static/lesions/raw/",
+    "processedfilespath":               "static/segmented/",
+    "vktokenenvironmentvariablename":   "VK_TOKEN"
 }

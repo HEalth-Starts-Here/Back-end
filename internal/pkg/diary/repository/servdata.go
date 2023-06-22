@@ -33,7 +33,21 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 		log.Error(err)
 		return domain.DiaryCreateResponse{}, err
 	}
-	fmt.Printf("startDate: %v\n", startDate)
+	println()
+	println()
+	fmt.Printf("medicId: %v\n", medicId)
+	fmt.Printf("time.Now().Format(\"2006.01.02 15:04:05\"): %v\n", time.Now().Format("2006.01.02 15:04:05"))
+	fmt.Printf("diary.DiaryBasicInfo.Title: %v\n", diary.DiaryBasicInfo.Title)
+	fmt.Printf("diary.DiaryBasicInfo.Complaints: %v\n", diary.DiaryBasicInfo.Complaints)
+	fmt.Printf("diary.DiaryBasicInfo.Anamnesis: %v\n", diary.DiaryBasicInfo.Anamnesis)
+	fmt.Printf("diary.DiaryBasicInfo.Objectively: %v\n", diary.DiaryBasicInfo.Objectively)
+	fmt.Printf("diary.DiaryBasicInfo.Diagnosis: %v\n", diary.DiaryBasicInfo.Diagnosis)
+	fmt.Printf("diary.DiaryBasicInfo.Reminder.Variant: %v\n", diary.DiaryBasicInfo.Reminder.Variant)
+	fmt.Printf("diary.DiaryBasicInfo.Reminder.Frequency: %v\n", diary.DiaryBasicInfo.Reminder.Frequency)
+	fmt.Printf("startDate.Format(\"2006-01-02\"): %v\n", startDate.Format("2006-01-02"))
+	println()
+	println()
+
 	resp, err := er.dbm.Query(query,
 		medicId,
 		// nil,
@@ -45,7 +59,7 @@ func (er *dbdiaryrepository) CreateDiary(diary domain.DiaryCreateRequest, medicI
 		diary.DiaryBasicInfo.Diagnosis,
 		diary.DiaryBasicInfo.Reminder.Variant,
 		diary.DiaryBasicInfo.Reminder.Frequency,
-		startDate)
+		startDate.Format("2006-01-02"))
 		// diary.DiaryBasicInfo.Reminder.StartDate)
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)

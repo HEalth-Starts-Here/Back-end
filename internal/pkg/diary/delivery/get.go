@@ -3,9 +3,11 @@ package diarydelivery
 import (
 	"fmt"
 	"hesh/internal/pkg/domain"
+	"hesh/internal/pkg/utils/config"
 	"hesh/internal/pkg/utils/log"
 	"hesh/internal/pkg/utils/sanitizer"
 	"io/ioutil"
+	"os"
 
 	"strconv"
 
@@ -13,7 +15,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	// "github.com/SevereCloud/vksdk/v2/api"
+	"github.com/SevereCloud/vksdk/v2/api"
 	"github.com/mailru/easyjson"
 )
 
@@ -52,12 +54,12 @@ func (handler *DiaryHandler) CreateDiary(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	fmt.Printf("DiaryCreateRequest.DiaryBasicInfo.Reminder.StartDate: %v\n", DiaryCreateRequest.DiaryBasicInfo.Reminder.StartDate)
-	
+
 	// if cast.IntToStr(sessionId) != EventCreatingRequest.UserId {
-		// 	http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
-		// 	w.WriteHeader(http.StatusBadRequest)
-		// }
-		
+	// 	http.Error(w, domain.Err.ErrObj.BadInput.Error(), http.StatusBadRequest)
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// }
+
 	sanitizer.SanitizeDiaryCreating(DiaryCreateRequest)
 	fmt.Printf("DiaryCreateRequest.DiaryBasicInfo.Reminder.StartDate: %v\n", DiaryCreateRequest.DiaryBasicInfo.Reminder.StartDate)
 
@@ -245,53 +247,42 @@ func (handler *DiaryHandler) GetDiary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// vk := api.NewVK("e80e2119e80e2119e80e21198ceb1d081fee80ee80e21198c168a958ccfd793e077d5da")
-	// println("123")
-	// println("123")
-	// println("123")
-	// println("123")
-	// println("123")
-	// println("123")
-	// users, err := vk.UsersGet(api.Params{
-	// 	"user_ids": 165523569,
-	// 	"fields": "photo_50,verified,photo_id,bdate",
-	// 	// "fields": "photo_50,verified",
-	// })
-	// if err != nil {
-	// 	log.Error(err)
-	// }
-	// fmt.Printf("users: %v\n", users)
+	println(os.Getenv("VK_TOKEN"))
+	println(os.Getenv("VK_TOKEN"))
+	vk := api.NewVK(os.Getenv(config.DevConfigStore.VkTokenEnvironmentVariableName))
 
-	// var userIds []int
+	users, err := vk.UsersGet(api.Params{
+		"user_ids": 165523569,
+		"fields":   "photo_50,verified,photo_id,bdate",
+		// "fields": "photo_50,verified",
+	})
+	if err != nil {
+		log.Error(err)
+	}
+	fmt.Printf("users: %v\n", users)
+
+	var userIds []int
+	userIds = append(userIds, 165523569)
 	// userIds = append(userIds, 165523569)
-	// // userIds = append(userIds, 165523569)
-	// notidications, err := vk.NotificationsSendMessage(api.Params{
-	// 	"user_ids": userIds,
-	// 	// "message":  "Вам пришла электронная повестка! Узнать подробности можно в личном кабинете на портале ГосУслуг (gosuslugi.ru)",
-	// 	"message":  "Доброе утро! Сегодня вам по плану желательно сделать: 2 запись(и) в дневнике \"Дневник №1\", 1 запись(и) в дневнике \"Дневник №2\"",
-	// 	// "sending_mode":  5,
-	// })
-	// if err != nil {
-	// 	log.Error(err)
-	// }
-	// fmt.Printf("notidications: %v\n", notidications)
-	// fmt.Printf("notidications: %v\n", notidications)
-	// fmt.Printf("notidications: %v\n", notidications)
-	// fmt.Printf("notidications: %v\n", notidications)
-	// fmt.Printf("notidications: %v\n", notidications)
-	// fmt.Printf("notidications: %v\n", notidications)
-	// fmt.Printf("notidications: %v\n", notidications)
-	// fmt.Printf("notidications: %v\n", notidications)
-	// println()
-	// println()
-
-
-
-
-
-
-
-
+	notidications, err := vk.NotificationsSendMessage(api.Params{
+		"user_ids": userIds,
+		// "message":  "Вам пришла электронная повестка! Узнать подробности можно в личном кабинете на портале ГосУслуг (gosuslugi.ru)",
+		"message": "Доброе утро! Сегодня вам по плану желательно сделать: 3 запись(и) в дневнике \"Небольшой ожог руки\", 1 запись(и) в дневнике \"Детская ветрянка\"",
+		// "sending_mode":  5,
+	})
+	if err != nil {
+		log.Error(err)
+	}
+	fmt.Printf("notidications: %v\n", notidications)
+	fmt.Printf("notidications: %v\n", notidications)
+	fmt.Printf("notidications: %v\n", notidications)
+	fmt.Printf("notidications: %v\n", notidications)
+	fmt.Printf("notidications: %v\n", notidications)
+	fmt.Printf("notidications: %v\n", notidications)
+	fmt.Printf("notidications: %v\n", notidications)
+	fmt.Printf("notidications: %v\n", notidications)
+	println()
+	println()
 
 	out, err := easyjson.Marshal(diaryList)
 	if err != nil {
@@ -365,7 +356,6 @@ func (handler *DiaryHandler) GetCertainDiary(w http.ResponseWriter, r *http.Requ
 		w.WriteHeader(httpStatus)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 func (handler *DiaryHandler) UpdateDiary(w http.ResponseWriter, r *http.Request) {

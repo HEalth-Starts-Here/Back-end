@@ -126,6 +126,23 @@ VALUES
     );
 
 
+	INSERT INTO
+    diaries (medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate)
+	VALUES
+    (
+		165523569,
+        '2023.05.14 22:07:57',
+        'titleCURL',
+        'complaintsCURL',
+        'anamnesisCURL',
+        'objectivelyCURL',
+        'diagnosisCURL',
+        true,
+        5,
+        '2023-04-26'
+    )
+	RETURNING id, medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
+	
 
 
 -- INSERT INTO
@@ -413,12 +430,12 @@ VALUES
     ),
     (
         -- false,
-		7,
+		10,
         'Akne_face.jpg'
     ),
     (
         -- false,
-		7,
+		10,
         'Akne_back.jpg'
     );
 
@@ -527,7 +544,7 @@ VALUES
         NULL,
         true,
         '2022-05-01 15:47:24',
-        'В следующий раз обратить внимание на том, появилось ли новые очаги акне на лице.'
+        'В следующий раз обратить внимание на то, появилось ли новые очаги акне на лице.'
     ),
     (
         5,
