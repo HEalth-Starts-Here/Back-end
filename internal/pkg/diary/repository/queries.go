@@ -1,12 +1,20 @@
 package diaryrepository
 
+// import "fmt"
+
+// func encryptVKID(id uint64)(string){
+// 	return fmt.Sprintf("encrypt(%d::text::bytea,'secret','aes')", id)
+// }
+
 const (
+	// encryptVKID = "encrypt(%s::text::bytea,'secret','aes')"
+
 	queryCreateDiary = `
 	INSERT INTO
     diaries (medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate)
 	VALUES
     (
-		$1,
+		encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text,
         $2,
         $3,
         $4,
@@ -17,7 +25,7 @@ const (
         $9,
         $10
     )
-	RETURNING id, medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
+	RETURNING id, convert_from(decrypt(medicId::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
 	`
 
 	queryCreateDiaryLinkToken = `
@@ -38,12 +46,12 @@ const (
 
 	queryLinkDiary = `
 	UPDATE diaries
-	SET patientid = $2
+	SET patientid = encrypt($2::bigint::text::bytea,'secret'::bytea,'aes'::text)::text
 	FROM diaries d
 	JOIN medics m
 	ON d.medicid = m.vkid
 	WHERE diaries.id = $1
-	RETURNING d.id, d.medicid, m.name, d.patientid, d.creatingdate, d.title, d.complaints, d.anamnesis, d.objectively, d.diagnosis, d.variant, d.frequency, d.startdate;
+	RETURNING d.id, convert_from(decrypt(d.medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, m.name, convert_from(decrypt(d.patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, d.creatingdate, d.title, d.complaints, d.anamnesis, d.objectively, d.diagnosis, d.variant, d.frequency, d.startdate;
 	`
 
 	// queryLinkDiary2 = `
@@ -71,17 +79,17 @@ const (
 	`
 
 	queryDiaryList = `
-	SELECT id, medicid, medics.name, patientid, patients.name, creatingdate, title, objectively, diarytokens.token, iscomplete
+	SELECT id, convert_from(decrypt(medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, medics.name, convert_from(decrypt(patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, patients.name, creatingdate, title, objectively, diarytokens.token, iscomplete
 	FROM diaries
 	LEFT JOIN patients ON diaries.patientid = patients.vkid
 	JOIN medics ON diaries.medicid = medics.vkid
 	LEFT JOIN diarytokens ON diaries.id = diarytokens.diaryid
-	WHERE medicid = $1 OR patientid = $1
+	WHERE medicid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text OR patientid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text
 	ORDER BY creatingdate DESC;
 	`
 
 	queryGetCertainDiaryMainInfo = `
-	SELECT patients.name, diaries.id, medicid, medics.name, patientid, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate
+	SELECT patients.name, diaries.id, convert_from(decrypt(medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, medics.name, convert_from(decrypt(patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate
 	FROM diaries 
 	LEFT JOIN patients on diaries.patientid = patients.vkid
 	LEFT JOIN medics on diaries.medicid = medics.vkid
@@ -104,24 +112,33 @@ const (
 	FROM patientRecords
 	WHERE diaryid = $1;
 	`
+	// queryGetUserRole = fmt.Sprintf(`
+	// SELECT true
+	// FROM medics
+	// WHERE %s = $1
+	// UNION ALL
+	// SELECT false
+	// FROM patients
+	// WHERE %s = $1;
+	// `, queryGetCertainDiaryPatientRecords, queryGetCertainDiaryPatientRecords)
 
 	queryGetUserRole = `
 	SELECT true
 	FROM medics 
-	WHERE vkid = $1 
+	WHERE vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text 
 	UNION ALL 
 	SELECT false
 	FROM patients 
-	WHERE vkid = $1;
+	WHERE vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text;
 	`
 
 	queryGetCertainDiaryRecords = `
-	SELECT diaries.medicid as userid, mr.creatingdate, mr.title, details
+	SELECT convert_from(decrypt(diaries.medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint as userid, mr.creatingdate, mr.title, details
 	FROM medicRecords mr
 	JOIN diaries ON diaries.id = diaryid 
 	WHERE diaryid = $1
 	UNION ALL
-	SELECT diaries.patientid as userid, pr.creatingdate, pr.title, details
+	SELECT convert_from(decrypt(diaries.patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint as userid, pr.creatingdate, pr.title, details
 	FROM patientRecords pr
 	JOIN diaries ON diaries.id = diaryid 
 	WHERE diaryid = $1;
@@ -151,6 +168,6 @@ const (
 	UPDATE diaries
 	SET title = $1, complaints = $2, anamnesis = $3, objectively = $4, diagnosis = $5, variant = $6, frequency = $7, startdate = $8
 	WHERE id = $9
-	RETURNING id, medicid, patientid, creatingdate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
+	RETURNING id, convert_from(decrypt(medicid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, convert_from(decrypt(patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, creatingdate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
 	`
 )

@@ -2,15 +2,15 @@ INSERT INTO
     medics (vkid, name)
 VALUES
     (
-        111,
+        encrypt(111::text::bytea,'secret','aes'),
         'Иван Безуглый'
     ),
     (
-        222,
+        encrypt(222::text::bytea,'secret','aes'),
         'Евгений Нечаев'
     ),
     (
-        333,
+        encrypt(333::text::bytea,'secret','aes'),
         'Петр Уколов'
     );
 
@@ -18,15 +18,15 @@ INSERT INTO
     patients (vkid, name)
 VALUES
     (
-        11,
+        encrypt(11::text::bytea,'secret','aes'),
         'Максим Максимов'
     ),
     (
-        22,
+        encrypt(22::text::bytea,'secret','aes'),
         'Александр Александров'
     ),
     (
-        165523569,
+        encrypt(165523569::text::bytea,'secret','aes'),
         'Виктор Киселев'
     );
 
@@ -34,8 +34,8 @@ INSERT INTO
     diaries (medicId, patientId, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate)
 VALUES
     (
-        111,
-        11,
+        encrypt(111::text::bytea,'secret','aes'),
+        encrypt(11::text::bytea,'secret','aes'),
         '2022-04-10 15:47:24',
         'Название дневника 1',
         'Жалобы дневника 1',
@@ -47,8 +47,8 @@ VALUES
         '2022-04-10'
     ),
     (
-        111,
-        11,
+        encrypt(111::text::bytea,'secret','aes'),
+        encrypt(11::text::bytea,'secret','aes'),
         '2022-04-10 15:27:24',
         'Название дневника 2',
         'Жалобы дневника 2',
@@ -60,8 +60,8 @@ VALUES
         '2023-05-2'
     ),
     (
-        111,
-        NULL,
+        encrypt(111::text::bytea,'secret','aes'),
+        encrypt(NULL::text::bytea,'secret','aes'),
         '2022-04-10 15:37:24',
         'Название дневника 3',
         'Жалобы дневника 3',
@@ -73,8 +73,8 @@ VALUES
         '2023-05-1'
     ),
     (
-        333,
-        165523569,
+        encrypt(333::text::bytea,'secret','aes'),
+        encrypt(165523569::text::bytea,'secret','aes'),
         '2023-05-8 15:47:24',
         'Небольшой ожог руки',
         'Жалобы дневника 4',
@@ -86,8 +86,8 @@ VALUES
         '2023-05-01'
     ),
     (
-        333,
-        11,
+        encrypt(333::text::bytea,'secret','aes'),
+        encrypt(11::text::bytea,'secret','aes'),
         '2023-04-25 15:47:24',
         'Подрастковое акне на щеках',
         'Зуд и воспаление, связанные с высыпаниями. Темные пятна на коже в местах прошлых высыпаний.',
@@ -99,8 +99,8 @@ VALUES
         '2023-05-03'
     ),
     (
-        333,
-        22,
+        encrypt(333::text::bytea,'secret','aes'),
+        encrypt(22::text::bytea,'secret','aes'),
         '2023-04-29 15:47:24',
         'Длительная себорея',
         'Жалобы дневника 6',
@@ -112,8 +112,8 @@ VALUES
         '2023-05-06'
     ),
     (
-        333,
-        165523569,
+        encrypt(333::text::bytea,'secret','aes'),
+        encrypt(165523569::text::bytea,'secret','aes'),
         '2023-04-18 15:47:24',
         'Детская ветрянка',
         'Жалобы дневника 6',
@@ -130,7 +130,7 @@ VALUES
     diaries (medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate)
 	VALUES
     (
-		165523569,
+		encrypt(111::text::bytea,'secret','aes'),
         '2023.05.14 22:07:57',
         'titleCURL',
         'complaintsCURL',
@@ -141,7 +141,7 @@ VALUES
         5,
         '2023-04-26'
     )
-	RETURNING id, medicId, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
+	RETURNING id, convert_from(decrypt(medicId::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, creatingDate, title, complaints, anamnesis, objectively, diagnosis, variant, frequency, startdate;
 	
 
 

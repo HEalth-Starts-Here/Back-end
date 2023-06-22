@@ -24,6 +24,10 @@ func Uint16ToStr(src uint16) string {
 	return fmt.Sprint(src)
 }
 
+func Uint64ToStr(src uint64) string {
+	return fmt.Sprint(src)
+}
+
 func FlToStr(src float64) string {
 	return fmt.Sprintf("%.1f", src)
 }

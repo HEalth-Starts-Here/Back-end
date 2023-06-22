@@ -11,26 +11,25 @@ const (
 	// WHERE patients.vkid = $1;
 	// `
 
-	queryCreateNote = `
-	INSERT INTO
-    notes (medicrecordid, ismedicrecord, creatingdate, text)
-	VALUES
-    (
-        $1,
-        $2,
-        $3,
-        $4
-    )
-	RETURNING id, $5, ismedicrecord, creatingDate, text;
-	`
+	// queryCreateNote = `
+	// INSERT INTO
+    // notes (medicrecordid, ismedicrecord, creatingdate, text)
+	// VALUES
+    // (
+    //     $1,
+    //     $2,
+    //     $3,
+    //     $4
+    // )
+	// RETURNING id, $5, ismedicrecord, creatingDate, text;
+	// `
 
 	queryCreateNoteFirstPart = `
 	INSERT INTO
     notes (
 	`
 
-	queryCreateNoteSecondPart = `
-	, ismedicrecord, creatingdate, text)
+	queryCreateNoteSecondPart = `, ismedicrecord, creatingdate, text)
 	VALUES
     (
         $1,
@@ -41,8 +40,7 @@ const (
 	RETURNING id, 
 	`
 
-	queryCreateNoteThirdPart = `
-	, ismedicrecord, creatingDate, text;	`
+	queryCreateNoteThirdPart = `, ismedicrecord, creatingDate, text;	`
 
 	// medicrecordid = "medicrecordid"
 	// patientrecordid = "patientrecordid"

@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 DROP TABLE IF EXISTS medics               CASCADE;
 DROP TABLE IF EXISTS patients             CASCADE;
 DROP TABLE IF EXISTS diaries              CASCADE;
@@ -13,22 +15,22 @@ DROP TABLE IF EXISTS notes                CASCADE;
 DROP TABLE IF EXISTS diaryTokens          CASCADE;
 
 CREATE TABLE medics (
-    vkId                                BIGINT NOT NULL PRIMARY KEY,
+    vkId                                TEXT NOT NULL PRIMARY KEY,
+    -- TODO: delete name. Name may be changed. Front should request it from vk api
     name                                VARCHAR(200)
 );
 
 CREATE TABLE patients (
-    vkId                                BIGINT NOT NULL PRIMARY KEY,
+    vkId                                TEXT NOT NULL PRIMARY KEY,
+    -- TODO: delete name. Name may be changed. Front should request it from vk api
     name                                VARCHAR(200)
     -- TODO: add characterestics
 );
 
 CREATE TABLE diaries (
     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
-    medicId                             BIGINT REFERENCES medics (vkId) ON DELETE CASCADE,
-    -- TODO: add reference to patients table
-    -- patientId                           BIGINT,
-    patientId                           BIGINT REFERENCES patients (vkId) ON DELETE CASCADE,
+    medicId                             TEXT REFERENCES medics (vkId) ON DELETE CASCADE,
+    patientId                           TEXT REFERENCES patients (vkId) ON DELETE CASCADE,
     creatingDate                        TIMESTAMP NOT NULL,
     title                               VARCHAR(50) NOT NULL,
     complaints                          VARCHAR(1000),
@@ -64,15 +66,12 @@ CREATE TABLE patientRecords (
 
 CREATE TABLE medicImages (
     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
-    -- TODO add foreign key refer to patientRecords
-    -- isMedic                             BOOLEAN,
     recordId                            BIGINT REFERENCES medicRecords (id) ON DELETE CASCADE,
     name                                VARCHAR(200)
 );
 
 CREATE TABLE patientImages (
     id                                  BIGSERIAL NOT NULL PRIMARY KEY,
-    -- isMedic                             BOOLEAN,
     recordId                            BIGINT REFERENCES patientRecords (id) ON DELETE CASCADE,
     name                                VARCHAR(200)
 );

@@ -219,6 +219,7 @@ func (cr *dbdiaryrepository) GetDiary(userId uint64) (domain.DiaryListResponse, 
 func (er *dbdiaryrepository) GetUserRole(userId uint64) (bool, bool, error) {
 	query := queryGetUserRole
 	resp, err := er.dbm.Query(query, userId)
+	// resp, err := er.dbm.Query(query, cast.cast.Uint64ToStr(userId))
 	if err != nil {
 		log.Warn("{" + cast.GetCurrentFuncName() + "} in query: " + query)
 		log.Error(err)

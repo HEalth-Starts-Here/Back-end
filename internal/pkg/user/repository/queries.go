@@ -4,11 +4,11 @@ const (
 	queryGetUserInfo = `
 	SELECT vkid, name, true 
 	FROM medics 
-	WHERE vkid = $1 
+	WHERE vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text 
 	UNION ALL 
 	SELECT vkid, name, false 
 	FROM patients 
-	WHERE vkid = $1;
+	WHERE vkid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text;
 	`
 
 	queryRegisterMedic = `
@@ -16,10 +16,10 @@ const (
     medics (vkid, name)
 	VALUES
     (
-		$1,
+		encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text,
         $2
     )
-	RETURNING vkid, name;
+	RETURNING convert_from(decrypt(vkid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, name;
 	`
 
 	queryRegisterPatient = `
@@ -27,17 +27,17 @@ const (
     patients (vkid, name)
 	VALUES
     (
-		$1,
+		encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text,
         $2
     )
-	RETURNING vkid, name;
+	RETURNING convert_from(decrypt(vkid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, name;
 	`
 
 	queryLinkPatientToDiary = `
 	UPDATE diaries
-	SET patientid = $1
+	SET patientid = encrypt($1::bigint::text::bytea,'secret'::bytea,'aes'::text)::text
 	WHERE id = $2
-	RETURNING patientid, id;
+	RETURNING convert_from(decrypt(patientid::text::bytea,'secret','aes'),'SQL_ASCII')::bigint, id;
 	`
 
 	queryDeleteLinkToken = `
